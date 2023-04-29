@@ -1,2 +1,6 @@
 # Ignorar aquivos temporarios do visual paradigm
 *.bak*
+
+# Ignorar pycache
+
+*.pyc
