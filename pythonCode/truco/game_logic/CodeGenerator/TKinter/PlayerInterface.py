@@ -191,33 +191,26 @@ class PlayerInterface(PyNetgamesServerListener):
 		pass
 
 	def receive_connection_succes(self):
-		""""""@ReturnType void"""
-		@ReturnType void"""
+		"""@ReturnType void"""
 		pass
 
 	def receive_match(self, aMatch):
-		""""""@ParamType aMatch MatchStartedMessage
+		"""@ParamType aMatch MatchStartedMessage
 		@ReturnType void"""
-		@ParamType aMatch MatchStartedMessage
-		@ReturnType void"""
+		
 		pass
 
 	def receive_move(self, aReceive_move):
-		""""""@ParamType aReceive_move MoveMessage
-		@ReturnType void"""
-		@ParamType aReceive_move MoveMessage
+		"""@ParamType aReceive_move MoveMessage
 		@ReturnType void"""
 		pass
 
 	def receive_error(self, aError):
-		""""""@ParamType aError Exception
-		@ReturnType void"""
-		@ParamType aError Exception
+		"""@ParamType aError Exception
 		@ReturnType void"""
 		pass
 
 	def receive_disconnect(self):
-		""""""@ReturnType void"""
-		@ReturnType void"""
+		"""@ReturnType void"""
 		pass
 

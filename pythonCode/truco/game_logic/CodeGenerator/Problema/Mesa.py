@@ -180,7 +180,7 @@ class Mesa(object):
 		"""@AttributeType Problema.Jogador*"""
 		self._placar = None
 		"""@AttributeType int*"""
-		self._vencedor = null
+		self._vencedor = None
 		"""@AttributeType Problema.Time"""
 		self._unnamed_PlayerInterface_ = None
 		"""@AttributeType TKinter.PlayerInterface

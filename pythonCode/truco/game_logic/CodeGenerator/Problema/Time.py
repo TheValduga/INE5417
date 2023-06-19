@@ -9,7 +9,7 @@ class Time(object):
 		@ReturnType Problema.Time"""
 		pass
 
-	def pegarPontuação(self, aTime):
+	def pegarPontuacao(self, aTime):
 		"""@ParamType aTime Problema.Time
 		@ReturnType int"""
 		pass
@@ -30,9 +30,9 @@ class Time(object):
 		pass
 
 	def __init__(self):
-		self._identificação = None
+		self._identificacao = None
 		"""@AttributeType int"""
-		self._pontuação = None
+		self._pontuacao = None
 		"""@AttributeType int"""
 		self._jogadores = None
 		"""@AttributeType Problema.Jogador"""
