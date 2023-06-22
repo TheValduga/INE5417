@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from Problema import Jogador
-from Problema import Mesa
+from truco.game_logic.Problema import Jogador
+from truco.game_logic.Problema import Mesa
 
 class Time(object):
 	def registrarTimeCarta(self, aJogador):

@@ -2,6 +2,10 @@
 # -*- coding: UTF-8 -*-
 from tkinter import *
 from tkinter import simpledialog
+from truco.game_logic.Problema.Jogador import Jogador
+from truco.game_logic.Problema.Mesa import Mesa
+from truco.game_logic.Problema.Baralho import Baralho
+from truco.game_logic.Problema.Time import Time
 import os
 from py_netgames_client.tkinter_client.PyNetgamesServerProxy import PyNetgamesServerProxy
 from py_netgames_client.tkinter_client.PyNetgamesServerListener import PyNetgamesServerListener
@@ -10,19 +14,41 @@ class PlayerInterface(PyNetgamesServerListener):
 
 	def __init__(self):
 		self.main_window = Tk()
-		self.main_window.title("Truco")
-		self.main_window.geometry("1366x768")
-
-		self.fill_main_window()
 		
+		table = Mesa()
+
+		deck = Baralho() #!! diagrama de sequência initialize tem que mudar. Metodo novo em baralho
+
+		localPlayer = Jogador()
+
+		remotePlayer1 = Jogador() #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
+		remotePlayer2 = Jogador() #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
+		remotePlayer3 = Jogador() #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
+		
+		nome = self.SolicitarNomeJogador()
+		localPlayer.RegistrarNome(nome)
+
+		time1 = Time()
+		time2 = Time()
+
+	 #----------------------- Pynetgames ----------------------------------->
+		self.add_listener()
+		self.send_connect()
+  	#<----------------------- Pynetgames ----------------------------------
+		self.fill_main_window() #!! initialize. Tem que incluir isso aqui nos diagramas 
+		self.main_window.mainloop() #!! na modelagem o initialize acaba aqui. ainda não sei se vamos precisar de mais coisa
+
 		#!! esse porre precisa botar nos diagramas? 
 		#!! variavel temporaria auxiliar porra, pelo amor de deus né
 		diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 		diretorio_pai = os.path.dirname(diretorio_atual)
 		diretorio_imagens = os.path.join(diretorio_pai,"images")
-		print(self.SolicitarNomeJogador())
+		
 
-
+		# Nome do jogador
+		self.logo_label = Label(self.player1_frame, text=localPlayer._nome, font="arial 24", bg="#046307")
+		self.logo_label.grid(row=0, column=3)
+		
 		self._back_card = PhotoImage(file=os.path.join(diretorio_imagens,"back_card2.png"))
 		
 		"""@AttributeType TKinter.PhotoImage"""
@@ -88,9 +114,11 @@ class PlayerInterface(PyNetgamesServerListener):
 		# @AssociationMultiplicity 4
 		# @AssociationKind Aggregation"""
 
-		self.main_window.mainloop()
+
 
 	def fill_main_window(self):
+		self.main_window.title("Truco")
+		self.main_window.geometry("1366x768")
 		self.main_window["bg"]="#046307"
 		# # Frame da mesa do jogo
 		# self.board_frame = Frame(self.main_window, padx=100, pady=25, bg="red")
@@ -201,6 +229,10 @@ class PlayerInterface(PyNetgamesServerListener):
 
 	def botaoResposta(self):
 		pass
+	
+	def IniciarPartida(self): #!! ATUALIZAR tem no sequencia Receive Match mas não existe em nenhum diagrama de classe
+		pass
+
 
 	def add_listener(self):		# Pyng use case "add listener"
 		self.server_proxy = PyNetgamesServerProxy()
@@ -209,8 +241,8 @@ class PlayerInterface(PyNetgamesServerListener):
 	def send_connect(self):	# Pyng use case "send connect"
 		self.server_proxy.send_connect("wss://py-netgames-server.fly.dev")
 
-	def send_match(self, amount_of_players):	# Pyng use case "send match"
-		self.server_proxy.send_match(amount_of_players) #4 = quantidade de jogadores.
+	def send_match(self): #!! esse amount_of_players é desnecessário e atrapalha. Tira essa porra da modelagemm pra já	# Pyng use case "send match"
+		self.server_proxy.send_match(2) #4 = quantidade de jogadores.
 
 	def receive_connection_success(self):	# Pyng use case "receive connection"
 		print('*************** CONECTADO *******************')
@@ -228,6 +260,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		print('*************** ORDEM: ', match.position)
 		print('*************** match_id: ', match.match_id)
 		self.set_match_id(match.match_id)
+		self.IniciarPartida()
 
 	def receive_move(self, move):	# Pyng use case "receive move"
 		pass

@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from Problema import Baralho
-from Problema import Jogador
 
-class Carta(object):
+class Carta():
 	def __init__(self, valor, naipe):
 		self._valor = valor
 		"""@AttributeType int"""

@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from Problema import Jogador
-from Problema import Baralho
-from Problema import Carta
-from Problema import Time
-from TKinter import PlayerInterface
+from truco.game_logic.Problema import Jogador
+from truco.game_logic.Problema import Baralho
+from truco.game_logic.Problema import Carta
+from truco.game_logic.Problema import Time
+from truco.game_logic.TKinter import PlayerInterface
 
-class Mesa(object):
+class Mesa():
+
 	def registrarTruco(self):
 		"""@ReturnType boolean"""
 		pass

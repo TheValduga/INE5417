@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from Problema import Carta
-from Problema import Time
-from Problema import Mesa
-from Problema import Baralho
+from truco.game_logic.Problema import Carta
+from truco.game_logic.Problema import Time
+from truco.game_logic.Problema import Mesa
+from truco.game_logic.Problema import Baralho
 import random
 
-class Jogador(object):
+class Jogador():
+
 	def verificarTurno(self):
 		"""@ReturnType boolean"""
 		pass
@@ -61,8 +62,9 @@ class Jogador(object):
 		"""@ReturnType boolean"""
 		pass
 
-	def RegistrarNome(self, aNome):
+	def RegistrarNome(self, nome):
 		"""@ParamType aNome string"""
+		self._nome = nome
 		pass
 
 	def DefinirDealer(self, jogadores): #!! o gerador de código gerou sem o parametro jogadores. Diagrama de classes deve estar incorreto
@@ -77,7 +79,7 @@ class Jogador(object):
 		"""@ReturnType int"""
 		pass
 
-	def __init__(self):
+	def __init__(self): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
 		self._nome = None
 		"""@AttributeType string"""
 		self._seuTurno = None

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from Problema import Carta
-from Problema import Mesa
+from truco.game_logic.Problema.Carta import Carta
+from truco.game_logic.Problema import Mesa
 import random
 
 class Baralho(object):
@@ -17,13 +17,21 @@ class Baralho(object):
 			baralho_resultado.append(item)
 		
 		self._cartas = baralho_resultado
-		
+
 		return baralho_resultado
 
 
-	# !! metodo adicionado depois, ATUALIZAR PROJETO
-	def instanciarCartas(self):# metodo incompleto
-		pass
+	# !! metodo adicionado depois, ATUALIZAR PROJETO -> diagrama de sequência do initialize por exemplo
+	def instanciarCartas(self):
+		baralho_aux = []
+		valores = [4,5,6,7,'J','Q','K','A',2,3]
+		naipes = ["paus","copas","espadas","ouro"]
+		for valor in valores:
+			for naipe in naipes:
+				carta = Carta(valor,naipe)
+				baralho_aux.append(carta)
+		
+		return baralho_aux
 
 
 	def __init__(self):
