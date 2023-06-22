@@ -37,6 +37,8 @@ class Baralho(object):
 	def __init__(self):
 		self._cartas = self.instanciarCartas()
 		"""@AttributeType Problema.Carta"""
+
+		#!! acho que esses atributos aqui são inuteis ou redundantes. Remover dos diagramas depois
 		self._unnamed_Mesa_ = None
 		"""@AttributeType Problema.Mesa
 		# @AssociationType Problema.Mesa"""

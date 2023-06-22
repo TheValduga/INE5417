@@ -7,10 +7,14 @@ class Carta():
 		"""@AttributeType int"""
 		self._naipe = naipe
 		"""@AttributeType string"""
-		self._unnamed_Baralho_ = None
-		"""@AttributeType Problema.Baralho
-		# @AssociationType Problema.Baralho"""
+
 		self._unnamed_Jogador_ = None
 		"""@AttributeType Problema.Jogador
 		# @AssociationType Problema.Jogador"""
+		
+		#
+		self._unnamed_Baralho_ = None
+		"""@AttributeType Problema.Baralho
+		# @AssociationType Problema.Baralho"""
+		
 

@@ -120,8 +120,10 @@ class Mesa():
 	def IniciarPartida(self):
 		pass
 
-	def DefinirTimes(self):
-		pass
+	def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
+		j = self._jogadores
+		self._times[0] = [j[0],j[2]]
+		self._times[1] = [j[1],j[3]]
 
 	def EscolherDealer(self):
 		pass
@@ -163,7 +165,7 @@ class Mesa():
 		"""@AttributeType Problema.Carta"""
 		self._valorMao = 1
 		"""@AttributeType int"""
-		self._partidaAndamento = None
+		self._partidaAndamento = False
 		"""@AttributeType boolean"""
 		self._times = None
 		"""@AttributeType Problema.Time"""

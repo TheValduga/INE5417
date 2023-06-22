@@ -15,21 +15,19 @@ class PlayerInterface(PyNetgamesServerListener):
 	def __init__(self):
 		self.main_window = Tk()
 		
-		table = Mesa()
+		
 
 		deck = Baralho() #!! diagrama de sequência initialize tem que mudar. Metodo novo em baralho
+		time1 = Time() #!! initialize ordem em que as coisas acontecem.
+		time2 = Time() #!! initialize
+		self._table = Mesa() #!! deve mudar um tanto de coisa.
+		self._table._baralho = deck #!! initialize
 
-		localPlayer = Jogador()
+		self.localPlayer = Jogador() #!! tem que botar nos diagramas
 
-		remotePlayer1 = Jogador() #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
-		remotePlayer2 = Jogador() #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
-		remotePlayer3 = Jogador() #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
-		
+		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
-		localPlayer.RegistrarNome(nome)
-
-		time1 = Time()
-		time2 = Time()
+		self.localPlayer.RegistrarNome(nome)
 
 	 #----------------------- Pynetgames ----------------------------------->
 		self.add_listener()
@@ -37,7 +35,7 @@ class PlayerInterface(PyNetgamesServerListener):
   	#<----------------------- Pynetgames ----------------------------------
 		self.fill_main_window() #!! initialize. Tem que incluir isso aqui nos diagramas 
 		self.main_window.mainloop() #!! na modelagem o initialize acaba aqui. ainda não sei se vamos precisar de mais coisa
-
+		
 		#!! esse porre precisa botar nos diagramas? 
 		#!! variavel temporaria auxiliar porra, pelo amor de deus né
 		diretorio_atual = os.path.dirname(os.path.abspath(__file__))
@@ -45,9 +43,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		diretorio_imagens = os.path.join(diretorio_pai,"images")
 		
 
-		# Nome do jogador
-		self.logo_label = Label(self.player1_frame, text=localPlayer._nome, font="arial 24", bg="#046307")
-		self.logo_label.grid(row=0, column=3)
+		
 		
 		self._back_card = PhotoImage(file=os.path.join(diretorio_imagens,"back_card2.png"))
 		
@@ -141,6 +137,22 @@ class PlayerInterface(PyNetgamesServerListener):
 		
 		self.placar_frame = Frame(self.main_window, padx=30, pady=30, bg="#046307")
 		self.placar_frame.grid(row=0, column=0)
+
+		# Nome do jogador local
+		self.logo_label = Label(self.player1_frame, text=self.localPlayer._nome, font="arial 24", bg="#046307")
+		self.logo_label.grid(row=0, column=3)
+
+		if len(self.remotePlayers) ==3: #!! mudar 2 pra 3 depois
+			# Nome do jogador remoto 1
+			print("TESTE")
+			self.logo_label = Label(self.player2_frame, text=self.remotePlayers[0], font="arial 24", bg="#046307")
+			self.logo_label.grid(row=0, column=1)
+
+			self.logo_label = Label(self.player3_frame, text=self.remotePlayers[1], font="arial 24", bg="#046307")
+			self.logo_label.grid(row=0, column=1)
+
+			self.logo_label = Label(self.player4_frame, text=self.remotePlayers[2], font="arial 24", bg="#046307")
+			self.logo_label.grid(row=0, column=1)
 
 	def mostra_mensagem(self, aMensagem):
 		"""@ParamType aMensagem string
@@ -242,11 +254,10 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.server_proxy.send_connect("wss://py-netgames-server.fly.dev")
 
 	def send_match(self): #!! esse amount_of_players é desnecessário e atrapalha. Tira essa porra da modelagemm pra já	# Pyng use case "send match"
-		self.server_proxy.send_match(2) #4 = quantidade de jogadores.
+		self.server_proxy.send_match(4) #4 = quantidade de jogadores.
 
 	def receive_connection_success(self):	# Pyng use case "receive connection"
 		print('*************** CONECTADO *******************')
-		print("VAI SE FUDER VAI SE FUDER VAI SE FUDER")
 		self.send_match()
 
 	def receive_disconnect(self):	# Pyng use case "receive disconnect"
@@ -260,8 +271,47 @@ class PlayerInterface(PyNetgamesServerListener):
 		print('*************** ORDEM: ', match.position)
 		print('*************** match_id: ', match.match_id)
 		self.set_match_id(match.match_id)
+		self.match_position = match.position #!! acrescentar aos diagramas
+		if self.match_position == 0:
+			print("COMEÇO ORDEM")
+			jogadores = {"jogadores" : [self.localPlayer._nome],'turno':1}
+			print("ENVIANDO: " + str(jogadores))
+			self.send_move(jogadores)
+
 		self.IniciarPartida()
 
 	def receive_move(self, move):	# Pyng use case "receive move"
-		pass
+		if self._table._partidaAndamento == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
+			if move.payload['turno'] == self.match_position:
+				print("RECEBI: " + str(move.payload['jogadores'])) 
+				print(move.payload['jogadores'])
+				jogadores = move.payload['jogadores']
+				print(len(jogadores))
+				if len(move.payload['jogadores']) < 4:
+					pacote = {}
+					pacote['jogadores'] = move.payload['jogadores']
+					pacote['jogadores'].append(self.localPlayer._nome)
+					print(pacote['jogadores'])
+					turno = (self.match_position +1) % 4
+					print("PROX TURNO: " + str(turno))
+					pacote['turno'] = turno
+					print("ENVIANDO: " + str(pacote))
+					self.send_move(pacote)
+				else:
+					remotos_locais = []
+					for jogador in move.payload['jogadores']:
+						if jogador != self.localPlayer._nome:
+							remotos_locais.append(jogador)
+					self.remotePlayers = remotos_locais
+					if self.match_position == 3:
+						turno = 0
+					turno = (self.match_position +1) % 4
+					self.send_move({'jogadores':move.payload['jogadores'], 'turno': turno})
+					print(self.remotePlayers)
+					print("PRONTO, PORRA!!!!")
+		self.fill_main_window()
+
+	#!! só para teste. Talvez vai pra interface, foda-se
+	def send_move(self,move):
+		self.server_proxy.send_move(self._match_id, move)
 
