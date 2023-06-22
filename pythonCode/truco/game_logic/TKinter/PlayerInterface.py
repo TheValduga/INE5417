@@ -1,36 +1,30 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from Problema import Mesa
-from TKinter import Frame
-from TKinter import PhotoImage
-from TKinter import Label
-from TKinter import Button
-from TKinter import Tk
-from Problema import Carta
-import MatchStartedMessage
-import MoveMessage
-import PyNetgamesServerListener
+from tkinter import *
+from tkinter import simpledialog
+import os
+from py_netgames_client.tkinter_client.PyNetgamesServerProxy import PyNetgamesServerProxy
+from py_netgames_client.tkinter_client.PyNetgamesServerListener import PyNetgamesServerListener
 
 class PlayerInterface(PyNetgamesServerListener):
-	def PlayerInterface(self):
-		pass
 
 	def __init__(self):
-		self._main_window = None
-		"""@AttributeType Problema.Mesa"""
-		self._player1_frame = None
-		"""@AttributeType TKinter.Frame"""
-		self._player2_frame = None
-		"""@AttributeType TKinter.Frame"""
-		self._player3_frame = None
-		"""@AttributeType TKinter.Frame"""
-		self._player4_frame = None
-		"""@AttributeType TKinter.Frame"""
-		self._mesa_frame = None
-		"""@AttributeType TKinter.Frame"""
-		self._placar_frame = None
-		"""@AttributeType TKinter.Frame"""
-		self._back_card = None
+		self.main_window = Tk()
+		self.main_window.title("Truco")
+		self.main_window.geometry("1366x768")
+
+		self.fill_main_window()
+		
+		#!! esse porre precisa botar nos diagramas? 
+		#!! variavel temporaria auxiliar porra, pelo amor de deus né
+		diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+		diretorio_pai = os.path.dirname(diretorio_atual)
+		diretorio_imagens = os.path.join(diretorio_pai,"images")
+		print(self.SolicitarNomeJogador())
+
+
+		self._back_card = PhotoImage(file=os.path.join(diretorio_imagens,"back_card2.png"))
+		
 		"""@AttributeType TKinter.PhotoImage"""
 		self._front_card = None
 		"""@AttributeType TKinter.PhotoImage"""
@@ -94,8 +88,31 @@ class PlayerInterface(PyNetgamesServerListener):
 		# @AssociationMultiplicity 4
 		# @AssociationKind Aggregation"""
 
+		self.main_window.mainloop()
+
 	def fill_main_window(self):
-		pass
+		self.main_window["bg"]="#046307"
+		# # Frame da mesa do jogo
+		# self.board_frame = Frame(self.main_window, padx=100, pady=25, bg="red")
+		# self.board_frame.grid(row=0 , column=0)
+		# Frame das cartas do jogador
+		self.player1_frame = Frame(self.main_window, padx=150, pady=20, bg="#046307")
+		self.player1_frame.grid(row=2, column=1)
+			
+		self.player2_frame = Frame(self.main_window, padx=10, pady=20, bg="#046307")
+		self.player2_frame.grid(row=1, column=0)
+		
+		self.player3_frame = Frame(self.main_window, padx=150, pady=20, bg="#046307")
+		self.player3_frame.grid(row=0, column=1)
+		
+		self.player4_frame = Frame(self.main_window, padx=10, pady=20, bg="#046307")
+		self.player4_frame.grid(row=1, column=2)
+		
+		self.mesa_frame = Frame(self.main_window, padx=150, pady=80, bg="#046307")
+		self.mesa_frame.grid(row=1, column=1)
+		
+		self.placar_frame = Frame(self.main_window, padx=30, pady=30, bg="#046307")
+		self.placar_frame.grid(row=0, column=0)
 
 	def mostra_mensagem(self, aMensagem):
 		"""@ParamType aMensagem string
@@ -148,24 +165,19 @@ class PlayerInterface(PyNetgamesServerListener):
 
 	def SolicitarNomeJogador(self):
 		"""@ReturnType string"""
-		pass
-
-	def add_listener(self):
-		pass
-
-	def send_connect(self):
-		pass
+		input_usuario = simpledialog.askstring("Solicitacao de Nome", "Digite seu nome: ")
+		if input_usuario == "":
+			return "Sem nome"
+		else:
+			return input_usuario
 
 	def Notificar(self, aMensagem):
 		"""@ParamType aMensagem string"""
 		pass
 
-	def send_match(self, aAmount_of_players):
-		"""@ParamType aAmount_of_players int"""
-		pass
-
-	def set_match_id(self, aMatch_id):
+	def set_match_id(self, match_id): # !! ATUALIZAR : botar match_id como atributo da classe playerinterface
 		"""@ParamType aMatch_id string"""
+		self._match_id = match_id
 		pass
 
 	def AtualizarInterface(self):
@@ -190,27 +202,33 @@ class PlayerInterface(PyNetgamesServerListener):
 	def botaoResposta(self):
 		pass
 
-	def receive_connection_succes(self):
-		"""@ReturnType void"""
+	def add_listener(self):		# Pyng use case "add listener"
+		self.server_proxy = PyNetgamesServerProxy()
+		self.server_proxy.add_listener(self)
+
+	def send_connect(self):	# Pyng use case "send connect"
+		self.server_proxy.send_connect("wss://py-netgames-server.fly.dev")
+
+	def send_match(self, amount_of_players):	# Pyng use case "send match"
+		self.server_proxy.send_match(amount_of_players) #4 = quantidade de jogadores.
+
+	def receive_connection_success(self):	# Pyng use case "receive connection"
+		print('*************** CONECTADO *******************')
+		print("VAI SE FUDER VAI SE FUDER VAI SE FUDER")
+		self.send_match()
+
+	def receive_disconnect(self):	# Pyng use case "receive disconnect"
+		pass
+			
+	def receive_error(self, error):	# Pyng use case "receive error"
 		pass
 
-	def receive_match(self, aMatch):
-		"""@ParamType aMatch MatchStartedMessage
-		@ReturnType void"""
-		
-		pass
+	def receive_match(self, match):	# Pyng use case "receive match"
+		print('*************** PARTIDA INICIADA *******************')
+		print('*************** ORDEM: ', match.position)
+		print('*************** match_id: ', match.match_id)
+		self.set_match_id(match.match_id)
 
-	def receive_move(self, aReceive_move):
-		"""@ParamType aReceive_move MoveMessage
-		@ReturnType void"""
-		pass
-
-	def receive_error(self, aError):
-		"""@ParamType aError Exception
-		@ReturnType void"""
-		pass
-
-	def receive_disconnect(self):
-		"""@ReturnType void"""
+	def receive_move(self, move):	# Pyng use case "receive move"
 		pass
 

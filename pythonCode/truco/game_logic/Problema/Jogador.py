@@ -4,6 +4,7 @@ from Problema import Carta
 from Problema import Time
 from Problema import Mesa
 from Problema import Baralho
+import random
 
 class Jogador(object):
 	def verificarTurno(self):
@@ -22,10 +23,19 @@ class Jogador(object):
 		@ReturnType Problema.Carta*"""
 		pass
 
-	def definirManilha(self, aBaralho):
+	def definirManilha(self, baralho):
 		"""@ParamType aBaralho Problema.Baralho
 		@ReturnType Problema.Carta"""
-		pass
+
+		sequencia = [4,5,6,7,'J','Q','K','A',2,3]
+
+		vira = baralho[0].valor
+
+		manilha = (sequencia.index(vira)+1) % 10
+
+		carta_retorno = Carta(manilha,'X')
+
+		return carta_retorno
 
 	def selecionarCarta(self, aCarta):
 		"""@ParamType aCarta Problema.Carta"""
@@ -55,8 +65,13 @@ class Jogador(object):
 		"""@ParamType aNome string"""
 		pass
 
-	def DefinirDealer(self):
-		pass
+	def DefinirDealer(self, jogadores): #!! o gerador de código gerou sem o parametro jogadores. Diagrama de classes deve estar incorreto
+
+		for i in range(0, len(jogadores)):
+			rand = random.randint(0,len(jogadores)-1)
+			jogadorDealer = jogadores[rand]
+
+		return jogadorDealer
 
 	def PegarTime(self):
 		"""@ReturnType int"""
