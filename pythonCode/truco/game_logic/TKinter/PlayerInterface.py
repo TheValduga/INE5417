@@ -136,18 +136,17 @@ class PlayerInterface(PyNetgamesServerListener):
 		diretorio_pai = os.path.dirname(diretorio_atual)
 		diretorio_imagens = os.path.join(diretorio_pai,"images")
 		self._back_card = PhotoImage(file=os.path.join(diretorio_imagens,"back_card2.png"))
-		teste_carta = Carta('1','paus')
-		self._back_card = teste_carta.get_foto_carta()
-		print("chegou aqui")
+		#teste_carta = Carta(1,'paus')
+		#self._back_card = teste_carta.get_foto_carta()
 		self.front_card = PhotoImage(file=os.path.join(diretorio_imagens,"a-espada.png")) 
 		self.card_deck = PhotoImage(file=os.path.join(diretorio_imagens, "card_deck.png")) 
 
 		# Imagem das cartas dos jogador 1
 
-		self.botao_correr = Button(self.player1_frame, bd = 3, text="Correr", command= print("s"))
+		self.botao_correr = Button(self.player1_frame, bd = 3, text="Correr", command= self.clicarBotao())
 		self.botao_correr.grid(row=1, column=0)
 
-		self.botao_aumentar = Button(self.player1_frame, bd = 3, text="Aumentar", command=print("s"))
+		self.botao_aumentar = Button(self.player1_frame, bd = 3, text="Aumentar", command=self.clicarBotao())
 		self.botao_aumentar.grid(row=1, column=1)
 
 		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self.front_card)
@@ -159,10 +158,10 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self.front_card)
 		self.cartas_viradas2.grid(row=1, column=4)
 
-		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=print("s"))
+		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=self.clicarBotao())
 		self.botao_truco.grid(row=1, column=5)
 
-		self.botao_aceitar = Button(self.player1_frame, bd = 3, text="Aceitar", command=print("s"))
+		self.botao_aceitar = Button(self.player1_frame, bd = 3, text="Aceitar", command=self.clicarBotao())
 		self.botao_aceitar.grid(row=1, column=6)
 		
 		
@@ -360,11 +359,9 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.Notificar("Ocorreu um erro no servidor, feche o programa")
 
 	def receive_match(self, match):	# Pyng use case "receive match"
-		print('*************** PARTIDA INICIADA *******************')
-		print('*************** ORDEM: ', match.position)
-		print('*************** match_id: ', match.match_id)
 		self.set_match_id(match.match_id)
 		self.match_position = match.position #!! acrescentar aos diagramas (lembrar: Sequencia e Atividade)
+		self.localPlayer._position = match.position #!! também vai pro diagrama
 
 		# aqui ele começa uma sequência de mensagens pra pegar o nome e match_position de todos os jogadores. Só posso inicializar a mesa depois de ter isso
 		self.pega_nomes_e_posicoes()
@@ -377,34 +374,49 @@ class PlayerInterface(PyNetgamesServerListener):
 			self.send_move(jogadores)
 
 	def inicializar_mesa(self,move): #!! adicionar ao diagrama  #!!Receive Match = Salvar match_id e match_position -> definir jogadores -> definir times -> definir  times -> definir dealer -> notificar times
-		if move.payload['turno'] == self.match_position:
-				if len(move.payload['jogadores']) < 4:
-					pacote = {}
-					pacote['jogadores'] = move.payload['jogadores']
-					pacote['jogadores'].append((self.localPlayer._nome, self.match_position)) #!! tupla de nome, posicao pra ajudar na UI
-					turno = (self.match_position +1) % 4
-					pacote['turno'] = turno
-					self.send_move(pacote)
-				else:
-					remotos_locais = []
-					for (jogador, position) in move.payload['jogadores']:
-						if jogador != self.localPlayer._nome:
-							remotos_locais.append((jogador, position))
-					self.remotePlayers = remotos_locais
-					if self.match_position == 3:
-						turno = 0
-					turno = (self.match_position +1) % 4
-					self.send_move({'jogadores':move.payload['jogadores'], 'turno': turno})
-					for nome,posicao in move.payload["jogadores"]:
-						jog_temp = Jogador(nome,posicao)
-						self._table._jogadores.append(jog_temp)
+		if 'turno' in move.payload:
+			if move.payload['turno'] == self.match_position:
+					if len(move.payload['jogadores']) < 4:
+						pacote = {}
+						pacote['jogadores'] = move.payload['jogadores']
+						pacote['jogadores'].append((self.localPlayer._nome, self.match_position)) #!! tupla de nome, posicao pra ajudar na UI
+						turno = (self.match_position +1) % 4
+						pacote['turno'] = turno
+						self.send_move(pacote)
+					else:
+						remotos_locais = []
+						for (jogador, position) in move.payload['jogadores']:
+							if jogador != self.localPlayer._nome:
+								remotos_locais.append((jogador, position))
+						self.remotePlayers = remotos_locais
+						if self.match_position == 3:
+							turno = 0
+						turno = (self.match_position +1) % 4
+						self.send_move({'jogadores':move.payload['jogadores'], 'turno': turno})
+						for nome,posicao in move.payload["jogadores"]:
+							jog_temp = Jogador(nome,posicao)
+							self._table._jogadores.append(jog_temp)
 
-					#self._table._jogadores = move.payload['jogadores']
+						#self._table._jogadores = move.payload['jogadores']
 
-
-					self._table.IniciarPartida()
-					self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0]._nome) + ' ,'+str(self._table._times[0]._jogadores[1]._nome)+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0]._nome)+' ,'+str(self._table._times[1]._jogadores[1]._nome))
-					self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
+						self._table.IniciarPartida(self.localPlayer) #!! diagrama e precisa disso pra escolher o dealer se não não funciona
+						self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0]._nome) + ' ,'+str(self._table._times[0]._jogadores[1]._nome)+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0]._nome)+' ,'+str(self._table._times[1]._jogadores[1]._nome))
+						self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
+						
+									#self._table.novaMao()
+						for jogador in self._table._jogadores:
+							if jogador._dealer:
+								self.enviar_dealer_p_todos(jogador._nome)
+								
+		if 'dealer' in move.payload:
+			print(move.payload['dealer'])
+			if move.payload['dealer'] == self.localPlayer._nome:
+				print("Sou o Dealer. Hora da novaMao")
+				self._table.novaMao()
+			
+	
+	def enviar_dealer_p_todos(self, dealer): #!! metodo novo
+		self.send_move({'dealer':dealer})
 
 	def receive_move(self, move):	# Pyng use case "receive move"
 		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo

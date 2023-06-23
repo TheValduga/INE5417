@@ -67,7 +67,7 @@ class Jogador():
 		pass
 
 	def DefinirDealer(self, jogadores): #!! o gerador de código gerou sem o parametro jogadores. Diagrama de classes deve estar incorreto
-
+		
 		for i in range(0, len(jogadores)):
 			rand = random.randint(0,len(jogadores)-1)
 			jogadorDealer = jogadores[rand]

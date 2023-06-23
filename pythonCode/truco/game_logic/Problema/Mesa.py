@@ -15,11 +15,14 @@ class Mesa():
 
 	def registrarMao(self):
 		"""@ReturnType boolean"""
-		pass
+		self._maoAndamento = not(self._maoAndamento)
+		return self._maoAndamento
 
-	def registrarStatusRodada(self, aStatus):
+	def registrarStatusRodada(self, status):
 		"""@ParamType aStatus boolean"""
-		pass
+		self._rodadaAndamento = status
+		return self._rodadaAndamento
+		
 
 	def registraPontoMao(self, aTime, aPontuacao):
 		"""@ParamType aTime Problema.Time
@@ -127,11 +130,12 @@ class Mesa():
 		"""@ParamType aJogador Problema.Jogador"""
 		pass
 
-	def IniciarPartida(self): #!!
+	def IniciarPartida(self, jogador_local): #!!
 		#self._jogadores = jogadores
 		print("INICIANDO PARTIDA")
 		self.DefinirTimes()
-		self.EscolherDealer()
+		print(jogador_local._position)
+		self.EscolherDealer(jogador_local) #!! adicionar aos diagramas
 		self._times[0].ZerarPlacar()
 		self._times[1].ZerarPlacar()
 		self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
@@ -144,15 +148,19 @@ class Mesa():
 		self._times[0]._jogadores = [j[0],j[2]]
 		self._times.append(Time())
 		self._times[1]._jogadores = [j[1],j[3]]
-		print(self._times[0]._jogadores[0]._nome)
-		print(self._times[0]._jogadores[1]._nome)
-		print(self._times[1]._jogadores[0]._nome)
-		print(self._times[1]._jogadores[1]._nome)
 		
 
-	def EscolherDealer(self):
-		num = random.randint(0,3)
-		#self._jogadores[num].definirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
+	def EscolherDealer(self, jogador_local): #!! tive que mudar o algoritmo. Jogador DefinirDealer nos diagramas tem que virar Mesa EscolherDealer e fazer as alterações necessárias
+			print(jogador_local._position)
+			if jogador_local._position == 0:
+				dealer = jogador_local.DefinirDealer(self._jogadores) #!! não sei se nos diagramas isso ta aqui. alguem ve
+				for jogador1 in self._jogadores:
+					if jogador1 == dealer:
+						jogador1._dealer = True
+						print("Eu sou o jogador 0 e decidi que o seguinte jogador é o dealer: " + jogador1._nome) 
+						break
+
+		
 
 
 	def pegarPlacar(self):
@@ -164,8 +172,16 @@ class Mesa():
 		Rodada = self.registrarStatusRodada(True)
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
 		self._baralho = self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
-
+		Maos = self.distribuirCartas()
 		pass
+
+	def distribuirCartas(self): #!! acho que metodo não existe na classe. o gerador automatico pelo menos não fez. O return é desnecessário e bunda
+		for jogador in self._jogadores:
+			carta1 = self._cartas.pop()
+			carta2 = self._cartas.pop()
+			carta3 = self._cartas.pop()
+			jogador._cartas = [carta1, carta2, carta3]
+		return maos
 
 	def novaRodada(self):
 		pass
