@@ -6,6 +6,7 @@ from truco.game_logic.Problema.Jogador import Jogador
 from truco.game_logic.Problema.Mesa import Mesa
 from truco.game_logic.Problema.Baralho import Baralho
 from truco.game_logic.Problema.Time import Time
+from truco.game_logic.Problema.Carta import Carta
 import os
 from py_netgames_client.tkinter_client.PyNetgamesServerProxy import PyNetgamesServerProxy
 from py_netgames_client.tkinter_client.PyNetgamesServerListener import PyNetgamesServerListener
@@ -135,6 +136,9 @@ class PlayerInterface(PyNetgamesServerListener):
 		diretorio_pai = os.path.dirname(diretorio_atual)
 		diretorio_imagens = os.path.join(diretorio_pai,"images")
 		self._back_card = PhotoImage(file=os.path.join(diretorio_imagens,"back_card2.png"))
+		teste_carta = Carta('1','paus')
+		self._back_card = teste_carta.get_foto_carta()
+		print("chegou aqui")
 		self.front_card = PhotoImage(file=os.path.join(diretorio_imagens,"a-espada.png")) 
 		self.card_deck = PhotoImage(file=os.path.join(diretorio_imagens, "card_deck.png")) 
 
@@ -306,7 +310,6 @@ class PlayerInterface(PyNetgamesServerListener):
 
 	def Notificar(self, mensagem):
 		messagebox.showinfo(message= mensagem)
-		pass
 
 	def set_match_id(self, match_id): # !! ATUALIZAR : botar match_id como atributo da classe playerinterface
 		"""@ParamType aMatch_id string"""
