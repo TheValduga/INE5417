@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 from truco.game_logic.Problema import Carta
 from truco.game_logic.Problema import Time
-from truco.game_logic.Problema import Mesa
 from truco.game_logic.Problema import Baralho
 import random
 
@@ -86,9 +85,12 @@ class Jogador():
 		"""@AttributeType boolean"""
 		self._mao = None
 		"""@AttributeType Problema.Carta*"""
-		self._dealer = None
+		self._dealer = False
 		"""@AttributeType boolean"""
 		self._time = None
+
+		self._position = None
+
 		"""@AttributeType int"""
 		self._unnamed_Carta_ = []
 		"""@AttributeType Problema.Carta*

@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from truco.game_logic.Problema.Carta import Carta
-from truco.game_logic.Problema import Mesa
 import random
 
 class Baralho(object):

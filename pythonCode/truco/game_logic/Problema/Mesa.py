@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from truco.game_logic.Problema import Jogador
-from truco.game_logic.Problema import Baralho
-from truco.game_logic.Problema import Carta
-from truco.game_logic.Problema import Time
+from truco.game_logic.Problema.Jogador import Jogador
+from truco.game_logic.Problema.Baralho import Baralho
+from truco.game_logic.Problema.Carta import Carta
+from truco.game_logic.Problema.Time import Time
 from truco.game_logic.TKinter import PlayerInterface
+import random
 
 class Mesa():
 
@@ -117,16 +118,25 @@ class Mesa():
 		"""@ParamType aJogador Problema.Jogador"""
 		pass
 
-	def IniciarPartida(self):
-		pass
+	def IniciarPartida(self): #!!
+		#self._jogadores = jogadores
+		print("INICIANDO PARTIDA")
+		self.DefinirTimes()
+		self._times[0].ZerarPlacar()
+		self._times[1].ZerarPlacar()
+		print(self._times)
+		self._Inicializada = True
 
 	def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
 		j = self._jogadores
-		self._times[0] = [j[0],j[2]]
-		self._times[1] = [j[1],j[3]]
+		self._times.append(Time())
+		self._times[0]._jogadores = [j[0],j[2]]
+		self._times.append(Time())
+		self._times[1]._jogadores = [j[1],j[3]]
 
 	def EscolherDealer(self):
-		pass
+		num = random.randint(0,3)
+		self._jogadores[num].definirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
 
 	def pegarPlacar(self):
 		"""@ReturnType int*"""
@@ -158,6 +168,8 @@ class Mesa():
 
 	def __init__(self):
 		self._jogadores = None
+
+		self._Inicializada = False
 		"""@AttributeType Problema.Jogador"""
 		self._baralho = None
 		"""@AttributeType Problema.Baralho"""
@@ -167,7 +179,7 @@ class Mesa():
 		"""@AttributeType int"""
 		self._partidaAndamento = False
 		"""@AttributeType boolean"""
-		self._times = None
+		self._times = []
 		"""@AttributeType Problema.Time"""
 		self._rodadaAndamento = None
 		"""@AttributeType boolean"""

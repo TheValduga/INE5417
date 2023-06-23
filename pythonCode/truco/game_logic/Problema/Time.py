@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from truco.game_logic.Problema import Jogador
-from truco.game_logic.Problema import Mesa
 
 class Time(object):
 	def registrarTimeCarta(self, aJogador):
@@ -23,7 +22,7 @@ class Time(object):
 		pass
 
 	def ZerarPlacar(self):
-		pass
+		self._pontuacao = 0
 
 	def setarPontuacao(self, aPontos):
 		"""@ParamType aPontos int"""
