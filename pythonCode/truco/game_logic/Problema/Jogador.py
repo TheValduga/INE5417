@@ -66,13 +66,9 @@ class Jogador():
 		self._nome = nome
 		pass
 
-	def DefinirDealer(self, jogadores): #!! o gerador de código gerou sem o parametro jogadores. Diagrama de classes deve estar incorreto
-		
-		for i in range(0, len(jogadores)):
-			rand = random.randint(0,len(jogadores)-1)
-			jogadorDealer = jogadores[rand]
-
-		return jogadorDealer
+	def DefinirDealer(self): #!! mudar diagrama de algoritmo
+		self._dealer = True
+		return True
 
 	def PegarTime(self):
 		"""@ReturnType int"""
@@ -83,7 +79,7 @@ class Jogador():
 		"""@AttributeType string"""
 		self._seuTurno = None
 		"""@AttributeType boolean"""
-		self._mao = None
+		self._mao = []
 		"""@AttributeType Problema.Carta*"""
 		self._dealer = False
 		"""@AttributeType boolean"""
