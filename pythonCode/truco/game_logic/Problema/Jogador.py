@@ -78,8 +78,8 @@ class Jogador():
 		"""@ReturnType int"""
 		pass
 
-	def __init__(self): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
-		self._nome = None
+	def __init__(self,nome,position): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
+		self._nome = nome
 		"""@AttributeType string"""
 		self._seuTurno = None
 		"""@AttributeType boolean"""
@@ -89,7 +89,7 @@ class Jogador():
 		"""@AttributeType boolean"""
 		self._time = None
 
-		self._position = None
+		self._position = position
 
 		"""@AttributeType int"""
 		self._unnamed_Carta_ = []

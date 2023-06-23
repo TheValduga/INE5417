@@ -144,15 +144,16 @@ class Mesa():
 		self._times[0]._jogadores = [j[0],j[2]]
 		self._times.append(Time())
 		self._times[1]._jogadores = [j[1],j[3]]
-		print(self._times[0]._jogadores[0])
-		print(self._times[0]._jogadores[1])
-		print(self._times[1]._jogadores[0])
-		print(self._times[1]._jogadores[1])
+		print(self._times[0]._jogadores[0]._nome)
+		print(self._times[0]._jogadores[1]._nome)
+		print(self._times[1]._jogadores[0]._nome)
+		print(self._times[1]._jogadores[1]._nome)
 		
 
 	def EscolherDealer(self):
 		num = random.randint(0,3)
-		self._jogadores[num].definirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
+		#self._jogadores[num].definirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
+
 
 	def pegarPlacar(self):
 		"""@ReturnType int*"""
@@ -188,7 +189,7 @@ class Mesa():
 		pass
 
 	def __init__(self):
-		self._jogadores = None
+		self._jogadores = []
 
 		self._Inicializada = False
 		"""@AttributeType Problema.Jogador"""

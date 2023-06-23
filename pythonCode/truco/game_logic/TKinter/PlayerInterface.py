@@ -20,7 +20,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		time2 = Time() #!! initialize
 		self._table = Mesa() #!! deve mudar um tanto de coisa.
 		self._table._baralho = deck #!! initialize
-		self.localPlayer = Jogador() #!! tem que botar nos diagramas
+		self.localPlayer = Jogador("","") #!! tem que botar nos diagramas
 		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
 		self.localPlayer.RegistrarNome(nome)
@@ -392,9 +392,15 @@ class PlayerInterface(PyNetgamesServerListener):
 						turno = 0
 					turno = (self.match_position +1) % 4
 					self.send_move({'jogadores':move.payload['jogadores'], 'turno': turno})
-					self._table._jogadores =move.payload['jogadores']
+					for nome,posicao in move.payload["jogadores"]:
+						jog_temp = Jogador(nome,posicao)
+						self._table._jogadores.append(jog_temp)
+
+					#self._table._jogadores = move.payload['jogadores']
+
+
 					self._table.IniciarPartida()
-					self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0][0]) + ' ,'+str(self._table._times[0]._jogadores[1][0])+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0][0])+' ,'+str(self._table._times[1]._jogadores[1][0]))
+					self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0]._nome) + ' ,'+str(self._table._times[0]._jogadores[1]._nome)+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0]._nome)+' ,'+str(self._table._times[1]._jogadores[1]._nome))
 					self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
 
 	def receive_move(self, move):	# Pyng use case "receive move"
