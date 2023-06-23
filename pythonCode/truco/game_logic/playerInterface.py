@@ -68,9 +68,7 @@ class PlayerInterface(PyNetgamesServerListener):
     self.botao_aceitar.grid(row=1, column=6)
 
 
-    # Nome do jogador
-    self.logo_label = Label(self.player2_frame, text='Lucas', font="arial 24", bg="#046307")
-    self.logo_label.grid(row=0, column=1)
+    
 
     # Imagem das cartas dos oponentes viradas para baixo
     self.cartas_viradas = Label(self.player2_frame, bd = 0, image=self.back_card)

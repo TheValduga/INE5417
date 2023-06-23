@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 from truco.game_logic.Problema import Carta
 from truco.game_logic.Problema import Time
-from truco.game_logic.Problema import Mesa
 from truco.game_logic.Problema import Baralho
 import random
 
@@ -68,7 +67,7 @@ class Jogador():
 		pass
 
 	def DefinirDealer(self, jogadores): #!! o gerador de código gerou sem o parametro jogadores. Diagrama de classes deve estar incorreto
-
+		
 		for i in range(0, len(jogadores)):
 			rand = random.randint(0,len(jogadores)-1)
 			jogadorDealer = jogadores[rand]
@@ -79,16 +78,19 @@ class Jogador():
 		"""@ReturnType int"""
 		pass
 
-	def __init__(self): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
-		self._nome = None
+	def __init__(self,nome,position): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
+		self._nome = nome
 		"""@AttributeType string"""
 		self._seuTurno = None
 		"""@AttributeType boolean"""
 		self._mao = None
 		"""@AttributeType Problema.Carta*"""
-		self._dealer = None
+		self._dealer = False
 		"""@AttributeType boolean"""
 		self._time = None
+
+		self._position = position
+
 		"""@AttributeType int"""
 		self._unnamed_Carta_ = []
 		"""@AttributeType Problema.Carta*
