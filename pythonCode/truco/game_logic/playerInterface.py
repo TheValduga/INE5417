@@ -141,7 +141,7 @@ class PlayerInterface(PyNetgamesServerListener):
     # valeDoze.pack(side = BOTTOM)
 
     # self.fill_main_window()
-
+#LIXO
   #----------------------- Pynetgames ----------------------------------->
     self.add_listener()
     self.send_connect()

@@ -17,7 +17,6 @@ class Baralho(object):
 		
 		self._cartas = baralho_resultado
 
-		return baralho_resultado
 
 
 	# !! metodo adicionado depois, ATUALIZAR PROJETO -> diagrama de sequência do initialize por exemplo

@@ -66,16 +66,9 @@ class Jogador():
 		self._nome = nome
 		pass
 
-	def DefinirDealer(self, jogadores): #!! o gerador de código gerou sem o parametro jogadores. Diagrama de classes deve estar incorreto
-		for player in jogadores:
-			if player._position ==1:
-				jogadorDealer = player
-		#Ta dando muito problema esse Dealer. Fazer com que o jogador 1 sempre seja o dealer pros testes
-		#for i in range(2, len(jogadores)):
-		#	rand = random.randint(0,len(jogadores)-1)
-		#	jogadorDealer = jogadores[rand]
-
-		return jogadorDealer
+	def DefinirDealer(self): #!! mudar diagrama de algoritmo
+		self._dealer = True
+		return True
 
 	def PegarTime(self):
 		"""@ReturnType int"""

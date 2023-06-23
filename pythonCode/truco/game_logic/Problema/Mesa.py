@@ -152,12 +152,8 @@ class Mesa():
 	def EscolherDealer(self, jogador_local): #!! tive que mudar o algoritmo. Jogador DefinirDealer nos diagramas tem que virar Mesa EscolherDealer e fazer as alterações necessárias
 			print(jogador_local._position)
 			if jogador_local._position == 0:
-				dealer = jogador_local.DefinirDealer(self._jogadores) #!! não sei se nos diagramas isso ta aqui. alguem ve
-				for jogador1 in self._jogadores:
-					if jogador1 == dealer:
-						jogador1._dealer = True
-						print("Eu sou o jogador 0 e decidi que o seguinte jogador é o dealer: " + jogador1._nome) 
-						break
+				dealer = jogador_local.DefinirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
+				print("Eu sou o jogador 0 e decidi que o seguinte jogador é o dealer: " + jogador_local._nome) 
 
 		
 
@@ -170,19 +166,19 @@ class Mesa():
 		Mao_registro =self.registrarMao()
 		Rodada = self.registrarStatusRodada(True)
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
-		self._baralho = self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
+		self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
 		self.distribuirCartas()
 		for jogador in self._jogadores:
 			if jogador._dealer:
-				self._manilha = self._definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
+				self._manilha = jogador.definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
 
 
 
 	def distribuirCartas(self): #!! acho que metodo não existe na classe. o gerador automatico pelo menos não fez. O return é desnecessário e bunda
 		for jogador in self._jogadores:
-			carta1 = self._baralho.pop()
-			carta2 = self._baralho.pop()
-			carta3 = self._baralho.pop()
+			carta1 = self._baralho._cartas.pop()
+			carta2 = self._baralho._cartas.pop()
+			carta3 = self._baralho._cartas.pop()
 			jogador._mao = [carta1, carta2, carta3]
 
 	def novaRodada(self):
