@@ -28,7 +28,16 @@ class Mesa():
 
 	def definirOrdem(self):
 		"""@ReturnType Problema.Jogador[]"""
-		pass
+		if self._ordemRodada == []:
+			nova_ordem = self._jogadores #!! no Mesa definirOrdem tem que mudar isso aqui. lá ta self.ordem = self.jogadores | tem que ser nova_ordem = self._jogadores agora
+		else:
+			nova_ordem = [self._ordemRodada[1]] #!! tem que colocar os [ ] ao redor do self.ordem[1] no diagrama de algoritmo Mesa definirOrdem
+			nova_ordem.append(self._ordemRodada[2]) #!! NOMES DIFERENTES NOS DIAGRAMAS TEM QUE MUDAR
+			nova_ordem.append(self._ordemRodada[3])
+			nova_ordem.append(self._ordemRodada[0])
+		
+		self._ordemRodada = nova_ordem #!! mudar nos diagramas (nomes)
+		return self._ordemRodada
 
 	def encerramentoPartida(self):
 		"""@ReturnType boolean"""
@@ -122,17 +131,24 @@ class Mesa():
 		#self._jogadores = jogadores
 		print("INICIANDO PARTIDA")
 		self.DefinirTimes()
+		self.EscolherDealer()
 		self._times[0].ZerarPlacar()
 		self._times[1].ZerarPlacar()
-		print(self._times)
+		self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
 		self._Inicializada = True
 
 	def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
 		j = self._jogadores
+		
 		self._times.append(Time())
 		self._times[0]._jogadores = [j[0],j[2]]
 		self._times.append(Time())
 		self._times[1]._jogadores = [j[1],j[3]]
+		print(self._times[0]._jogadores[0])
+		print(self._times[0]._jogadores[1])
+		print(self._times[1]._jogadores[0])
+		print(self._times[1]._jogadores[1])
+		
 
 	def EscolherDealer(self):
 		num = random.randint(0,3)
@@ -143,6 +159,11 @@ class Mesa():
 		pass
 
 	def novaMao(self):
+		Mao_registro =self.registrarMao()
+		Rodada = self.registrarStatusRodada(True)
+		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
+		self._baralho = self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
+
 		pass
 
 	def novaRodada(self):
