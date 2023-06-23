@@ -369,32 +369,19 @@ class PlayerInterface(PyNetgamesServerListener):
 	def pega_nomes_e_posicoes(self): #!! adicionar aos diagramas
 		if self.match_position == 0:
 			print("COMEÇO ORDEM")
-<<<<<<< HEAD
-			jogadores = {"jogadores" : [(self.localPlayer._nome, self.match_position)],'turno':1}
-=======
 			jogadores = {"jogadores" : [(self.localPlayer._nome, self.match_position)],'turno_init':1}
->>>>>>> origin/Russi
 			print("ENVIANDO: " + str(jogadores))
 			self.send_move(jogadores)
 
 	def inicializar_mesa(self,move): #!! adicionar ao diagrama  #!!Receive Match = Salvar match_id e match_position -> definir jogadores -> definir times -> definir  times -> definir dealer -> notificar times
-<<<<<<< HEAD
-		if 'turno' in move.payload:
-			if move.payload['turno'] == self.match_position:
-=======
 		if 'turno_init' in move.payload:
 			if move.payload['turno_init'] == self.match_position:
->>>>>>> origin/Russi
 					if len(move.payload['jogadores']) < 4:
 						pacote = {}
 						pacote['jogadores'] = move.payload['jogadores']
 						pacote['jogadores'].append((self.localPlayer._nome, self.match_position)) #!! tupla de nome, posicao pra ajudar na UI
 						turno = (self.match_position +1) % 4
-<<<<<<< HEAD
-						pacote['turno'] = turno
-=======
 						pacote['turno_init'] = turno
->>>>>>> origin/Russi
 						self.send_move(pacote)
 					else:
 						remotos_locais = []
@@ -405,15 +392,8 @@ class PlayerInterface(PyNetgamesServerListener):
 						if self.match_position == 3:
 							turno = 0
 						turno = (self.match_position +1) % 4
-<<<<<<< HEAD
-						self.send_move({'jogadores':move.payload['jogadores'], 'turno': turno})
-						for nome,posicao in move.payload["jogadores"]:
-							print(nome)
-							print(posicao)
-=======
 						self.send_move({'jogadores':move.payload['jogadores'], 'turno_init': turno})
 						for nome,posicao in move.payload["jogadores"]:
->>>>>>> origin/Russi
 							jog_temp = Jogador(nome,posicao)
 							self._table._jogadores.append(jog_temp)
 
@@ -421,23 +401,6 @@ class PlayerInterface(PyNetgamesServerListener):
 
 						self._table.IniciarPartida(self.localPlayer) #!! diagrama e precisa disso pra escolher o dealer se não não funciona
 						self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0]._nome) + ' ,'+str(self._table._times[0]._jogadores[1]._nome)+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0]._nome)+' ,'+str(self._table._times[1]._jogadores[1]._nome))
-<<<<<<< HEAD
-						self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
-						
-									#self._table.novaMao()
-						for jogador in self._table._jogadores:
-							if jogador._dealer:
-								self.enviar_dealer_p_todos(jogador._nome)
-								
-		if 'dealer' in move.payload:
-			print(move.payload['dealer'])
-			if move.payload['dealer'] == self.localPlayer._nome:
-				print("Sou o Dealer. Hora da novaMao")
-			
-	
-	def enviar_dealer_p_todos(self, dealer): #!! metodo novo
-		self.send_move({'dealer':dealer})
-=======
 						
 						self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
 						
@@ -489,13 +452,10 @@ class PlayerInterface(PyNetgamesServerListener):
 							
 			#turno = (self.localPlayer._position + 1) % 4 , 'turno':turno
 								
->>>>>>> origin/Russi
 
 	def receive_move(self, move):	# Pyng use case "receive move"
 		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
 			self.inicializar_mesa(move) #!! Adicionar ao diagrama
-<<<<<<< HEAD
-=======
 		elif 'tipo' in move.payload:
 			if move.payload['tipo'] == 'NovaMao':
 						
@@ -534,7 +494,6 @@ class PlayerInterface(PyNetgamesServerListener):
 				
 
 
->>>>>>> origin/Russi
 		
 
 	#!! só para teste. Talvez vai pra interface, foda-se
