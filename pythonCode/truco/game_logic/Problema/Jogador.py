@@ -67,10 +67,13 @@ class Jogador():
 		pass
 
 	def DefinirDealer(self, jogadores): #!! o gerador de código gerou sem o parametro jogadores. Diagrama de classes deve estar incorreto
-		
-		for i in range(0, len(jogadores)):
-			rand = random.randint(0,len(jogadores)-1)
-			jogadorDealer = jogadores[rand]
+		for player in jogadores:
+			if player._position ==1:
+				jogadorDealer = player
+		#Ta dando muito problema esse Dealer. Fazer com que o jogador 1 sempre seja o dealer pros testes
+		#for i in range(2, len(jogadores)):
+		#	rand = random.randint(0,len(jogadores)-1)
+		#	jogadorDealer = jogadores[rand]
 
 		return jogadorDealer
 
@@ -83,7 +86,7 @@ class Jogador():
 		"""@AttributeType string"""
 		self._seuTurno = None
 		"""@AttributeType boolean"""
-		self._mao = None
+		self._mao = []
 		"""@AttributeType Problema.Carta*"""
 		self._dealer = False
 		"""@AttributeType boolean"""

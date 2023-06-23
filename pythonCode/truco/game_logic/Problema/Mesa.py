@@ -139,7 +139,6 @@ class Mesa():
 		self._times[0].ZerarPlacar()
 		self._times[1].ZerarPlacar()
 		self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
-		self._Inicializada = True
 
 	def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
 		j = self._jogadores
@@ -172,16 +171,19 @@ class Mesa():
 		Rodada = self.registrarStatusRodada(True)
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
 		self._baralho = self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
-		Maos = self.distribuirCartas()
-		pass
+		self.distribuirCartas()
+		for jogador in self._jogadores:
+			if jogador._dealer:
+				self._manilha = self._definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
+
+
 
 	def distribuirCartas(self): #!! acho que metodo não existe na classe. o gerador automatico pelo menos não fez. O return é desnecessário e bunda
 		for jogador in self._jogadores:
-			carta1 = self._cartas.pop()
-			carta2 = self._cartas.pop()
-			carta3 = self._cartas.pop()
-			jogador._cartas = [carta1, carta2, carta3]
-		return maos
+			carta1 = self._baralho.pop()
+			carta2 = self._baralho.pop()
+			carta3 = self._baralho.pop()
+			jogador._mao = [carta1, carta2, carta3]
 
 	def novaRodada(self):
 		pass
@@ -209,7 +211,7 @@ class Mesa():
 
 		self._Inicializada = False
 		"""@AttributeType Problema.Jogador"""
-		self._baralho = None
+		self._baralho = Baralho()
 		"""@AttributeType Problema.Baralho"""
 		self._manilha = None
 		"""@AttributeType Problema.Carta"""
@@ -229,7 +231,7 @@ class Mesa():
 		"""@AttributeType Problema.Carta*"""
 		self._registroRodada = 3
 		"""@AttributeType int*"""
-		self._ordemRodada = None
+		self._ordemRodada = []
 		"""@AttributeType Problema.Jogador*"""
 		self._placar = None
 		"""@AttributeType int*"""

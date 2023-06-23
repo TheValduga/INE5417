@@ -259,7 +259,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		pass
 
 	def exibirNotificacaoInicioMao(self):
-		pass
+		self.Notificar("Nova Mão entregue")
 
 	def enviarPedidoTruco(self):
 		pass
@@ -406,13 +406,35 @@ class PlayerInterface(PyNetgamesServerListener):
 									#self._table.novaMao()
 						for jogador in self._table._jogadores:
 							if jogador._dealer:
+								print("HEHEHEHEHEHE " + str(jogador._nome))
 								self.enviar_dealer_p_todos(jogador._nome)
+								self._table._Inicializada = True
 								
 		if 'dealer' in move.payload:
 			print(move.payload['dealer'])
 			if move.payload['dealer'] == self.localPlayer._nome:
+				self.localPlayer._dealer = True
 				print("Sou o Dealer. Hora da novaMao")
 				self._table.novaMao()
+				novas_maos = []
+				for jogador in self._table._jogadores:
+					if jogador._nome != self.localPlayer._nome:
+						nova_mao = []
+						for carta in jogador._mao:
+							valor = carta._valor
+							naipe = carta._naipe
+							nova_mao.append([valor,naipe])
+						novas_maos.append(nova_mao)
+				print('\n\n')
+				print(novas_maos)
+				print('\n\n')
+
+				
+				self.send_move({'nova_mao': novas_maos})
+				self._table._Inicializada = True
+
+		
+			
 			
 	
 	def enviar_dealer_p_todos(self, dealer): #!! metodo novo
@@ -421,6 +443,26 @@ class PlayerInterface(PyNetgamesServerListener):
 	def receive_move(self, move):	# Pyng use case "receive move"
 		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
 			self.inicializar_mesa(move) #!! Adicionar ao diagrama
+		else:
+			if 'nova_mao' in move.payload:
+				if self.localPlayer._dealer == False:
+					print("pegando minha mão hehe")
+					temp_mao = move.payload['nova_mao'][(self.match_position)]
+					print(temp_mao)
+					self.localPlayer._mao.append(Carta(temp_mao[0][0],temp_mao[0][1]))
+					self.localPlayer._mao.append(Carta(temp_mao[1][0],temp_mao[1][1]))
+					self.localPlayer._mao.append(Carta(temp_mao[2][0],temp_mao[2][1]))
+					
+
+				self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self.localPlayer._mao[0].get_foto_carta())
+				self.cartas_viradas.grid(row=1, column=2)
+
+				self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image=self.localPlayer._mao[1].get_foto_carta())
+				self.cartas_viradas1.grid(row=1, column=3)
+
+				self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self.localPlayer._mao[2].get_foto_carta())
+				self.cartas_viradas2.grid(row=1, column=4)
+
 		
 
 	#!! só para teste. Talvez vai pra interface, foda-se
