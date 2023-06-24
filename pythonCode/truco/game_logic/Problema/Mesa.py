@@ -32,7 +32,7 @@ class Mesa():
 	def definirOrdem(self):
 		"""@ReturnType Problema.Jogador[]"""
 		if self._ordemRodada == []:
-			nova_ordem = self._jogadores #!! no Mesa definirOrdem tem que mudar isso aqui. lá ta self.ordem = self.jogadores | tem que ser nova_ordem = self._jogadores agora
+			nova_ordem = self._jogadores
 		else:
 			nova_ordem = [self._ordemRodada[1]] #!! tem que colocar os [ ] ao redor do self.ordem[1] no diagrama de algoritmo Mesa definirOrdem
 			nova_ordem.append(self._ordemRodada[2]) #!! NOMES DIFERENTES NOS DIAGRAMAS TEM QUE MUDAR
@@ -43,11 +43,23 @@ class Mesa():
 		return self._ordemRodada
 
 	def encerramentoPartida(self):
-		"""@ReturnType boolean"""
-		pass
+		placar = [self._times[0].pegarPontuacao(self._times[0]),
+				  self._times[1].pegarPontuacao(self._times[1])]
+		if placar[0] >= 12 or placar[1] >= 12:
+			# Partida acabou
+			self.definirPartidaAndamento(False)
+			if placar[0] >= 12:
+				self.registrarVencedor(self._times[0])
+			else:
+				self.registrarVencedor(self._times[1])
+			return True
+		else:
+			# Partida continua
+			return False
+
 
 	def definirPartidaAndamento(self, aBoolean):
-		pass
+		self._partidaAndamento = aBoolean
 
 	def registrarVencedor(self, aTime):
 		"""@ParamType aTime Problema.Time"""
@@ -93,7 +105,7 @@ class Mesa():
 		pass
    
 	def comparaMonte(self):
-		"""@ReturnType int"""
+		"""@ReturnType carta"""
 		naipes = ['O', 'E', 'P', 'C']
 		seq = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3']
 		cartaForte = Carta(4, 'O')
