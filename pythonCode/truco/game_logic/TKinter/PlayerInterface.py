@@ -149,13 +149,13 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.botao_aumentar = Button(self.player1_frame, bd = 3, text="Aumentar", command=self.clicarBotao())
 		self.botao_aumentar.grid(row=1, column=1)
 
-		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self.front_card, command=self.clicarCarta(0))
+		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self.front_card, command=lambda:self.clicarCarta(0))
 		self.cartas_viradas.grid(row=1, column=2)
 
-		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image=self.front_card, command=self.clicarCarta(1))
+		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image=self.front_card, command=lambda:self.clicarCarta(1))
 		self.cartas_viradas1.grid(row=1, column=3)
 
-		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self.front_card, command=self.clicarCarta(2))
+		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self.front_card, command=lambda: self.clicarCarta(2))
 		self.cartas_viradas2.grid(row=1, column=4)
 
 		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=self.clicarBotao())
@@ -298,12 +298,12 @@ class PlayerInterface(PyNetgamesServerListener):
 	def clicarCarta(self, index: int): #!! adicionar argumento ao projeto
 		"""@ReturnType Problema.Carta"""
 
-
-		#self.localPlayer.selecionarCarta(index)
+		print('AAAAUUUUUUUUUUUUUU')
+		self.localPlayer.selecionarCarta(index)
 
 		pass
 
-		self.localPlayer.selecionarCarta(index)
+
 
 
 	def SolicitarNomeJogador(self):
@@ -334,13 +334,13 @@ class PlayerInterface(PyNetgamesServerListener):
 		carta3.get_foto_carta()
 		manilha.get_foto_carta()
 
-		self.cartas_viradas = Button(self.player1_frame, bd = 3, image= carta1._imagem)
+		self.cartas_viradas = Button(self.player1_frame, bd = 3, image= carta1._imagem,command=lambda: self.clicarCarta(0))
 		self.cartas_viradas.grid(row=1, column=2)
 
-		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image= carta2._imagem)
+		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image= carta2._imagem,command=lambda: self.clicarCarta(1))
 		self.cartas_viradas1.grid(row=1, column=3)
 
-		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image= carta3._imagem)
+		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image= carta3._imagem,command=lambda: self.clicarCarta(2))
 		self.cartas_viradas2.grid(row=1, column=4)
 
 		self.logo_label = Label(self.mesa_frame, bd = 0, image= manilha._imagem) # MANILHA

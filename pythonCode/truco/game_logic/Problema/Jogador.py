@@ -31,7 +31,9 @@ class Jogador():
 
 		vira = baralho._cartas[13]._valor # !! mudar diagrama de algoritmo
 
-		manilha = (sequencia.index(vira)+1) % 10
+		manilha = sequencia[(sequencia.index(vira)+1) % 10]
+
+		print("MANILHA:" + str(manilha))
 
 		carta_retorno = Carta(manilha,'ouro')
 

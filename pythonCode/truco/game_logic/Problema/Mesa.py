@@ -310,7 +310,7 @@ class Mesa():
 		"""@AttributeType int*"""
 		self._vencedor = None
 		"""@AttributeType Problema.Time"""
-		self._PlayerInterface_ = interface
+		self._PlayerInterface = interface
 		"""@AttributeType TKinter.PlayerInterface
 		# @AssociationType TKinter.PlayerInterface"""
 		self._unnamed_Jogador_3 = None
