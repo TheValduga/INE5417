@@ -74,8 +74,22 @@ class Mesa():
 		pass
 
 	def encerramentoRodada(self):
-		"""@ReturnType boolean"""
-		pass
+		encerrar = False
+		cartaForte = self.comparaMonte()
+		self.definirTopo(cartaForte)
+		#!! TODO: criar AtualizarTopo()
+		#self.atualizarTopo()
+		ordem = self.pegarOrdem()
+		#!! TODO: Criar metodo ehUltimo
+		ehUltimo = lambda x: x == ordem[3]
+		if ehUltimo:
+			pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
+			#!! TODO: acrescentar vetor registroRodadas
+			qualrodada= self.verificaRodada()
+			self.registrarRodada(qualrodada, pontuaRodada)
+			encerrar = True
+			self.registrarStatusRodada(False)
+		return encerrar
 
 	def encerramentoMao(self): # !! metodo nao estad nos diagramas, arrumar diagrama de avaliar encerramento da mao
 		pass
@@ -223,7 +237,8 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._times = [time1,time2]
 		"""@AttributeType Problema.Time"""
-		self._rodadaAndamento = None
+		self._rodadaAndamento = Noneordem[3]
+		if ehUltimo:
 		"""@AttributeType boolean"""
 		self._maoAndamento = None
 		"""@AttributeType boolean"""
