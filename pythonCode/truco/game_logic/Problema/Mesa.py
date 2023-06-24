@@ -198,19 +198,28 @@ class Mesa():
 	def novaRodada(self):
 		pass
 
-	def ColocarNaMesa(self, aTime):
-		"""@ParamType aTime int"""
-		pass
+	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
+		carta = jogador._mao[cardIndex]
+		jogador._mao[cardIndex] = None
+		self._monte[aTime].append(carta)
+		carta = [carta._valor,carta._naipe]
+		return carta
 
-	def PassarTurno(self):
-		pass
+	def PassarTurno(self, jogador):
+		jogador._seuTurno = False
+		for j in range(4):
+			if self._ordemRodada[j]._nome == jogador._nome:
+				if j != 3:
+					return self._ordemRodada[j]._nome
+				
+
 
 	def ClicarBotaoTruco(self):
 		pass
 
 	def VerificarTrucoAndamento(self):
 		"""@ReturnType boolean"""
-		pass
+		return self._truco
 
 	def receberJogada(self, aJogada):
 		"""@ParamType aJogada Dict{string, any}"""
@@ -237,7 +246,7 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._truco = None
 		"""@AttributeType boolean"""
-		self._monte = None
+		self._monte = [[],[]]
 		"""@AttributeType Problema.Carta*"""
 		self._registroRodada = 3
 		"""@AttributeType int*"""
