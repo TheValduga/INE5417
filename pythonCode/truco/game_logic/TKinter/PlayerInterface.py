@@ -485,7 +485,6 @@ class PlayerInterface(PyNetgamesServerListener):
 		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
 			self.inicializar_mesa(move) #!! Adicionar ao diagrama
 		else:
-			print(f'{move.payload}  NA INTERFACE')
 			self._table.receberJogada(move)
 							
 	#!! só para teste. Talvez vai pra interface, foda-se
