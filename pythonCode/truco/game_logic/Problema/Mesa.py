@@ -77,6 +77,9 @@ class Mesa():
 		"""@ReturnType boolean"""
 		pass
 
+	def encerramentoMao(self): # !! metodo nao estad nos diagramas, arrumar diagrama de avaliar encerramento da mao
+		pass
+   
 	def comparaMonte(self):
 		"""@ReturnType int"""
 		pass
@@ -143,10 +146,13 @@ class Mesa():
 	def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
 		j = self._jogadores
 		
-		self._times.append(Time())
 		self._times[0]._jogadores = [j[0],j[2]]
-		self._times.append(Time())
+		j[0]._time = 0
+		j[2]._time = 0
+		
 		self._times[1]._jogadores = [j[1],j[3]]
+		j[1]._time = 1
+		j[3]._time = 1
 		
 
 	def EscolherDealer(self, jogador_local): #!! tive que mudar o algoritmo. Jogador DefinirDealer nos diagramas tem que virar Mesa EscolherDealer e fazer as alterações necessárias
@@ -210,12 +216,12 @@ class Mesa():
 		"""@ParamType aJogada Dict{string, any}"""
 		pass
 
-	def __init__(self):
+	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []
 
 		self._Inicializada = False
 		"""@AttributeType Problema.Jogador"""
-		self._baralho = Baralho()
+		self._baralho = deck
 		"""@AttributeType Problema.Baralho"""
 		self._manilha = Carta('','')
 		"""@AttributeType Problema.Carta"""
@@ -223,7 +229,7 @@ class Mesa():
 		"""@AttributeType int"""
 		self._partidaAndamento = False
 		"""@AttributeType boolean"""
-		self._times = []
+		self._times = [time1,time2]
 		"""@AttributeType Problema.Time"""
 		self._rodadaAndamento = None
 		"""@AttributeType boolean"""
@@ -241,7 +247,7 @@ class Mesa():
 		"""@AttributeType int*"""
 		self._vencedor = None
 		"""@AttributeType Problema.Time"""
-		self._unnamed_PlayerInterface_ = None
+		self._PlayerInterface_ = interface
 		"""@AttributeType TKinter.PlayerInterface
 		# @AssociationType TKinter.PlayerInterface"""
 		self._unnamed_Jogador_3 = None

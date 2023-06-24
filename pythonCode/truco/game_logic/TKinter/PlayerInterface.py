@@ -19,15 +19,14 @@ class PlayerInterface(PyNetgamesServerListener):
 		deck = Baralho() #!! diagrama de sequência initialize tem que mudar. Metodo novo em baralho
 		time1 = Time() #!! initialize ordem em que as coisas acontecem.
 		time2 = Time() #!! initialize
-<<<<<<< Updated upstream
-		self._table = Mesa() #!! deve mudar um tanto de coisa.
-		self._table._baralho = deck #!! initialize
-		self.localPlayer = Jogador("","") #!! tem que botar nos diagramas
-=======
+
 		self._table = Mesa(deck, time1, time2, self) #!! deve mudar um tanto de coisa.
 		#self._table._baralho = deck #!! initialize
 		self.localPlayer = Jogador(self._table) #!! tem que botar nos diagramas
->>>>>>> Stashed changes
+
+		self._table = Mesa(deck, time1, time2, self) #!! deve mudar um tanto de coisa.
+		self._table._baralho = deck #!! initialize
+		self.localPlayer = Jogador(self._table) #!! tem que botar nos diagramas
 		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
 		self.localPlayer.RegistrarNome(nome)
@@ -155,13 +154,13 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.botao_aumentar = Button(self.player1_frame, bd = 3, text="Aumentar", command=self.clicarBotao())
 		self.botao_aumentar.grid(row=1, column=1)
 
-		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self.front_card)
+		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self.front_card, command=self.clicarCarta(0))
 		self.cartas_viradas.grid(row=1, column=2)
 
-		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image=self.front_card)
+		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image=self.front_card, command=self.clicarCarta(1))
 		self.cartas_viradas1.grid(row=1, column=3)
 
-		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self.front_card)
+		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self.front_card, command=self.clicarCarta(2))
 		self.cartas_viradas2.grid(row=1, column=4)
 
 		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=self.clicarBotao())
@@ -301,13 +300,16 @@ class PlayerInterface(PyNetgamesServerListener):
 	def exibirRespostaTruco(self, aResposta):
 		pass
 
-	def clicarCarta(self):
+	def clicarCarta(self, index: int):
 		"""@ReturnType Problema.Carta"""
-<<<<<<< Updated upstream
-=======
+
+
 		#self.localPlayer.selecionarCarta(index)
->>>>>>> Stashed changes
+
 		pass
+
+		self.localPlayer.selecionarCarta(index)
+
 
 	def SolicitarNomeJogador(self):
 		"""@ReturnType string"""

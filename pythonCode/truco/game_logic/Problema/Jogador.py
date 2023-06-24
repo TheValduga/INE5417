@@ -39,7 +39,26 @@ class Jogador():
 
 	def selecionarCarta(self, aCarta):
 		"""@ParamType aCarta Problema.Carta"""
-		pass
+		turno = self.verificarTurno()
+		if turno:
+			truco = self._mesa.VerificarTrucoAndamento()
+			if not truco:
+				time = self._time.PegarTime()
+				self._mesa.ColocarNaMesa(time)
+				encerraRodada = self._mesa.encerramentoRodada()
+				if not encerraRodada:
+					self._mesa.PassarTurno()
+				else:
+					encerraMao = self._mesa.encerramentoMao()
+					if encerraMao:
+						encerraPartida = self._mesa.encerramentoPartida()
+				self._mesa._PlayerInterface.AtualizarInterface()
+				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': aCarta}
+				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
+			else:
+				self._mesa._PlayerInterface.Notificar('Truco em andamento')
+		else:
+			self._mesa._PlayerInterface.Notificar('Não é seu turno')
 
 	def verificarTrucoAndamento(self):
 		"""@ReturnType boolean"""
@@ -74,8 +93,8 @@ class Jogador():
 		"""@ReturnType int"""
 		pass
 
-	def __init__(self,nome,position): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
-		self._nome = nome
+	def __init__(self, mesa): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
+		self._nome = ''
 		"""@AttributeType string"""
 		self._seuTurno = None
 		"""@AttributeType boolean"""
@@ -85,7 +104,7 @@ class Jogador():
 		"""@AttributeType boolean"""
 		self._time = None
 
-		self._position = position
+		self._position = '' #!! atributo nao ta na modelagem
 
 		"""@AttributeType int"""
 		self._unnamed_Carta_ = []
@@ -97,7 +116,7 @@ class Jogador():
 		"""@AttributeType Problema.Time*
 		# @AssociationType Problema.Time[]
 		# @AssociationMultiplicity 2"""
-		self._unnamed_Mesa_2 = None
+		self._mesa = mesa
 		"""@AttributeType Problema.Mesa
 		# @AssociationType Problema.Mesa"""
 
