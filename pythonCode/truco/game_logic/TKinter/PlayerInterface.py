@@ -482,39 +482,8 @@ class PlayerInterface(PyNetgamesServerListener):
 								
 
 	def receive_move(self, move):	# Pyng use case "receive move"
-		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
-			self.inicializar_mesa(move) #!! Adicionar ao diagrama
-		elif 'tipo' in move.payload:
-			if move.payload['tipo'] == 'NovaMao' and move.payload['turno_mao'] == self.localPlayer._position:
-						print("pegando minha mão hehe")
-						temp_mao = move.payload['nova_mao'][(self.match_position)]
-						self.localPlayer._mao = []
-									
-						carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
-						carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
-						carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
-
-						self.localPlayer._mao.append(carta1)
-						self.localPlayer._mao.append(carta2)
-						self.localPlayer._mao.append(carta3)
-
-						temp_manilha = move.payload['manilha']
-						manilha = Carta(temp_manilha,'ouro')
-						self._table._manilha = manilha
-
-						self.AtualizarInterface()
-
-						if self.localPlayer._position == 3:
-							pass
-						else:
-							turno = (self.localPlayer._position + 1)
-							self.send_move({'tipo': 'NovaMao', 'nova_mao': move.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._table._manilha._valor})
+		self._table.receberJogada(move)
 							
-				
-
-
-		
-
 	#!! só para teste. Talvez vai pra interface, foda-se
 	def send_move(self,move):
 		self.server_proxy.send_move(self._match_id, move)
