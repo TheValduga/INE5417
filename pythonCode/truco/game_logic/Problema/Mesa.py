@@ -74,15 +74,49 @@ class Mesa():
 		pass
 
 	def encerramentoRodada(self):
-		"""@ReturnType boolean"""
-		pass
+		encerrar = False
+		cartaForte = self.comparaMonte()
+		self.definirTopo(cartaForte)
+		PlayerInterface.atualizarTopo(cartaForte)
+		ordem = self.pegarOrdem()
+		ehUltimo = self._jogadores.ehUltimo(ordem)
+		if ehUltimo:
+			pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
+			#!! TODO: acrescentar vetor registroRodadas
+			qualrodada= self.verificaRodada()
+			self.registrarRodada(qualrodada, pontuaRodada)
+			encerrar = True
+			self.registrarStatusRodada(False)
+		return encerrar
 
-	def encerramentoMao(self): # !! metodo nao estad nos diagramas, arrumar diagrama de avaliar encerramento da mao
+	def encerramentoMao(self):
 		pass
    
 	def comparaMonte(self):
 		"""@ReturnType int"""
-		pass
+		naipes = ['O', 'E', 'P', 'C']
+		seq = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3']
+		cartaForte = Carta(4, 'O')
+		for carta in self._monte:
+			valorCarta = seq.index(carta.getValor())
+			valorCartaForte = seq.index(cartaForte.getValor())
+			naipeCarta = naipes.index(carta.getNaipe())
+			naipeCartaForte = naipes.index(cartaForte.getNaipe())
+			if valorCarta < valorCartaForte:
+				return cartaForte
+			elif valorCarta == valorCartaForte:
+				if naipeCarta > naipeCartaForte:
+					cartaForte = carta
+					return cartaForte
+				else:
+					return cartaForte
+			else:
+				# valorCarta > valorCartaForte
+				cartaForte = carta
+				return cartaForte
+
+
+
 
 	def definirTopo(self, aCartaForte):
 		"""@ParamType aCartaForte int
@@ -90,8 +124,7 @@ class Mesa():
 		pass
 
 	def pegarOrdem(self):
-		"""@ReturnType Problema.Jogador[]"""
-		pass
+		return self._ordemRodada
 
 	def vencedorRodada(self, *aMonte, aCartaForte):
 		"""@ParamType aMonte Problema.Carta*
@@ -100,14 +133,23 @@ class Mesa():
 		pass
 
 	def verificaRodada(self, *aRegistroRodadas):
-		"""@ParamType aRegistroRodadas int*
-		@ReturnType int"""
-		pass
+		for rodada in aRegistroRodadas:
+			if rodada == 0:
+				# EMPATE
+				return 0
+			elif rodada == 1:
+				# Time 1 venceu
+				return 1
+			elif rodada == 2:
+				# Time 2 venceu
+				return 2
+			elif rodada == 3:
+				# Rodada nao finalizada
+				return 3
 
 	def registrarRodada(self, aQualRodada, aVencedorRodada):
-		"""@ParamType aQualRodada int
-		@ParamType aVencedorRodada int"""
-		pass
+		self._registroRodada = aQualRodada
+		self._registroRodada.append(aVencedorRodada)
 
 	def trucoRespondido(self):
 		"""@ReturnType boolean"""
@@ -240,7 +282,8 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._times = [time1,time2]
 		"""@AttributeType Problema.Time"""
-		self._rodadaAndamento = None
+		self._rodadaAndamento = Noneordem[3]
+		if ehUltimo:
 		"""@AttributeType boolean"""
 		self._maoAndamento = None
 		"""@AttributeType boolean"""

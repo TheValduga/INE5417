@@ -71,10 +71,11 @@ class Jogador():
 	def passarTurno(self):
 		pass
 
-	def ehUltimo(self, *aOrdem):
-		"""@ParamType aOrdem Problema.Jogador*
-		@ReturnType boolean"""
-		pass
+	def ehUltimo(self, ordem):
+		"""@ReturnType boolean"""
+		"""@ParamType ordem Problema.Jogador[]"""
+		return self == ordem[-1]
+
 
 	def respondeTruco(self):
 		"""@ReturnType boolean"""
@@ -85,7 +86,7 @@ class Jogador():
 		self._nome = nome
 		pass
 
-	def DefinirDealer(self): #!! mudar diagrama de algoritmo
+	def DefinirDealer(self):
 		self._dealer = True
 		return True
 
@@ -93,7 +94,7 @@ class Jogador():
 		"""@ReturnType int"""
 		return self._time
 
-	def __init__(self, mesa): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
+	def __init__(self, mesa): #!! não sei exatamente como se modelou o init, dar uma olhada no exemplo do Ricardo
 		self._nome = ''
 		"""@AttributeType string"""
 		self._seuTurno = False
