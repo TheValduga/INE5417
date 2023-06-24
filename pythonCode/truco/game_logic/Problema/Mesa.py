@@ -282,8 +282,7 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._times = [time1,time2]
 		"""@AttributeType Problema.Time"""
-		self._rodadaAndamento = Noneordem[3]
-		if ehUltimo:
+		self._rodadaAndamento = None
 		"""@AttributeType boolean"""
 		self._maoAndamento = None
 		"""@AttributeType boolean"""
