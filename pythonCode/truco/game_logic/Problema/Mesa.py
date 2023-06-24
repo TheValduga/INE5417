@@ -277,33 +277,31 @@ class Mesa():
 
 	def receberJogada(self, aJogada):
 		"""@ParamType aJogada Dict{string, any}"""
-		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
-			self.inicializar_mesa(aJogada) #!! Adicionar ao diagrama
-		elif 'tipo' in aJogada.payload:
-			if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self.localPlayer._position:
-						print("pegando minha mão hehe")
-						temp_mao = aJogada.payload['nova_mao'][(self.match_position)]
-						self.localPlayer._mao = []
-									
-						carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
-						carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
-						carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
+		print(f'{aJogada.payload} NA MESA')
+		if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self.localPlayer._position:
+			print("pegando minha mão hehe")
+			temp_mao = aJogada.payload['nova_mao'][(self.match_position)]
+			self.localPlayer._mao = []
+						
+			carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
+			carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
+			carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
 
-						self.localPlayer._mao.append(carta1)
-						self.localPlayer._mao.append(carta2)
-						self.localPlayer._mao.append(carta3)
+			self.localPlayer._mao.append(carta1)
+			self.localPlayer._mao.append(carta2)
+			self.localPlayer._mao.append(carta3)
 
-						temp_manilha = aJogada.payload['manilha']
-						manilha = Carta(temp_manilha,'ouro')
-						self._table._manilha = manilha
+			temp_manilha = aJogada.payload['manilha']
+			manilha = Carta(temp_manilha,'ouro')
+			self._table._manilha = manilha
 
-						self.AtualizarInterface()
+			self.AtualizarInterface()
 
-						if self.localPlayer._position == 3:
-							pass
-						else:
-							turno = (self.localPlayer._position + 1)
-							self.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._table._manilha._valor})
+			if self.localPlayer._position == 3:
+				pass
+			else:
+				turno = (self.localPlayer._position + 1)
+				self.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._table._manilha._valor})
 
 	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []
