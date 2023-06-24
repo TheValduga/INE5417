@@ -17,8 +17,8 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.main_window = Tk()
 
 		deck = Baralho() #!! diagrama de sequência initialize tem que mudar. Metodo novo em baralho
-		time1 = Time() #!! initialize ordem em que as coisas acontecem.
-		time2 = Time() #!! initialize
+		time1 = Time(0) #!! initialize ordem em que as coisas acontecem.
+		time2 = Time(1) #!! initialize
 		self._table = Mesa(deck, time1, time2, self) #!! deve mudar um tanto de coisa.
 		self._table._baralho = deck #!! initialize
 		self.localPlayer = Jogador(self._table) #!! tem que botar nos diagramas
@@ -167,14 +167,14 @@ class PlayerInterface(PyNetgamesServerListener):
 		
 
 		# Mesa frame
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card) # carta esquerda
 		self.logo_label.grid(row=0, column=0)
 		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.card_deck)
 		# canvas = Canvas(self.mesa_frame, bg="#046307", width=200, height=100)
 		# canvas.pack()
 		# canvas.create_image(100,50,image=self.card_deck)
 		self.logo_label.grid(row=0, column=1)
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card) # carta direita
 		self.logo_label.grid(row=0, column=2)
 
 		##!! TODOS ESSES IF'S PODEM SER SUBSTITUIDOS POR ALGO TIPO "IF self._table.Inicializado == True" depois
@@ -295,7 +295,7 @@ class PlayerInterface(PyNetgamesServerListener):
 	def exibirRespostaTruco(self, aResposta):
 		pass
 
-	def clicarCarta(self, index: int):
+	def clicarCarta(self, index: int): #!! adicionar argumento ao projeto
 		"""@ReturnType Problema.Carta"""
 		self.localPlayer.selecionarCarta(index)
 
@@ -329,7 +329,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		pass
 
 	def enviarAtualizacaoPartida(self, aNovoEstado):
-		pass
+		self.send_move(aNovoEstado)
 
 	def ClicarBotaoTruco(self):
 		pass
