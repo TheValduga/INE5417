@@ -89,7 +89,7 @@ class Mesa():
 		encerrar = False
 		cartaForte = self.comparaMonte()
 		self.definirTopo(cartaForte)
-		PlayerInterface.atualizarTopo(cartaForte)
+		self._PlayerInterface_.atualizarTopo(cartaForte)
 		ordem = self.pegarOrdem()
 		ehUltimo = self._jogadores.ehUltimo(ordem)
 		if ehUltimo:
@@ -251,8 +251,26 @@ class Mesa():
 	def PassarTurno(self):
 		pass
 
-	def ClicarBotaoTruco(self):
-		pass
+	def ClicarBotaoTruco(self, jogador):
+		#  TODO: alterar parametro nos diagramas
+		turno = jogador.verificarTurno()
+		if turno:
+			truco = self.VerificarTrucoAndamento()
+			if not truco:	# se não há truco em andamento
+				self.registrarTruco()
+	# 			 PlayerInterface notifica que foi pedido truco e está aguardando resposta
+				self._PlayerInterface_.Notificar("Você pediu truco,"
+												 " aguardando resposta adversária")
+				# TODO: definir estado enviado
+				self._PlayerInterface_.enviarAtualizacaoPartida()
+				# TODO: Determinar parametros
+				self._PlayerInterface_.send_move()
+			else:	# há truco em andamento
+				self._PlayerInterface_.Notificar("Jogada de truco em andamento")
+		else:
+			self._PlayerInterface_.Notificar("Não é seu turno")
+
+
 
 	def VerificarTrucoAndamento(self):
 		"""@ReturnType boolean"""
