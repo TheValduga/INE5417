@@ -19,9 +19,15 @@ class PlayerInterface(PyNetgamesServerListener):
 		deck = Baralho() #!! diagrama de sequência initialize tem que mudar. Metodo novo em baralho
 		time1 = Time() #!! initialize ordem em que as coisas acontecem.
 		time2 = Time() #!! initialize
+<<<<<<< Updated upstream
 		self._table = Mesa() #!! deve mudar um tanto de coisa.
 		self._table._baralho = deck #!! initialize
 		self.localPlayer = Jogador("","") #!! tem que botar nos diagramas
+=======
+		self._table = Mesa(deck, time1, time2, self) #!! deve mudar um tanto de coisa.
+		#self._table._baralho = deck #!! initialize
+		self.localPlayer = Jogador(self._table) #!! tem que botar nos diagramas
+>>>>>>> Stashed changes
 		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
 		self.localPlayer.RegistrarNome(nome)
@@ -167,14 +173,14 @@ class PlayerInterface(PyNetgamesServerListener):
 		
 
 		# Mesa frame
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card) # CARTA A ESQUERDA DO BARALHO
 		self.logo_label.grid(row=0, column=0)
 		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.card_deck)
 		# canvas = Canvas(self.mesa_frame, bg="#046307", width=200, height=100)
 		# canvas.pack()
 		# canvas.create_image(100,50,image=self.card_deck)
 		self.logo_label.grid(row=0, column=1)
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card) # CARTA A DIREITA DO BARALHO
 		self.logo_label.grid(row=0, column=2)
 
 		##!! TODOS ESSES IF'S PODEM SER SUBSTITUIDOS POR ALGO TIPO "IF self._table.Inicializado == True" depois
@@ -297,6 +303,10 @@ class PlayerInterface(PyNetgamesServerListener):
 
 	def clicarCarta(self):
 		"""@ReturnType Problema.Carta"""
+<<<<<<< Updated upstream
+=======
+		#self.localPlayer.selecionarCarta(index)
+>>>>>>> Stashed changes
 		pass
 
 	def SolicitarNomeJogador(self):
@@ -316,7 +326,35 @@ class PlayerInterface(PyNetgamesServerListener):
 		pass
 
 	def AtualizarInterface(self):
-		pass
+		
+		carta1 = self.localPlayer._mao[0]
+		carta2 = self.localPlayer._mao[1]
+		carta3 = self.localPlayer._mao[2]
+		manilha = self._table._manilha
+
+		carta1.get_foto_carta()
+		carta2.get_foto_carta()
+		carta3.get_foto_carta()
+		manilha.get_foto_carta()
+
+		self.cartas_viradas = Button(self.player1_frame, bd = 3, image= carta1._imagem)
+		self.cartas_viradas.grid(row=1, column=2)
+
+		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image= carta2._imagem)
+		self.cartas_viradas1.grid(row=1, column=3)
+
+		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image= carta3._imagem)
+		self.cartas_viradas2.grid(row=1, column=4)
+
+		self.logo_label = Label(self.mesa_frame, bd = 0, image= manilha._imagem) # MANILHA
+		self.logo_label.grid(row=0, column=0)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.card_deck)
+		# canvas = Canvas(self.mesa_frame, bg="#046307", width=200, height=100)
+		# canvas.pack()
+		# canvas.create_image(100,50,image=self.card_deck)
+		self.logo_label.grid(row=0, column=1)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card) # MONTE
+		self.logo_label.grid(row=0, column=2)
 
 	def clicarBotao(self):
 		pass
@@ -373,6 +411,8 @@ class PlayerInterface(PyNetgamesServerListener):
 			print("ENVIANDO: " + str(jogadores))
 			self.send_move(jogadores)
 
+	
+
 	def inicializar_mesa(self,move): #!! adicionar ao diagrama  #!!Receive Match = Salvar match_id e match_position -> definir jogadores -> definir times -> definir  times -> definir dealer -> notificar times
 		if 'turno_init' in move.payload:
 			if move.payload['turno_init'] == self.match_position:
@@ -394,7 +434,9 @@ class PlayerInterface(PyNetgamesServerListener):
 						turno = (self.match_position +1) % 4
 						self.send_move({'jogadores':move.payload['jogadores'], 'turno_init': turno})
 						for nome,posicao in move.payload["jogadores"]:
-							jog_temp = Jogador(nome,posicao)
+							jog_temp = Jogador(self._table)
+							jog_temp._nome = nome
+							jog_temp._position = posicao
 							self._table._jogadores.append(jog_temp)
 
 						#self._table._jogadores = move.payload['jogadores']
@@ -413,13 +455,12 @@ class PlayerInterface(PyNetgamesServerListener):
 							print("Sou o Dealer. Hora da novaMao")
 							novas_maos = []
 							for jogador in self._table._jogadores:
-								if jogador._nome != self.localPlayer._nome:
-									nova_mao = []
-									for carta in jogador._mao:
-										valor = carta._valor
-										naipe = carta._naipe
-										nova_mao.append([valor,naipe])
-									novas_maos.append(nova_mao)
+								nova_mao = []
+								for carta in jogador._mao:
+									valor = carta._valor
+									naipe = carta._naipe
+									nova_mao.append([valor,naipe])
+								novas_maos.append(nova_mao)
 							print('\n\n')
 							print(novas_maos)
 							print('\n\n')
@@ -431,24 +472,14 @@ class PlayerInterface(PyNetgamesServerListener):
 							carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
 							carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
 							carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
-
+							
 							self.localPlayer._mao.append(carta1)
 							self.localPlayer._mao.append(carta2)
 							self.localPlayer._mao.append(carta3)
 
-							carta1.get_foto_carta()
-							carta2.get_foto_carta()
-							carta3.get_foto_carta()
+							self.AtualizarInterface()
 
-							self.cartas_viradas = Button(self.player1_frame, bd = 3, image= carta1._imagem)
-							self.cartas_viradas.grid(row=1, column=2)
-
-							self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image= carta2._imagem)
-							self.cartas_viradas1.grid(row=1, column=3)
-
-							self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image= carta3._imagem)
-							self.cartas_viradas2.grid(row=1, column=4)
-							self.send_move({'tipo': 'NovaMao', 'nova_mao': novas_maos})
+							self.send_move({'tipo': 'NovaMao', 'nova_mao': novas_maos, 'turno_mao':1, 'manilha': self._table._manilha._valor})
 							
 			#turno = (self.localPlayer._position + 1) % 4 , 'turno':turno
 								
@@ -457,14 +488,10 @@ class PlayerInterface(PyNetgamesServerListener):
 		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
 			self.inicializar_mesa(move) #!! Adicionar ao diagrama
 		elif 'tipo' in move.payload:
-			if move.payload['tipo'] == 'NovaMao':
-						
+			if move.payload['tipo'] == 'NovaMao' and move.payload['turno_mao'] == self.localPlayer._position:
 						print("pegando minha mão hehe")
 						temp_mao = move.payload['nova_mao'][(self.match_position)]
-						print(temp_mao)
-						self.localPlayer._mao.append(Carta(temp_mao[0][0],temp_mao[0][1]))
-						self.localPlayer._mao.append(Carta(temp_mao[1][0],temp_mao[1][1]))
-						self.localPlayer._mao.append(Carta(temp_mao[2][0],temp_mao[2][1]))
+						self.localPlayer._mao = []
 									
 						carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
 						carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
@@ -474,23 +501,18 @@ class PlayerInterface(PyNetgamesServerListener):
 						self.localPlayer._mao.append(carta2)
 						self.localPlayer._mao.append(carta3)
 
-						carta1.get_foto_carta()
-						carta2.get_foto_carta()
-						carta3.get_foto_carta()
+						temp_manilha = move.payload['manilha']
+						manilha = Carta(temp_manilha,'ouro')
+						self._table._manilha = manilha
 
-						self.cartas_viradas = Button(self.player1_frame, bd = 3, image= carta1._imagem)
-						self.cartas_viradas.grid(row=1, column=2)
+						self.AtualizarInterface()
 
-						self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image= carta2._imagem)
-						self.cartas_viradas1.grid(row=1, column=3)
-
-						self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image= carta3._imagem)
-						self.cartas_viradas2.grid(row=1, column=4)
-
-						self.send_move({'tipo': 'NovaMao', 'nova_mao': move.payload['nova_mao']})
-
-						#if self.localPlayer._position == 3:
-						#	exit()
+						if self.localPlayer._position == 3:
+							pass
+						else:
+							turno = (self.localPlayer._position + 1)
+							self.send_move({'tipo': 'NovaMao', 'nova_mao': move.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._table._manilha._valor})
+							
 				
 
 
