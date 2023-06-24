@@ -367,7 +367,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.send_move(aNovoEstado)
 
 	def ClicarBotaoTruco(self):
-		pass
+		self._table.ClicarBotaoTruco(self.localPlayer)
 
 	def botaoResposta(self):
 		pass

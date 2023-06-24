@@ -11,7 +11,8 @@ class Mesa():
 
 	def registrarTruco(self):
 		"""@ReturnType boolean"""
-		pass
+		self._truco = not self._truco
+		return self._truco
 
 	def registrarMao(self):
 		"""@ReturnType boolean"""
@@ -256,8 +257,19 @@ class Mesa():
 				
 
 
-	def ClicarBotaoTruco(self):
-		pass
+	def ClicarBotaoTruco(self, jogador):
+		turno = jogador.verificarTurno()
+		if turno:
+			truco = self.VerificarTrucoAndamento()
+			if not truco:
+				self.registrarTruco()
+				self._PlayerInterface_.Notificar('Você pediu truco, aguardando resposta adversária')
+				novoEstado = {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False}
+				self._PlayerInterface_.enviarAtualizaçãoPartida(novoEstado)
+			else:
+				self._PlayerInterface_.Notificar("Jogada de truco em andamento")
+		else:
+			self._PlayerInterface_.Notificar("Não é seu turno")
 
 	def VerificarTrucoAndamento(self):
 		"""@ReturnType boolean"""
@@ -286,7 +298,7 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._maoAndamento = None
 		"""@AttributeType boolean"""
-		self._truco = None
+		self._truco = False
 		"""@AttributeType boolean"""
 		self._monte = [[],[]]
 		"""@AttributeType Problema.Carta*"""
