@@ -34,12 +34,12 @@ class Mesa():
 		if self._ordemRodada == []:
 			nova_ordem = self._jogadores
 		else:
-			nova_ordem = [self._ordemRodada[1]] #!! tem que colocar os [ ] ao redor do self.ordem[1] no diagrama de algoritmo Mesa definirOrdem
-			nova_ordem.append(self._ordemRodada[2]) #!! NOMES DIFERENTES NOS DIAGRAMAS TEM QUE MUDAR
+			nova_ordem = [self._ordemRodada[1]]
+			nova_ordem.append(self._ordemRodada[2])
 			nova_ordem.append(self._ordemRodada[3])
 			nova_ordem.append(self._ordemRodada[0])
 		
-		self._ordemRodada = nova_ordem #!! mudar nos diagramas (nomes)
+		self._ordemRodada = nova_ordem
 		return self._ordemRodada
 
 	def encerramentoPartida(self):
