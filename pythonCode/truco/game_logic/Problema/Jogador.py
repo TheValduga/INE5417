@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from truco.game_logic.Problema import Carta
-from truco.game_logic.Problema import Time
-from truco.game_logic.Problema import Baralho
+from truco.game_logic.Problema.Carta import Carta
+from truco.game_logic.Problema.Time import Time
+from truco.game_logic.Problema.Baralho import Baralho
 import random
 
 class Jogador():
@@ -27,13 +27,13 @@ class Jogador():
 		"""@ParamType aBaralho Problema.Baralho
 		@ReturnType Problema.Carta"""
 
-		sequencia = [4,5,6,7,'J','Q','K','A',2,3]
+		sequencia = [4,5,6,7,'J','Q','K',1,2,3]
 
-		vira = baralho[0].valor
+		vira = baralho._cartas[13]._valor # !! mudar diagrama de algoritmo
 
 		manilha = (sequencia.index(vira)+1) % 10
 
-		carta_retorno = Carta(manilha,'X')
+		carta_retorno = Carta(manilha,'ouro')
 
 		return carta_retorno
 

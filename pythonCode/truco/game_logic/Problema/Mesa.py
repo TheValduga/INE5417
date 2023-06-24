@@ -141,7 +141,7 @@ class Mesa():
 		self.EscolherDealer(jogador_local) #!! adicionar aos diagramas
 		self._times[0].ZerarPlacar()
 		self._times[1].ZerarPlacar()
-		self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
+		#self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
 
 	def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
 		j = self._jogadores
@@ -168,24 +168,32 @@ class Mesa():
 		"""@ReturnType int*"""
 		pass
 
+
 	def novaMao(self):
 		Mao_registro =self.registrarMao()
 		Rodada = self.registrarStatusRodada(True)
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
 		self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
 		self.distribuirCartas()
-		for jogador in self._jogadores:
-			if jogador._dealer:
-				self._manilha = jogador.definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
+		self._manilha = self._jogadores[0].definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
+		print(self._manilha._valor)
 
 
 
 	def distribuirCartas(self): #!! acho que metodo não existe na classe. o gerador automatico pelo menos não fez. O return é desnecessário e bunda
+
+		i = 0 
 		for jogador in self._jogadores:
-			carta1 = self._baralho._cartas.pop()
-			carta2 = self._baralho._cartas.pop()
-			carta3 = self._baralho._cartas.pop()
+			print("CARTAS PARA JOGADOR")
+			carta1 = self._baralho._cartas[i]
+			i = i+1
+			carta2 = self._baralho._cartas[i]
+			i = i+1
+			carta3 = self._baralho._cartas[i]
+			i = i+1
 			jogador._mao = [carta1, carta2, carta3]
+		
+		print(i)
 
 	def novaRodada(self):
 		pass
@@ -215,7 +223,7 @@ class Mesa():
 		"""@AttributeType Problema.Jogador"""
 		self._baralho = deck
 		"""@AttributeType Problema.Baralho"""
-		self._manilha = None
+		self._manilha = Carta('','')
 		"""@AttributeType Problema.Carta"""
 		self._valorMao = 1
 		"""@AttributeType int"""
