@@ -78,8 +78,7 @@ class Mesa():
 		pass
 
 	def encerramentoMao(self): # !! metodo nao estad nos diagramas, arrumar diagrama de avaliar encerramento da mao
-		"""@ReturnType boolean"""
-      	pass
+		pass
    
 	def comparaMonte(self):
 		"""@ReturnType int"""

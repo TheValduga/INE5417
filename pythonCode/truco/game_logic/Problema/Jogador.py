@@ -45,7 +45,7 @@ class Jogador():
 			if not truco:
 				time = self._time.PegarTime()
 				self._mesa.ColocarNaMesa(time)
-    		    encerraRodada = self._mesa.encerramentoRodada()
+				encerraRodada = self._mesa.encerramentoRodada()
 				if not encerraRodada:
 					self._mesa.PassarTurno()
 				else:
