@@ -42,12 +42,22 @@ class Jogador():
 	def selecionarCarta(self, aCarta):
 		"""@ParamType aCarta Problema.Carta"""
 		turno = self.verificarTurno()
+		encerraMao = False
+		encerraRodada = False
+		encerraPartida = False
+		
 		if turno:
 			truco = self._mesa.VerificarTrucoAndamento()
 			if not truco:
+<<<<<<< Updated upstream
 				time = self._time.PegarTime()
 				self._mesa.ColocarNaMesa(time)
 				encerraRodada = self._mesa.encerramentoRodada()
+=======
+				time = self._position % 2
+				carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
+				encerraRodada = self._mesa.encerramentoRodada(self._position)
+>>>>>>> Stashed changes
 				if not encerraRodada:
 					self._mesa.PassarTurno()
 				else:
@@ -55,8 +65,14 @@ class Jogador():
 					if encerraMao:
 						encerraPartida = self._mesa.encerramentoPartida()
 				self._mesa._PlayerInterface.AtualizarInterface()
+<<<<<<< Updated upstream
 				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': aCarta}
+=======
+				proximo = self._mesa.PassarTurno(self)
+				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
+>>>>>>> Stashed changes
 				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
+				print(novoEstado)
 			else:
 				self._mesa._PlayerInterface.Notificar('Truco em andamento')
 		else:
@@ -71,7 +87,8 @@ class Jogador():
 		pass
 
 	def passarTurno(self):
-		pass
+		self._seuTurno = False
+		return ((self._position + 1) % 4)
 
 	def ehUltimo(self, *aOrdem):
 		"""@ParamType aOrdem Problema.Jogador*
@@ -89,6 +106,7 @@ class Jogador():
 
 	def DefinirDealer(self): #!! mudar diagrama de algoritmo
 		self._dealer = True
+		self._seuTurno = True # !! mais uma pequena alteração no diagrama de algoritmo
 		return True
 
 	def PegarTime(self):

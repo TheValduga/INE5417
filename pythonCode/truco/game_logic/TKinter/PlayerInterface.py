@@ -149,13 +149,13 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.botao_aumentar = Button(self.player1_frame, bd = 3, text="Aumentar", command=self.clicarBotao())
 		self.botao_aumentar.grid(row=1, column=1)
 
-		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self.front_card, command=lambda:self.clicarCarta(0))
+		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self._back_card, command=lambda:self.clicarCarta(0))
 		self.cartas_viradas.grid(row=1, column=2)
 
-		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image=self.front_card, command=lambda:self.clicarCarta(1))
+		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image=self._back_card, command=lambda:self.clicarCarta(1))
 		self.cartas_viradas1.grid(row=1, column=3)
 
-		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self.front_card, command=lambda: self.clicarCarta(2))
+		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self._back_card, command=lambda: self.clicarCarta(2))
 		self.cartas_viradas2.grid(row=1, column=4)
 
 		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=self.clicarBotao())
@@ -167,14 +167,14 @@ class PlayerInterface(PyNetgamesServerListener):
 		
 
 		# Mesa frame
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self._back_card)
 		self.logo_label.grid(row=0, column=0)
 		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.card_deck)
 		# canvas = Canvas(self.mesa_frame, bg="#046307", width=200, height=100)
 		# canvas.pack()
 		# canvas.create_image(100,50,image=self.card_deck)
 		self.logo_label.grid(row=0, column=1)
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self._back_card)
 		self.logo_label.grid(row=0, column=2)
 
 		##!! TODOS ESSES IF'S PODEM SER SUBSTITUIDOS POR ALGO TIPO "IF self._table.Inicializado == True" depois
@@ -247,7 +247,8 @@ class PlayerInterface(PyNetgamesServerListener):
 			placar_azul = "Time Azul : " + str(self._table._times[0]._pontuacao)
 			self.time_azul_label = Label(self.placar_frame, text=placar_azul, font="arial 20", fg="blue", bg="#046307")
 			self.time_azul_label.grid(row=1, column=1)
-			self.time_vermelho_label = Label(self.placar_frame, text='Time Vermelho - 0', font="arial 20", fg="red", bg="#046307")
+			placar_vermelho = "Time Vermelho : " + str(self._table._times[1]._pontuacao)
+			self.time_vermelho_label = Label(self.placar_frame, text=placar_vermelho, font="arial 20", fg="red", bg="#046307")
 			self.time_vermelho_label.grid(row=2, column=1)
 
 	def mostra_mensagem(self, aMensagem):
@@ -275,6 +276,7 @@ class PlayerInterface(PyNetgamesServerListener):
 
 	def atualizaTopo(self, aMonte_cartaForte_):
 		"""@ParamType aMonte_cartaForte_ Problema.Carta"""
+		
 		pass
 
 	def exibirCarta(self, aCarta):
@@ -321,6 +323,12 @@ class PlayerInterface(PyNetgamesServerListener):
 		"""@ParamType aMatch_id string"""
 		self._match_id = match_id
 		pass
+	
+	def atualizarTopo(self, carta):
+		carta.get_foto_carta()
+		self.logo_label.grid(row=0, column=1)
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=carta._imagem) # MONTE
+		self.logo_label.grid(row=0, column=2)
 
 	def AtualizarInterface(self):
 		
@@ -328,20 +336,26 @@ class PlayerInterface(PyNetgamesServerListener):
 		carta2 = self.localPlayer._mao[1]
 		carta3 = self.localPlayer._mao[2]
 		manilha = self._table._manilha
-
-		carta1.get_foto_carta()
-		carta2.get_foto_carta()
-		carta3.get_foto_carta()
+		
+		
+		
+		
 		manilha.get_foto_carta()
 
-		self.cartas_viradas = Button(self.player1_frame, bd = 3, image= carta1._imagem,command=lambda: self.clicarCarta(0))
-		self.cartas_viradas.grid(row=1, column=2)
+		if carta1:
+			carta1.get_foto_carta()
+			self.cartas_viradas = Button(self.player1_frame, bd = 3, image= carta1._imagem,command=lambda: self.clicarCarta(0))
+			self.cartas_viradas.grid(row=1, column=2)
 
-		self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image= carta2._imagem,command=lambda: self.clicarCarta(1))
-		self.cartas_viradas1.grid(row=1, column=3)
+		if carta2:
+			carta2.get_foto_carta()
+			self.cartas_viradas1 = Button(self.player1_frame, bd = 3, image= carta2._imagem,command=lambda: self.clicarCarta(1))
+			self.cartas_viradas1.grid(row=1, column=3)
 
-		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image= carta3._imagem,command=lambda: self.clicarCarta(2))
-		self.cartas_viradas2.grid(row=1, column=4)
+		if carta3:
+			carta3.get_foto_carta()
+			self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image= carta3._imagem,command=lambda: self.clicarCarta(2))
+			self.cartas_viradas2.grid(row=1, column=4)
 
 		self.logo_label = Label(self.mesa_frame, bd = 0, image= manilha._imagem) # MANILHA
 		self.logo_label.grid(row=0, column=0)
@@ -349,9 +363,16 @@ class PlayerInterface(PyNetgamesServerListener):
 		# canvas = Canvas(self.mesa_frame, bg="#046307", width=200, height=100)
 		# canvas.pack()
 		# canvas.create_image(100,50,image=self.card_deck)
-		self.logo_label.grid(row=0, column=1)
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=self.front_card) # MONTE
-		self.logo_label.grid(row=0, column=2)
+
+
+		self.titulo_label = Label(self.placar_frame, text='Score', font="arial 24", bg="#046307")
+		self.titulo_label.grid(row=0, column=1)
+		placar_azul = "Time Azul : " + str(self._table._times[0]._pontuacao)
+		self.time_azul_label = Label(self.placar_frame, text=placar_azul, font="arial 20", fg="blue", bg="#046307")
+		self.time_azul_label.grid(row=1, column=1)
+		placar_vermelho = "Time Vermelho : " + str(self._table._times[1]._pontuacao)
+		self.time_vermelho_label = Label(self.placar_frame, text=placar_vermelho, font="arial 20", fg="red", bg="#046307")
+		self.time_vermelho_label.grid(row=2, column=1)
 
 	def clicarBotao(self):
 		pass
