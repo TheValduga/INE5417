@@ -10,7 +10,8 @@ import random
 class Mesa():
 
 	def registrarTruco(self):
-		self._truco = True
+		self._truco = not self._truco
+		return self._truco
 
 	def registrarMao(self):
 		"""@ReturnType boolean"""
@@ -274,7 +275,7 @@ class Mesa():
 		self.EscolherDealer(jogador_local) #!! adicionar aos diagramas
 		self._times[0].ZerarPlacar()
 		self._times[1].ZerarPlacar()
-		self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
+		#self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
 
 	def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
 		j = self._jogadores
@@ -301,62 +302,96 @@ class Mesa():
 		"""@ReturnType int*"""
 		pass
 
+
 	def novaMao(self):
 		Mao_registro =self.registrarMao()
 		Rodada = self.registrarStatusRodada(True)
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
 		self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
 		self.distribuirCartas()
-		for jogador in self._jogadores:
-			if jogador._dealer:
-				self._manilha = jogador.definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
+		self._manilha = self._jogadores[0].definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
+		print(self._manilha._valor)
 
 
 
 	def distribuirCartas(self): #!! acho que metodo não existe na classe. o gerador automatico pelo menos não fez. O return é desnecessário e bunda
+
+		i = 0 
 		for jogador in self._jogadores:
-			carta1 = self._baralho._cartas.pop()
-			carta2 = self._baralho._cartas.pop()
-			carta3 = self._baralho._cartas.pop()
+			print("CARTAS PARA JOGADOR")
+			carta1 = self._baralho._cartas[i]
+			i = i+1
+			carta2 = self._baralho._cartas[i]
+			i = i+1
+			carta3 = self._baralho._cartas[i]
+			i = i+1
 			jogador._mao = [carta1, carta2, carta3]
+		
+		print(i)
 
 	def novaRodada(self):
 		pass
+	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
+		carta = jogador._mao[cardIndex]
+		jogador._mao[cardIndex] = None
+		self._monte[aTime].append(carta)
+		carta = [carta._valor,carta._naipe]
+		return carta
 
-	def ColocarNaMesa(self, aTime):
-		"""@ParamType aTime int"""
-		pass
+	def PassarTurno(self, jogador):
+		jogador._seuTurno = False
+		for j in range(4):
+			if self._ordemRodada[j]._nome == jogador._nome:
+				if j != 3:
+					return self._ordemRodada[j]._nome
+				
 
-	def PassarTurno(self):
-		pass
 
 	def ClicarBotaoTruco(self, jogador):
-		#  TODO: alterar parametro nos diagramas
 		turno = jogador.verificarTurno()
 		if turno:
 			truco = self.VerificarTrucoAndamento()
-			if not truco:	# se não há truco em andamento
+			if not truco:
 				self.registrarTruco()
-	# 			 PlayerInterface notifica que foi pedido truco e está aguardando resposta
-				self._PlayerInterface_.Notificar("Você pediu truco,"
-												 " aguardando resposta adversária")
-				# TODO: definir estado enviado
-				self._PlayerInterface_.enviarAtualizacaoPartida()
-				# TODO: Determinar parametros
-				self._PlayerInterface_.send_move()
-			else:	# há truco em andamento
+				self._PlayerInterface_.Notificar('Você pediu truco, aguardando resposta adversária')
+				novoEstado = {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False}
+				self._PlayerInterface_.enviarAtualizaçãoPartida(novoEstado)
+			else:
 				self._PlayerInterface_.Notificar("Jogada de truco em andamento")
 		else:
 			self._PlayerInterface_.Notificar("Não é seu turno")
 
-
-
 	def VerificarTrucoAndamento(self):
+		"""@ReturnType boolean"""
 		return self._truco
 
 	def receberJogada(self, aJogada):
 		"""@ParamType aJogada Dict{string, any}"""
-		pass
+		if 'tipo' in aJogada.payload:
+			if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self._PlayerInterface.localPlayer._position:
+				print("pegando minha mão hehe")
+				temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
+				self._PlayerInterface.localPlayer._mao = []
+							
+				carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
+				carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
+				carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
+
+				self._PlayerInterface.localPlayer._mao.append(carta1)
+				self._PlayerInterface.localPlayer._mao.append(carta2)
+				self._PlayerInterface.localPlayer._mao.append(carta3)
+
+				temp_manilha = aJogada.payload['manilha']
+				manilha = Carta(temp_manilha,'ouro')
+				self._manilha = manilha
+
+				self._PlayerInterface.AtualizarInterface()
+
+				if self._PlayerInterface.localPlayer._position == 3:
+					pass
+				else:
+					turno = (self._PlayerInterface.localPlayer._position + 1)
+					self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
 
 	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []
@@ -365,7 +400,7 @@ class Mesa():
 		"""@AttributeType Problema.Jogador"""
 		self._baralho = deck
 		"""@AttributeType Problema.Baralho"""
-		self._manilha = None
+		self._manilha = Carta('','')
 		"""@AttributeType Problema.Carta"""
 		self._valorMao = 1
 		"""@AttributeType int"""
@@ -373,14 +408,13 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._times = [time1,time2]
 		"""@AttributeType Problema.Time"""
-		self._rodadaAndamento = Noneordem[3]
-		if ehUltimo:
+		self._rodadaAndamento = None
 		"""@AttributeType boolean"""
 		self._maoAndamento = None
 		"""@AttributeType boolean"""
-		self._truco = None
+		self._truco = False
 		"""@AttributeType boolean"""
-		self._monte = None
+		self._monte = [[],[]]
 		"""@AttributeType Problema.Carta*"""
 		self._registroRodada = list()
 		"""@AttributeType int*"""
@@ -390,7 +424,7 @@ class Mesa():
 		"""@AttributeType int*"""
 		self._vencedor = None
 		"""@AttributeType Problema.Time"""
-		self._PlayerInterface_ = interface
+		self._PlayerInterface = interface
 		"""@AttributeType TKinter.PlayerInterface
 		# @AssociationType TKinter.PlayerInterface"""
 		self._unnamed_Jogador_3 = None

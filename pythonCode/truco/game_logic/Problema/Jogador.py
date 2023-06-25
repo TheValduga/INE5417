@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from truco.game_logic.Problema import Carta
-from truco.game_logic.Problema import Time
-from truco.game_logic.Problema import Baralho
+from truco.game_logic.Problema.Carta import Carta
+from truco.game_logic.Problema.Time import Time
+from truco.game_logic.Problema.Baralho import Baralho
 import random
 
 class Jogador():
 
 	def verificarTurno(self):
 		"""@ReturnType boolean"""
-		pass
+		return self._seuTurno
 
 	def clicarBotao(self):
 		pass
@@ -27,33 +27,35 @@ class Jogador():
 		"""@ParamType aBaralho Problema.Baralho
 		@ReturnType Problema.Carta"""
 
-		sequencia = [4,5,6,7,'J','Q','K','A',2,3]
+		sequencia = [4,5,6,7,'J','Q','K',1,2,3]
 
-		vira = baralho[0].valor
+		vira = baralho._cartas[13]._valor # !! mudar diagrama de algoritmo
 
-		manilha = (sequencia.index(vira)+1) % 10
+		manilha = sequencia[(sequencia.index(vira)+1) % 10]
 
-		carta_retorno = Carta(manilha,'X')
+		print("MANILHA:" + str(manilha))
+
+		carta_retorno = Carta(manilha,'ouro')
 
 		return carta_retorno
 
-	def selecionarCarta(self, aCarta):
+	def selecionarCarta(self, cartaIndex: int): # !! alterar nome e tipo de do argumento para int
 		"""@ParamType aCarta Problema.Carta"""
 		turno = self.verificarTurno()
 		if turno:
 			truco = self._mesa.VerificarTrucoAndamento()
 			if not truco:
 				time = self._time.PegarTime()
-				self._mesa.ColocarNaMesa(time)
+				carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
 				encerraRodada = self._mesa.encerramentoRodada()
 				if not encerraRodada:
-					self._mesa.PassarTurno()
+					proximo = self._mesa.PassarTurno(self)
 				else:
 					encerraMao = self._mesa.encerramentoMao()
 					if encerraMao:
 						encerraPartida = self._mesa.encerramentoPartida()
 				self._mesa._PlayerInterface.AtualizarInterface()
-				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': aCarta}
+				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
 				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
 			else:
 				self._mesa._PlayerInterface.Notificar('Truco em andamento')
@@ -92,12 +94,12 @@ class Jogador():
 
 	def PegarTime(self):
 		"""@ReturnType int"""
-		pass
+		return self._time
 
 	def __init__(self, mesa): #!! não sei exatamente como se modelou o init, dar uma olhada no exemplo do Ricardo
 		self._nome = ''
 		"""@AttributeType string"""
-		self._seuTurno = None
+		self._seuTurno = False
 		"""@AttributeType boolean"""
 		self._mao = []
 		"""@AttributeType Problema.Carta*"""

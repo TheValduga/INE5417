@@ -28,8 +28,8 @@ class Time(object):
 		"""@ParamType aPontos int"""
 		pass
 
-	def __init__(self):
-		self._identificacao = None
+	def __init__(self, id):
+		self._identificacao = id
 		"""@AttributeType int"""
 		self._pontuacao = None
 		"""@AttributeType int"""
