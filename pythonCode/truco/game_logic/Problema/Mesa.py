@@ -87,7 +87,6 @@ class Mesa():
 
 	def encerramentoRodada(self, jogador):
 		#!! alterar parametro nos diagramas
-		print("AAAAAAAAAAAAAAAAAAAAAAA ENTREI NESSA FUNÇÃO DE MERDA")
 		encerrar = False
 		cartaForte = self.comparaMonte()
 		self.definirTopo(cartaForte)
@@ -97,13 +96,16 @@ class Mesa():
 			ordem.append(player._nome)
 		ehUltimo = self._jogadores[jogador].ehUltimo() #!! AGORA VAI SER SEMPRE A MESMA ORDEM FODA-SE
 		if ehUltimo:
+			print("SOU O ÚLTIMO")
+			cartaForte = self.comparaMonte()
 			pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
 			#!! TODO: acrescentar vetor registroRodadas
 			qualrodada= self.verificaRodada()
 			self.registrarRodada(qualrodada, pontuaRodada)
+			print(self._registroRodada)
 			encerrar = True
 			self.registrarStatusRodada(False)
-			print("SOU O ÚLTIMO")
+			
 		
 		return encerrar
 
@@ -228,9 +230,15 @@ class Mesa():
 		return self._ordemRodada
 
 	def vencedorRodada(self, aMonte, aCartaForte):
+		print("QUEM VENCEU A RODADA???")
 		print(aMonte)
+		print(aCartaForte._valor)
+		print(aCartaForte._naipe)
 		posicao_vencedor = aMonte.index([aCartaForte._valor,aCartaForte._naipe])
+		print("POSICAO_VENCEDOR")
+		print(posicao_vencedor)
 		time_vencedor = posicao_vencedor % 2
+		print(time_vencedor)
 		return time_vencedor
 
 	def verificaRodada(self, *aRegistroRodadas):
@@ -333,7 +341,7 @@ class Mesa():
 
 	def novaRodada(self):
 		pass
-	
+
 	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
 		carta = jogador._mao[cardIndex]
 		jogador._mao[cardIndex] = None
