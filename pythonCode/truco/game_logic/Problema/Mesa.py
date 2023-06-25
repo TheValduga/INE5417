@@ -24,10 +24,10 @@ class Mesa():
 		return self._rodadaAndamento
 		
 
-	def registraPontoMao(self, aTime, aPontuacao):
+	def registraPontoMao(self, time, pontuacao):
 		"""@ParamType aTime Problema.Time
 		@ParamType aPontuacao int"""
-		pass
+		self._times[time].setarPontuacao(pontuacao)
 
 	def definirOrdem(self):
 		"""@ReturnType Problema.Jogador[]"""
@@ -61,26 +61,38 @@ class Mesa():
 	def definirPartidaAndamento(self, aBoolean):
 		self._partidaAndamento = aBoolean
 
-	def registrarVencedor(self, aTime):
+	def registrarVencedor(self, time):
 		"""@ParamType aTime Problema.Time"""
-		pass
+		self._vencedor = time
 
 	def verificarRegistroRodadas(self):
 		"""@ReturnType list"""
 		return self._registroRodada
 
-	def verificarVencedorRodada(self, aRodada):
+	def verificarVencedorRodada(self, rodada):
 		"""@ParamType aRodada int
 		@ReturnType Problema.Time"""
-		pass
+		if self._registroRodada[rodada] == 1:
+			return self._times[0]
+		elif self._registroRodada[rodada] == 2:
+			return self._times[1]
+		else:
+			print("Erro em registro de rodadas")
+			return 0
 
 	def verificarEmpate(self):
 		"""@ReturnType boolean"""
-		pass
+		for rodada in self._registroRodada:
+			if rodada == 0:
+				return True
 
 	def verificarRodadasEmpatadas(self):
 		"""@ReturnType int*"""
-		pass
+		rodadasEmpatadas = []
+		for rodada in self._registroRodada:
+			if rodada == 0:
+				rodadasEmpatadas.append(rodada)
+		return rodadasEmpatadas
 
 	def nenhumTimePontua(self):
 		pass
@@ -195,7 +207,7 @@ class Mesa():
 		"""@ReturnType carta"""
 		naipes = ["paus","copa","espada","ouro"]
 		seq = [4,5,6,7,'J','Q','K',1,2,3]
-		cartaForte = Carta(4, 'ouro') #!! teste isso né?
+		cartaForte = Carta(4, 'ouro')
 		cartas_monte = self._monte
 		for carta in cartas_monte:
 			carta_temp = Carta(carta[0],carta[1])
@@ -219,10 +231,10 @@ class Mesa():
 
 
 
-	def definirTopo(self, aCartaForte):
+	def definirTopo(self, cartaForte):
 		"""@ParamType aCartaForte int
 		@ReturnType int"""
-		pass
+		return self._monte.index(cartaForte)
 
 	def pegarOrdem(self):
 		return self._ordemRodada
@@ -265,10 +277,9 @@ class Mesa():
 
 	def adicionarPontuacaoTime(self, aTime, aPontos):
 		self._times[aTime] = self._times[aTime] + aPontos
-		pass
 
 	def aumentarValorMao(self):
-		pass
+		self._valorMao += 3
 
 	def clicarBotao(self, aJogador):
 		"""@ParamType aJogador Problema.Jogador"""
@@ -304,7 +315,7 @@ class Mesa():
 
 	def pegarPlacar(self):
 		"""@ReturnType int*"""
-		pass
+		return self._times[0].pegarPontuacao(self._times[0]), self._times[1].pegarPontuacao(self._times[1])
 
 
 	def novaMao(self):
