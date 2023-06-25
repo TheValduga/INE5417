@@ -65,8 +65,8 @@ class Mesa():
 		pass
 
 	def verificarRegistroRodadas(self):
-		"""@ReturnType int*"""
-		pass
+		"""@ReturnType list"""
+		return self._registroRodada
 
 	def verificarVencedorRodada(self, aRodada):
 		"""@ParamType aRodada int
@@ -102,8 +102,87 @@ class Mesa():
 		return encerrar
 
 	def encerramentoMao(self):
-		pass
-   
+		rodadas = self.verificarRegistroRodadas()
+		match len(rodadas):
+			case 1:
+				#  Apenas uma rodada até o momento.
+				self._times[1].registraMaoEncerrada(False)
+				self._times[0].registraMaoEncerrada(False)
+			case 2:
+				#  Duas rodadas até o momento.
+				empate = self.verificarEmpate()
+				if empate:
+					# !! TODO: implementar verificarEmpate
+					# !! TODO: implementar verificarRodadasEmpatadas
+					rodadasEmpatadas = self.verificarRodadasEmpatadas()
+					if len(rodadasEmpatadas) > 2:
+						self._times[1].registraMaoEncerrada(False)
+						self._times[0].registraMaoEncerrada(False)
+					elif len(rodadasEmpatadas) == 1:
+						# !! TODO: implementar verificarVencedorRodada
+						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
+						if time == self._times[0]:
+							self.registraPontoMao(self._times[0], self._valorMao)
+							self._times[0].registraMaoEncerrada(True)
+						else:
+							self.registraPontoMao(self._times[1], self._valorMao)
+							self._times[1].registraMaoEncerrada(True)
+					else:
+						# rodadasempatadas == 2
+						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
+						if time == self._times[0]:
+							self.registraPontoMao(self._times[0], self._valorMao)
+							self._times[0].registraMaoEncerrada(True)
+						else:
+							self.registraPontoMao(self._times[1], self._valorMao)
+							self._times[1].registraMaoEncerrada(True)
+				else:
+					#!! TODO: verificar identificação do time local ou remoto
+					rodadasTimeLocal = self._times[0].verificarRodadasTime()
+					rodadasTimeRemoto = self._times[1].verificarRodadasTime()
+					if rodadasTimeLocal == 2:
+						self.registraPontoMao(self._times[0], self._valorMao)
+						self._times[0].registraMaoEncerrada(True)
+					elif rodadasTimeRemoto == 2:
+						self.registraPontoMao(self._times[1], self._valorMao)
+						self._times[1].registraMaoEncerrada(True)
+					else:
+						# rodadasTimeLocal == 1 and rodadasTimeRemoto == 1
+						self._times[1].registraMaoEncerrada(False)
+						self._times[0].registraMaoEncerrada(False)
+			case 3:
+				#  Três rodadas até o momento.
+				empate = self.verificarEmpate()
+				if empate:
+					rodadasEmpatadas = self.verificarRodadasEmpatadas()
+					if len(rodadasEmpatadas) >= 3:
+						self.nenhumTimePontua()
+					elif len(rodadasEmpatadas) == 2:
+						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
+						if time == self._times[0]:
+							self.registraPontoMao(self._times[0], self._valorMao)
+							self._times[0].registraMaoEncerrada(True)
+						else:
+							self.registraPontoMao(self._times[1], self._valorMao)
+							self._times[1].registraMaoEncerrada(True)
+					else:
+						# rodadasempatadas == 1
+						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
+						if time == self._times[0]:
+							self.registraPontoMao(self._times[0], self._valorMao)
+							self._times[0].registraMaoEncerrada(True)
+						else:
+							self.registraPontoMao(self._times[1], self._valorMao)
+							self._times[1].registraMaoEncerrada(True)
+				else:
+					rodadasTimeLocal = self._times[0].verificarRodadasTime()
+					rodadasTimeRemoto = self._times[1].verificarRodadasTime()
+					if rodadasTimeLocal == 2:
+						self.registraPontoMao(self._times[0], self._valorMao)
+						self._times[0].registraMaoEncerrada(True)
+					if rodadasTimeRemoto == 2:
+						self.registraPontoMao(self._times[1], self._valorMao)
+						self._times[1].registraMaoEncerrada(True)
 	def comparaMonte(self):
 		"""@ReturnType carta"""
 		naipes = ['O', 'E', 'P', 'C']
@@ -303,7 +382,7 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._monte = None
 		"""@AttributeType Problema.Carta*"""
-		self._registroRodada = 3
+		self._registroRodada = list()
 		"""@AttributeType int*"""
 		self._ordemRodada = []
 		"""@AttributeType Problema.Jogador*"""
