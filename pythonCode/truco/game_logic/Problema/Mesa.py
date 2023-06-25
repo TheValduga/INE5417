@@ -302,6 +302,37 @@ class Mesa():
 				else:
 					turno = (self._PlayerInterface.localPlayer._position + 1)
 					self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
+     
+			elif aJogada.payload['tipo'] == 'rodada':
+				pass
+		
+			elif aJogada.payload['tipo'] == 'carta':
+				if aJogada.payload['rodadaEncerrada']:
+					if vence == 0:
+						printar = 'azul'
+					else:
+						printar = 'vermelho'
+					if aJogada.payload['maoEncerrada']:
+						self.registrarMao()
+						vence = None # só pra nao acusar erro
+						self.adicionarPontuacaoTime(vence, self._valorMao) # tem q receber o paratro do time q vence a rodada por pyng 
+						if aJogada.payload['jogoEncerrado']:
+							self.registrarVencedor(vence) #  TODO time vencedor deve chegar por pyng
+							
+							self._PlayerInterface.Notificar(f'Time {printar} vence o jogo')
+						else:
+						
+							self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
+					else:
+						self.registrarStatusRodada(False)
+						self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
+						qualRodada = None # apenas pra nao acusar erro
+						self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
+				else:
+					self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}')
+			
+			elif aJogada.payload['tipo'] == 'truco':
+				pass
 
 	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []
