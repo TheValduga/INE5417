@@ -42,12 +42,16 @@ class Jogador():
 	def selecionarCarta(self, cartaIndex: int): # !! alterar nome e tipo de do argumento para int
 		"""@ParamType aCarta Problema.Carta"""
 		turno = self.verificarTurno()
+		encerraMao = False
+		encerraRodada = False
+		encerraPartida = False
+		
 		if turno:
 			truco = self._mesa.VerificarTrucoAndamento()
 			if not truco:
-				time = self._time.PegarTime()
+				time = self._position % 2
 				carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
-				encerraRodada = self._mesa.encerramentoRodada()
+				encerraRodada = self._mesa.encerramentoRodada(self._position)
 				if not encerraRodada:
 					proximo = self._mesa.PassarTurno(self)
 				else:
@@ -55,8 +59,12 @@ class Jogador():
 					if encerraMao:
 						encerraPartida = self._mesa.encerramentoPartida()
 				self._mesa._PlayerInterface.AtualizarInterface()
+				proximo = self._mesa.PassarTurno(self)
+				self._mesa._monte.append(carta)
+				print(carta)
 				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
 				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
+				print(novoEstado)
 			else:
 				self._mesa._PlayerInterface.Notificar('Truco em andamento')
 		else:
@@ -71,7 +79,8 @@ class Jogador():
 		pass
 
 	def passarTurno(self):
-		pass
+		self._seuTurno = False
+		return ((self._position + 1) % 4)
 
 	def ehUltimo(self, ordem):
 		"""@ReturnType boolean"""
@@ -90,6 +99,7 @@ class Jogador():
 
 	def DefinirDealer(self):
 		self._dealer = True
+		self._seuTurno = True # !! mais uma pequena alteração no diagrama de algoritmo
 		return True
 
 	def PegarTime(self):

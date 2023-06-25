@@ -90,16 +90,16 @@ class Mesa():
 		encerrar = False
 		cartaForte = self.comparaMonte()
 		self.definirTopo(cartaForte)
-		self._PlayerInterface_.atualizarTopo(cartaForte)
+		self._PlayerInterface.atualizarTopo(cartaForte)
 		ordem = self.pegarOrdem()
 		ehUltimo = self._jogadores[jogador].ehUltimo(ordem)
-		if ehUltimo:
-			pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
+		#if ehUltimo:
+			#pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
 			#!! TODO: acrescentar vetor registroRodadas
-			qualrodada= self.verificaRodada()
-			self.registrarRodada(qualrodada, pontuaRodada)
-			encerrar = True
-			self.registrarStatusRodada(False)
+			#qualrodada= self.verificaRodada()
+			#self.registrarRodada(qualrodada, pontuaRodada)
+			#encerrar = True
+			#self.registrarStatusRodada(False)
 		return encerrar
 
 	def encerramentoMao(self):
@@ -184,16 +184,20 @@ class Mesa():
 					if rodadasTimeRemoto == 2:
 						self.registraPontoMao(self._times[1], self._valorMao)
 						self._times[1].registraMaoEncerrada(True)
+
+
 	def comparaMonte(self):
 		"""@ReturnType carta"""
-		naipes = ['O', 'E', 'P', 'C']
-		seq = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3']
-		cartaForte = Carta(4, 'O')
-		for carta in self._monte:
-			valorCarta = seq.index(carta.getValor())
-			valorCartaForte = seq.index(cartaForte.getValor())
-			naipeCarta = naipes.index(carta.getNaipe())
-			naipeCartaForte = naipes.index(cartaForte.getNaipe())
+		naipes = ["paus","copa","espada","ouro"]
+		seq = [4,5,6,7,'J','Q','K',1,2,3]
+		cartaForte = Carta(4, 'ouro') #!! teste isso né?
+		cartas_monte = [item for sublist in self._monte for item in sublist]
+		for carta in cartas_monte:
+			carta_temp = Carta(carta[0],carta[1])
+			valorCarta = seq.index(carta_temp._valor)
+			valorCartaForte = seq.index(cartaForte._valor)
+			naipeCarta = naipes.index(carta_temp._naipe)
+			naipeCartaForte = naipes.index(cartaForte._naipe)
 			if valorCarta < valorCartaForte:
 				return cartaForte
 			elif valorCarta == valorCartaForte:
@@ -204,7 +208,7 @@ class Mesa():
 					return cartaForte
 			else:
 				# valorCarta > valorCartaForte
-				cartaForte = carta
+				cartaForte = carta_temp
 				return cartaForte
 
 
@@ -218,7 +222,7 @@ class Mesa():
 	def pegarOrdem(self):
 		return self._ordemRodada
 
-	def vencedorRodada(self, *aMonte, aCartaForte):
+	def vencedorRodada(self, aMonte, aCartaForte):
 		"""@ParamType aMonte Problema.Carta*
 		@ParamType aCartaForte int
 		@ReturnType int"""
@@ -334,17 +338,17 @@ class Mesa():
 	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
 		carta = jogador._mao[cardIndex]
 		jogador._mao[cardIndex] = None
-		self._monte[aTime].append(carta)
 		carta = [carta._valor,carta._naipe]
+		self._monte[aTime].append(carta)
+		self._PlayerInterface.localPlayer._mao[cardIndex] = None
 		return carta
 
 	def PassarTurno(self, jogador):
 		jogador._seuTurno = False
-		for j in range(4):
-			if self._ordemRodada[j]._nome == jogador._nome:
-				if j != 3:
-					return self._ordemRodada[j]._nome
-				
+		proximo = (jogador._position + 1) % 4
+		for player in self._jogadores:
+			if player._position == proximo:
+				return player._nome
 
 
 	def ClicarBotaoTruco(self, jogador):
@@ -353,13 +357,13 @@ class Mesa():
 			truco = self.VerificarTrucoAndamento()
 			if not truco:
 				self.registrarTruco()
-				self._PlayerInterface_.Notificar('Você pediu truco, aguardando resposta adversária')
+				self._PlayerInterface.Notificar('Você pediu truco, aguardando resposta adversária')
 				novoEstado = {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False}
-				self._PlayerInterface_.enviarAtualizaçãoPartida(novoEstado)
+				self._PlayerInterface.enviarAtualizaçãoPartida(novoEstado)
 			else:
-				self._PlayerInterface_.Notificar("Jogada de truco em andamento")
+				self._PlayerInterface.Notificar("Jogada de truco em andamento")
 		else:
-			self._PlayerInterface_.Notificar("Não é seu turno")
+			self._PlayerInterface.Notificar("Não é seu turno")
 
 	def VerificarTrucoAndamento(self):
 		"""@ReturnType boolean"""
@@ -420,6 +424,14 @@ class Mesa():
 						self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
 				else:
 					self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}')
+					self._monte.append(aJogada.payload['carta'])
+					print(self._monte)
+					if self._PlayerInterface.localPlayer._nome == aJogada.payload['proximo']:
+						
+						self._PlayerInterface.AtualizarInterface()
+						
+						self._PlayerInterface.localPlayer._seuTurno = True
+						print("MEU TURNO AEEE")
 			
 			elif aJogada.payload['tipo'] == 'truco':
 				pass
