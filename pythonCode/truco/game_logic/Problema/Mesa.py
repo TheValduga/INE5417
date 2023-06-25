@@ -90,18 +90,23 @@ class Mesa():
 		encerrar = False
 		cartaForte = self.comparaMonte()
 		self.definirTopo(cartaForte)
-		self._PlayerInterface.atualizarTopo(cartaForte)
+		self._topo = self._PlayerInterface.atualizarTopo(cartaForte)
 		ordem = []
 		for player in self.pegarOrdem():
 			ordem.append(player._nome)
 		ehUltimo = self._jogadores[jogador].ehUltimo() #!! AGORA VAI SER SEMPRE A MESMA ORDEM FODA-SE
+		
 		if ehUltimo:
 			print("SOU O ÚLTIMO")
-			cartaForte = self.comparaMonte()
-			pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
+			pontuaRodada = self.vencedorRodada(self._monte, self._topo)
 			#!! TODO: acrescentar vetor registroRodadas
 			qualrodada= self.verificaRodada()
-			self.registrarRodada(qualrodada, pontuaRodada)
+			self.registrarRodada(qualrodada, pontuaRodada) #!!
+			if pontuaRodada == 0:
+				vencedor = "Time azul vence a rodada"
+			if pontuaRodada == 1:
+				vencedor = "Time vermelho vence a rodada"
+			self._PlayerInterface.Notificar(vencedor)
 			print(self._registroRodada)
 			encerrar = True
 			self.registrarStatusRodada(False)
@@ -232,6 +237,7 @@ class Mesa():
 	def vencedorRodada(self, aMonte, aCartaForte):
 		print("QUEM VENCEU A RODADA???")
 		print(aMonte)
+		print(self._topo)
 		print(aCartaForte._valor)
 		print(aCartaForte._naipe)
 		posicao_vencedor = aMonte.index([aCartaForte._valor,aCartaForte._naipe])
@@ -438,7 +444,7 @@ class Mesa():
 						qualRodada = None # apenas pra nao acusar erro
 						self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
 					
-					self._PlayerInterface.send_move({'atualizacao_placar': [self._times[0]._pontuacao,self._times[1]._pontuacao]})
+					
 
 				
 				else:
@@ -455,6 +461,7 @@ class Mesa():
 				pass
 
 			if 'atualizacao_placar' in aJogada.payload:
+				print("ahahahahahaha")
 				print(aJogada['atualizacao_placar'])
 				self._table._times[0]._pontuacao= aJogada.payload['atualizacao_placar'][0]
 				self._table._times[1]._pontuacao = aJogada.payload['atualizacao_placar'][1]

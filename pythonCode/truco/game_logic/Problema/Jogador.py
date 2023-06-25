@@ -62,7 +62,7 @@ class Jogador():
 				proximo = self._mesa.PassarTurno(self)
 				#self._mesa._monte.append(carta)
 				if encerraRodada:
-					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'vencedor_rodada': self._mesa._registroRodada[-1]}
+					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'vencedor_rodada': self._mesa._registroRodada[-1],}
 				else:
 					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
 				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)

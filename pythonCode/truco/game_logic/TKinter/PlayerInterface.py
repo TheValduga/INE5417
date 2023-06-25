@@ -334,6 +334,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.logo_label.grid(row=0, column=1)
 		self.logo_label = Label(self.mesa_frame, bd = 0, image=self._topo._imagem) # MONTE
 		self.logo_label.grid(row=0, column=2)
+		return self._topo
 
 	def AtualizarInterface(self):
 		
