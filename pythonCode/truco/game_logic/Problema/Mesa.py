@@ -87,19 +87,24 @@ class Mesa():
 
 	def encerramentoRodada(self, jogador):
 		#!! alterar parametro nos diagramas
+		print("AAAAAAAAAAAAAAAAAAAAAAA ENTREI NESSA FUNÇÃO DE MERDA")
 		encerrar = False
 		cartaForte = self.comparaMonte()
 		self.definirTopo(cartaForte)
 		self._PlayerInterface.atualizarTopo(cartaForte)
-		ordem = self.pegarOrdem()
-		ehUltimo = self._jogadores[jogador].ehUltimo(ordem)
-		#if ehUltimo:
-			#pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
+		ordem = []
+		for player in self.pegarOrdem():
+			ordem.append(player._nome)
+		ehUltimo = self._jogadores[jogador].ehUltimo() #!! AGORA VAI SER SEMPRE A MESMA ORDEM FODA-SE
+		if ehUltimo:
+			pontuaRodada = self.vencedorRodada(self._monte, cartaForte)
 			#!! TODO: acrescentar vetor registroRodadas
-			#qualrodada= self.verificaRodada()
-			#self.registrarRodada(qualrodada, pontuaRodada)
-			#encerrar = True
-			#self.registrarStatusRodada(False)
+			qualrodada= self.verificaRodada()
+			self.registrarRodada(qualrodada, pontuaRodada)
+			encerrar = True
+			self.registrarStatusRodada(False)
+			print("SOU O ÚLTIMO")
+		
 		return encerrar
 
 	def encerramentoMao(self):
@@ -191,7 +196,7 @@ class Mesa():
 		naipes = ["paus","copa","espada","ouro"]
 		seq = [4,5,6,7,'J','Q','K',1,2,3]
 		cartaForte = Carta(4, 'ouro') #!! teste isso né?
-		cartas_monte = [item for sublist in self._monte for item in sublist]
+		cartas_monte = self._monte
 		for carta in cartas_monte:
 			carta_temp = Carta(carta[0],carta[1])
 			valorCarta = seq.index(carta_temp._valor)
@@ -223,10 +228,10 @@ class Mesa():
 		return self._ordemRodada
 
 	def vencedorRodada(self, aMonte, aCartaForte):
-		"""@ParamType aMonte Problema.Carta*
-		@ParamType aCartaForte int
-		@ReturnType int"""
-		pass
+		print(aMonte)
+		posicao_vencedor = aMonte.index([aCartaForte._valor,aCartaForte._naipe])
+		time_vencedor = posicao_vencedor % 2
+		return time_vencedor
 
 	def verificaRodada(self, *aRegistroRodadas):
 		for rodada in aRegistroRodadas:
@@ -244,7 +249,6 @@ class Mesa():
 				return 3
 
 	def registrarRodada(self, aQualRodada, aVencedorRodada):
-		self._registroRodada = aQualRodada
 		self._registroRodada.append(aVencedorRodada)
 
 	def trucoRespondido(self):
@@ -260,8 +264,7 @@ class Mesa():
 		pass
 
 	def adicionarPontuacaoTime(self, aTime, aPontos):
-		"""@ParamType aTime Problema.Time
-		@ParamType aPontos int"""
+		self._times[aTime] = self._times[aTime] + aPontos
 		pass
 
 	def aumentarValorMao(self):
@@ -273,9 +276,7 @@ class Mesa():
 
 	def IniciarPartida(self, jogador_local): #!!
 		#self._jogadores = jogadores
-		print("INICIANDO PARTIDA")
 		self.DefinirTimes()
-		print(jogador_local._position)
 		self.EscolherDealer(jogador_local) #!! adicionar aos diagramas
 		self._times[0].ZerarPlacar()
 		self._times[1].ZerarPlacar()
@@ -297,7 +298,6 @@ class Mesa():
 			print(jogador_local._position)
 			if jogador_local._position == 0:
 				dealer = jogador_local.DefinirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
-				print("Eu sou o jogador 0 e decidi que o seguinte jogador é o dealer: " + jogador_local._nome) 
 
 		
 
@@ -322,7 +322,6 @@ class Mesa():
 
 		i = 0 
 		for jogador in self._jogadores:
-			print("CARTAS PARA JOGADOR")
 			carta1 = self._baralho._cartas[i]
 			i = i+1
 			carta2 = self._baralho._cartas[i]
@@ -331,15 +330,15 @@ class Mesa():
 			i = i+1
 			jogador._mao = [carta1, carta2, carta3]
 		
-		print(i)
 
 	def novaRodada(self):
 		pass
+	
 	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
 		carta = jogador._mao[cardIndex]
 		jogador._mao[cardIndex] = None
 		carta = [carta._valor,carta._naipe]
-		self._monte[aTime].append(carta)
+		self._monte.append(carta) #!! A estrutura de dado pra dividir o monte em 2 é uma bosta. Agora que a ordem é sempre a mesma foda-se
 		self._PlayerInterface.localPlayer._mao[cardIndex] = None
 		return carta
 
@@ -400,8 +399,17 @@ class Mesa():
 			elif aJogada.payload['tipo'] == 'rodada':
 				pass
 		
-			elif aJogada.payload['tipo'] == 'carta':
-				if aJogada.payload['rodadaEncerrada']:
+			elif aJogada.payload['tipo'] == 'carta' :
+
+				self._monte.append(aJogada.payload['carta'])
+				print("AAAAAAAAAAA")
+				print(self._monte)
+				print("AAAAAAAAAAAAAAA")
+				carta_temp = Carta(aJogada.payload['carta'][0], aJogada.payload['carta'][1])
+				self._PlayerInterface.atualizarTopo(carta_temp)
+				
+				if aJogada.payload['rodadaEncerrada'] == True:
+					vence = aJogada.payload['vencedor_rodada']
 					if vence == 0:
 						printar = 'azul'
 					else:
@@ -412,7 +420,6 @@ class Mesa():
 						self.adicionarPontuacaoTime(vence, self._valorMao) # tem q receber o paratro do time q vence a rodada por pyng 
 						if aJogada.payload['jogoEncerrado']:
 							self.registrarVencedor(vence) #  TODO time vencedor deve chegar por pyng
-							
 							self._PlayerInterface.Notificar(f'Time {printar} vence o jogo')
 						else:
 						
@@ -422,19 +429,28 @@ class Mesa():
 						self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
 						qualRodada = None # apenas pra nao acusar erro
 						self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
+					
+					self._PlayerInterface.send_move({'atualizacao_placar': [self._times[0]._pontuacao,self._times[1]._pontuacao]})
+
+				
 				else:
-					self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}')
-					self._monte.append(aJogada.payload['carta'])
-					print(self._monte)
-					if self._PlayerInterface.localPlayer._nome == aJogada.payload['proximo']:
+					if aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
 						
+						self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
 						self._PlayerInterface.AtualizarInterface()
-						
+							
 						self._PlayerInterface.localPlayer._seuTurno = True
 						print("MEU TURNO AEEE")
+				
 			
 			elif aJogada.payload['tipo'] == 'truco':
 				pass
+
+			if 'atualizacao_placar' in aJogada.payload:
+				print(aJogada['atualizacao_placar'])
+				self._table._times[0]._pontuacao= aJogada.payload['atualizacao_placar'][0]
+				self._table._times[1]._pontuacao = aJogada.payload['atualizacao_placar'][1]
+				self._PlayerInterface.AtualizarInterface()
 
 	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []
@@ -457,9 +473,9 @@ class Mesa():
 		"""@AttributeType boolean"""
 		self._truco = False
 		"""@AttributeType boolean"""
-		self._monte = [[],[]]
+		self._monte = []
 		"""@AttributeType Problema.Carta*"""
-		self._registroRodada = list()
+		self._registroRodada = []
 		"""@AttributeType int*"""
 		self._ordemRodada = []
 		"""@AttributeType Problema.Jogador*"""

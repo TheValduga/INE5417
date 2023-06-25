@@ -60,11 +60,12 @@ class Jogador():
 						encerraPartida = self._mesa.encerramentoPartida()
 				self._mesa._PlayerInterface.AtualizarInterface()
 				proximo = self._mesa.PassarTurno(self)
-				self._mesa._monte.append(carta)
-				print(carta)
-				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
+				#self._mesa._monte.append(carta)
+				if encerraRodada:
+					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'vencedor_rodada': self._mesa._registroRodada[-1]}
+				else:
+					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
 				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
-				print(novoEstado)
 			else:
 				self._mesa._PlayerInterface.Notificar('Truco em andamento')
 		else:
@@ -82,10 +83,10 @@ class Jogador():
 		self._seuTurno = False
 		return ((self._position + 1) % 4)
 
-	def ehUltimo(self, ordem):
+	def ehUltimo(self):
 		"""@ReturnType boolean"""
 		"""@ParamType ordem Problema.Jogador[]"""
-		return self == ordem[-1]
+		return self._position == 3
 
 
 	def respondeTruco(self):

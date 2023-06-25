@@ -25,6 +25,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
 		self.localPlayer.RegistrarNome(nome)
+		self._topo = Carta(4,'paus')
 
 	 #----------------------- Pynetgames ----------------------------------->
 		self.add_listener()
@@ -51,6 +52,8 @@ class PlayerInterface(PyNetgamesServerListener):
 		self._botao_truco = None
 		"""@AttributeType TKinter.Button"""
 		self._unnamed_PhotoImage_ = None
+
+		
 		"""@AttributeType TKinter.PhotoImage
 		# @AssociationType TKinter.PhotoImage
 		# @AssociationKind Aggregation"""
@@ -324,7 +327,9 @@ class PlayerInterface(PyNetgamesServerListener):
 		pass
 	
 	def atualizarTopo(self, carta):
-		self._topo = carta #!! self._topo é novo
+		valores = [4,5,6,7,'J','Q','K',1,2,3]
+		if valores.index(carta._valor) > valores.index(self._topo._valor):
+			self._topo = carta #!! self._topo é novo
 		self._topo.get_foto_carta()
 		self.logo_label.grid(row=0, column=1)
 		self.logo_label = Label(self.mesa_frame, bd = 0, image=self._topo._imagem) # MONTE
@@ -507,6 +512,7 @@ class PlayerInterface(PyNetgamesServerListener):
 			self.inicializar_mesa(move) #!! Adicionar ao diagrama
 		else:
 			self._table.receberJogada(move)
+		
 							
 	#!! só para teste. Talvez vai pra interface, foda-se
 	def send_move(self,move):
