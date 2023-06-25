@@ -309,7 +309,7 @@ class Mesa():
 			print(jogador_local._position)
 			if jogador_local._position == 0:
 				dealer = jogador_local.DefinirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
-
+				return dealer
 		
 
 
@@ -319,7 +319,7 @@ class Mesa():
 
 
 	def novaMao(self):
-		Mao_registro =self.registrarMao()
+		Mao_registro = self.registrarMao()
 		Rodada = self.registrarStatusRodada(True)
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
 		self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
@@ -343,7 +343,12 @@ class Mesa():
 		
 
 	def novaRodada(self):
-		pass
+		rodadaAndamento = self.registrarStatusRodada(True)
+		self._ordemRodada = self.definirOrdem()
+		novoEstado = {'tipo': 'rodada', 'rodadaAndamento': rodadaAndamento, 'ordemRodada': self._ordemRodada}
+		self._PlayerInterface.enviarAtualizaçãoPartida(novoEstado)
+		self._PlayerInterface.AtualizarInterface()
+
 	
 	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
 		carta = jogador._mao[cardIndex]
