@@ -8,25 +8,25 @@ class Time(object):
 		@ReturnType Problema.Time"""
 		pass
 
-	def pegarPontuacao(self, aTime):
+	def pegarPontuacao(self, time):
 		"""@ParamType aTime Problema.Time
 		@ReturnType int"""
-		pass
+		return time._pontuacao
 
 	def verificarRodadasTime(self):
 		"""@ReturnType int"""
 		pass
 
-	def registraMaoEncerrada(self, aEncerrada):
+	def registraMaoEncerrada(self, encerrada):
 		"""@ParamType aEncerrada boolean"""
-		pass
+		self._unnamed_Mesa_.registraMaoEncerrada(encerrada)
 
 	def ZerarPlacar(self):
 		self._pontuacao = 0
 
-	def setarPontuacao(self, aPontos):
+	def setarPontuacao(self, pontos):
 		"""@ParamType aPontos int"""
-		pass
+		self._pontuacao = pontos
 
 	def __init__(self, id):
 		self._identificacao = id

@@ -24,10 +24,10 @@ class Mesa():
 		return self._rodadaAndamento
 		
 
-	def registraPontoMao(self, aTime, aPontuacao):
+	def registraPontoMao(self, time, pontuacao):
 		"""@ParamType aTime Problema.Time
 		@ParamType aPontuacao int"""
-		pass
+		self._times[time].setarPontuacao(pontuacao)
 
 	def definirOrdem(self): #!! serve pra nada mais
 		"""@ReturnType Problema.Jogador[]"""
@@ -61,33 +61,45 @@ class Mesa():
 	def definirPartidaAndamento(self, aBoolean):
 		self._partidaAndamento = aBoolean
 
-	def registrarVencedor(self, aTime):
+	def registrarVencedor(self, time):
 		"""@ParamType aTime Problema.Time"""
-		pass
+		self._vencedor = time
 
 	def verificarRegistroRodadas(self):
 		"""@ReturnType list"""
 		return self._registroRodada
 
-	def verificarVencedorRodada(self, aRodada):
+	def verificarVencedorRodada(self, rodada):
 		"""@ParamType aRodada int
 		@ReturnType Problema.Time"""
-		pass
+		if self._registroRodada[rodada] == 1:
+			return self._times[0]
+		elif self._registroRodada[rodada] == 2:
+			return self._times[1]
+		else:
+			print("Erro em registro de rodadas")
+			return 0
 
 	def verificarEmpate(self):
 		"""@ReturnType boolean"""
-		pass
+		for rodada in self._registroRodada:
+			if rodada == 0:
+				return True
 
 	def verificarRodadasEmpatadas(self):
 		"""@ReturnType int*"""
-		pass
+		rodadasEmpatadas = []
+		for rodada in self._registroRodada:
+			if rodada == 0:
+				rodadasEmpatadas.append(rodada)
+		return rodadasEmpatadas
 
 	def nenhumTimePontua(self):
 		pass
 
 	def encerramentoRodada(self, jogador):
 		#!! alterar parametro nos diagramas
-		encerrar = False
+		encerrar = False<<<<<<< Maria
 		cartaForte = self.comparaMonte()
 		self.definirTopo(cartaForte)
 		self._topo = self._PlayerInterface.atualizarTopo(cartaForte)
@@ -158,7 +170,7 @@ class Mesa():
 		"""@ReturnType carta"""
 		naipes = ["paus","copa","espada","ouro"]
 		seq = [4,5,6,7,'J','Q','K',1,2,3]
-		cartaForte = Carta(4, 'ouro') #!! teste isso né?
+		cartaForte = Carta(4, 'ouro')
 		cartas_monte = self._monte
 		for carta in cartas_monte:
 			carta_temp = Carta(carta[0],carta[1])
@@ -182,10 +194,10 @@ class Mesa():
 
 
 
-	def definirTopo(self, aCartaForte):
+	def definirTopo(self, cartaForte):
 		"""@ParamType aCartaForte int
 		@ReturnType int"""
-		pass
+		return self._monte.index(cartaForte)
 
 	def pegarOrdem(self):
 		return self._ordemRodada
@@ -236,9 +248,8 @@ class Mesa():
 	def adicionarPontuacaoTime(self, aTime, aPontos):
 		self._times[aTime]._pontuacao = self._times[aTime]._pontuacao + aPontos
 
-
 	def aumentarValorMao(self):
-		pass
+		self._valorMao += 3
 
 	def clicarBotao(self, aJogador):
 		"""@ParamType aJogador Problema.Jogador"""
@@ -268,17 +279,17 @@ class Mesa():
 			print(jogador_local._position)
 			if jogador_local._position == 0:
 				dealer = jogador_local.DefinirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
-
+				return dealer
 		
 
 
 	def pegarPlacar(self):
 		"""@ReturnType int*"""
-		pass
+		return self._times[0].pegarPontuacao(self._times[0]), self._times[1].pegarPontuacao(self._times[1])
 
 
 	def novaMao(self):
-		Mao_registro =self.registrarMao()
+		Mao_registro = self.registrarMao()
 		Rodada = self.registrarStatusRodada(True)
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
 		self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
@@ -340,7 +351,7 @@ class Mesa():
 		self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
 		self._PlayerInterface.AtualizarInterface()
 		self._PlayerInterface.localPlayer._seuTurno = True
-
+    
 	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
 		carta = jogador._mao[cardIndex]
 		jogador._mao[cardIndex] = None
@@ -402,7 +413,7 @@ class Mesa():
 				else:
 					turno = (self._PlayerInterface.localPlayer._position + 1)
 					self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
-     
+
 			elif aJogada.payload['tipo'] == 'rodada':
 				self._PlayerInterface.Notificar("Nova Rodada Iniciada")
 				self.registrarStatusRodada(True)
@@ -451,20 +462,69 @@ class Mesa():
 						if self._PlayerInterface.localPlayer._dealer:
 							self.novaRodada()
 					
+
 				else:
 					if aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
 						
 						self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
 						
-							
 						self._PlayerInterface.localPlayer._seuTurno = True
 						print("MEU TURNO AEEE")
-				
-			
+
+
 			elif aJogada.payload['tipo'] == 'truco':
-				pass
-	
-		self._PlayerInterface.AtualizarInterface()
+				if aJogada.payload['time'] == self._times[0]:
+					# pedido aliado
+					if aJogada.payload['respondido']:
+						match aJogada.payload['resposta']:
+							case 'correr':
+								self.adicionarPontuacaoTime(self._times[1], 1)
+								self._times[0].setarPontuacao(1)
+								self.registrarMao()
+								self.encerramentoPartida()
+							case 'aceitar':
+								self.aumentarValorMao()
+								self.registrarTruco()
+								self._PlayerInterface.Notificar(f"Truco respondido com {aJogada.payload['resposta']}")
+								if aJogada.payload['jogadorResponde'] == self._PlayerInterface.localPlayer:
+									estado = ""  # todo: verificar informações do estado
+									self._PlayerInterface.enviarAtualizacaoPartida(estado)
+									self._PlayerInterface.send_move(
+										{'tipo': 'truco', 'time': self._times[1], 'respondido': True,
+										 'resposta': aJogada.payload['resposta'],
+										 'jogadorResponde': self._PlayerInterface.localPlayer})
+							case _:
+								self._PlayerInterface.Notificar("Resposta inválida")
+					else:
+						self._PlayerInterface.Notificar("Aguardando resposta ao pedido de truco aliado")
+				else:
+					if aJogada.payload['jogadorResponde'] == self._PlayerInterface.localPlayer:
+						self.registrarRespostaTruco(aJogada.payload['resposta'])
+					elif aJogada.payload['respondido']:
+						match aJogada.payload['resposta']:
+							case 'correr':
+								self.adicionarPontuacaoTime(self._times[0], 1)
+								self._times[0].setarPontuacao(1)
+								self.registrarMao()
+								self.encerramentoPartida()
+							case 'aceitar':
+								self.aumentarValorMao()
+								self.registrarTruco()
+								self._PlayerInterface.Notificar(f"Truco respondido com {aJogada.payload['resposta']}")
+								estado = ""
+								self._PlayerInterface.enviarAtualizacaoPartida(estado)
+								self._PlayerInterface.send_move(
+									{'tipo': 'truco', 'time': self._times[1], 'respondido': True,
+									 'resposta': aJogada.payload['resposta'],
+									 'jogadorResponde': self._PlayerInterface.localPlayer})
+							case _:
+								self._PlayerInterface.Notificar("Resposta inválida")
+
+			if 'atualizacao_placar' in aJogada.payload:
+				print(aJogada['atualizacao_placar'])
+				self._table._times[0]._pontuacao= aJogada.payload['atualizacao_placar'][0]
+				self._table._times[1]._pontuacao = aJogada.payload['atualizacao_placar'][1]
+				self._PlayerInterface.AtualizarInterface()
 
 	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []
