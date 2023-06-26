@@ -1,7 +1,12 @@
 ***Truco 0.9***
 
 - Versão inicial:
-    
+  
+    __Requisitos implementados:__
+  
+   __Requisitos a Implementar:__
+
+  
 Suporta execução distribuída
 
 Interface gráfica em versão inicial
