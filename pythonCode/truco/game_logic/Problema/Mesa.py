@@ -162,23 +162,22 @@ class Mesa():
 		cartaForte = Carta(4, 'ouro') #!! teste isso né?
 		cartas_monte = self._monte
 		for carta in cartas_monte:
+			print(carta)
 			carta_temp = Carta(carta[0],carta[1])
 			valorCarta = seq.index(carta_temp._valor)
 			valorCartaForte = seq.index(cartaForte._valor)
 			naipeCarta = naipes.index(carta_temp._naipe)
 			naipeCartaForte = naipes.index(cartaForte._naipe)
 			if valorCarta < valorCartaForte:
-				return cartaForte
+				pass
 			elif valorCarta == valorCartaForte:
 				if naipeCarta > naipeCartaForte:
-					cartaForte = carta
-					return cartaForte
-				else:
-					return cartaForte
+					cartaForte = carta_temp
 			else:
 				# valorCarta > valorCartaForte
 				cartaForte = carta_temp
-				return cartaForte
+				
+		return cartaForte
 
 
 
@@ -398,17 +397,30 @@ class Mesa():
 				self.registrarStatusRodada(True)
 
 		
-			elif aJogada.payload['tipo'] == 'carta' :
-
-				self._monte.append(aJogada.payload['carta'])
-				
+			elif aJogada.payload['tipo'] == 'carta' and aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
 				
 
+				temp_monte = aJogada.payload['monte']
+				if len(temp_monte) > 4:
+					new_monte = []
+					for carta in temp_monte:
+						if carta in self._monte:
+							pass
+						else:
+							new_monte.append(carta)
+					self._monte = new_monte
+				else:
+					for carta in temp_monte:
+						self._monte.append(carta)
+				
+				#self._monte.append(aJogada.payload['carta'])
+				
 				print(self._monte)
 
 				cartaForte = self.comparaMonte()
 				self.definirTopo(cartaForte)
 				self._topo = cartaForte
+				print(cartaForte._valor)
 				self._PlayerInterface.AtualizarInterface()
 
 				if aJogada.payload['rodadaEncerrada'] == True:
@@ -426,6 +438,7 @@ class Mesa():
 						self._valorMao = 1
 						self._registroRodada = []
 						self._monte = []
+						self._topo = Carta(4,"ouro")
 						self._PlayerInterface._topo = Carta(4,"ouro")
 						self._PlayerInterface.AtualizarInterface()
 						
@@ -446,6 +459,7 @@ class Mesa():
 						qualRodada = None # apenas pra nao acusar erro
 						self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
 						self._monte = []
+						self._topo = Carta(4,"ouro")
 						self._PlayerInterface._topo = Carta(4,"ouro")
 						self._PlayerInterface.AtualizarInterface()
 						if self._PlayerInterface.localPlayer._dealer:

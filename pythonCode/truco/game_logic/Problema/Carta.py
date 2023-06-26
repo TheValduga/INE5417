@@ -27,7 +27,6 @@ class Carta():
 	
 	def get_foto_carta(self): #!! além de adicionar nos diagramas, ver se escrevi o nome dos arquivos perfeitamente
 		nome_imagem = str(self._valor) + '_' + str(self._naipe) + ".png"
-		print(nome_imagem)
 		file=os.path.join(self.diretorio_imagens, nome_imagem)
 		imagem = ImageTk.PhotoImage(Image.open(file).resize((61,95)))
 		self._imagem = imagem #!! adicionar self._imagem aos diagramas

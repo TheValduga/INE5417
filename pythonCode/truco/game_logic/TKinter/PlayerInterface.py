@@ -25,7 +25,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
 		self.localPlayer.RegistrarNome(nome)
-		self._topo = Carta(4,'paus')
+		self._topo = Carta(4,'ouro')
 
 	 #----------------------- Pynetgames ----------------------------------->
 		self.add_listener()
