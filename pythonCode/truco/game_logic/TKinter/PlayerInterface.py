@@ -470,40 +470,12 @@ class PlayerInterface(PyNetgamesServerListener):
 						
 						self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
 						
-						self._table.novaMao()
 
 						self._table._Inicializada = True
 
 						if self.localPlayer._dealer:
 							self._table.novaMao()
-							print("Sou o Dealer. Hora da novaMao")
-							novas_maos = []
-							for jogador in self._table._jogadores:
-								nova_mao = []
-								for carta in jogador._mao:
-									valor = carta._valor
-									naipe = carta._naipe
-									nova_mao.append([valor,naipe])
-								novas_maos.append(nova_mao)
-							print('\n\n')
-							print(novas_maos)
-							print('\n\n')
-
-							self._table._Inicializada = True
-							#turno = (self.localPlayer._position + 1) % 4 , 'turno' : turno
-							temp_mao = novas_maos[self.localPlayer._position]
-
-							carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
-							carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
-							carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
 							
-							self.localPlayer._mao.append(carta1)
-							self.localPlayer._mao.append(carta2)
-							self.localPlayer._mao.append(carta3)
-
-							self.AtualizarInterface()
-
-							self.send_move({'tipo': 'NovaMao', 'nova_mao': novas_maos, 'turno_mao':1, 'manilha': self._table._manilha._valor})
 							
 			#turno = (self.localPlayer._position + 1) % 4 , 'turno':turno
 								

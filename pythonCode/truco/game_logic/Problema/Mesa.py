@@ -29,7 +29,7 @@ class Mesa():
 		@ParamType aPontuacao int"""
 		pass
 
-	def definirOrdem(self):
+	def definirOrdem(self): #!! serve pra nada mais
 		"""@ReturnType Problema.Jogador[]"""
 		if self._ordemRodada == []:
 			nova_ordem = self._jogadores
@@ -114,88 +114,44 @@ class Mesa():
 		
 		return encerrar
 
-	def encerramentoMao(self):
+	def encerramentoMao(self): #!! comicamente diferente dos diagramas
 		rodadas = self.verificarRegistroRodadas()
+		maoEncerrada = False
+		vencedor = None
 		match len(rodadas):
 			case 1:
 				#  Apenas uma rodada até o momento.
-				self._times[1].registraMaoEncerrada(False)
-				self._times[0].registraMaoEncerrada(False)
+				pass
 			case 2:
 				#  Duas rodadas até o momento.
-				empate = self.verificarEmpate()
-				if empate:
-					# !! TODO: implementar verificarEmpate
-					# !! TODO: implementar verificarRodadasEmpatadas
-					rodadasEmpatadas = self.verificarRodadasEmpatadas()
-					if len(rodadasEmpatadas) > 2:
-						self._times[1].registraMaoEncerrada(False)
-						self._times[0].registraMaoEncerrada(False)
-					elif len(rodadasEmpatadas) == 1:
-						# !! TODO: implementar verificarVencedorRodada
-						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
-						if time == self._times[0]:
-							self.registraPontoMao(self._times[0], self._valorMao)
-							self._times[0].registraMaoEncerrada(True)
-						else:
-							self.registraPontoMao(self._times[1], self._valorMao)
-							self._times[1].registraMaoEncerrada(True)
-					else:
-						# rodadasempatadas == 2
-						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
-						if time == self._times[0]:
-							self.registraPontoMao(self._times[0], self._valorMao)
-							self._times[0].registraMaoEncerrada(True)
-						else:
-							self.registraPontoMao(self._times[1], self._valorMao)
-							self._times[1].registraMaoEncerrada(True)
-				else:
-					#!! TODO: verificar identificação do time local ou remoto
-					rodadasTimeLocal = self._times[0].verificarRodadasTime()
-					rodadasTimeRemoto = self._times[1].verificarRodadasTime()
-					if rodadasTimeLocal == 2:
-						self.registraPontoMao(self._times[0], self._valorMao)
-						self._times[0].registraMaoEncerrada(True)
-					elif rodadasTimeRemoto == 2:
-						self.registraPontoMao(self._times[1], self._valorMao)
-						self._times[1].registraMaoEncerrada(True)
-					else:
-						# rodadasTimeLocal == 1 and rodadasTimeRemoto == 1
-						self._times[1].registraMaoEncerrada(False)
-						self._times[0].registraMaoEncerrada(False)
+				if rodadas[0] == rodadas[1]:
+					maoEncerrada = True
+					vencedor = rodadas[0]
 			case 3:
 				#  Três rodadas até o momento.
-				empate = self.verificarEmpate()
-				if empate:
-					rodadasEmpatadas = self.verificarRodadasEmpatadas()
-					if len(rodadasEmpatadas) >= 3:
-						self.nenhumTimePontua()
-					elif len(rodadasEmpatadas) == 2:
-						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
-						if time == self._times[0]:
-							self.registraPontoMao(self._times[0], self._valorMao)
-							self._times[0].registraMaoEncerrada(True)
-						else:
-							self.registraPontoMao(self._times[1], self._valorMao)
-							self._times[1].registraMaoEncerrada(True)
-					else:
-						# rodadasempatadas == 1
-						time = self.verificarVencedorRodada(rodadasEmpatadas[0])
-						if time == self._times[0]:
-							self.registraPontoMao(self._times[0], self._valorMao)
-							self._times[0].registraMaoEncerrada(True)
-						else:
-							self.registraPontoMao(self._times[1], self._valorMao)
-							self._times[1].registraMaoEncerrada(True)
-				else:
-					rodadasTimeLocal = self._times[0].verificarRodadasTime()
-					rodadasTimeRemoto = self._times[1].verificarRodadasTime()
-					if rodadasTimeLocal == 2:
-						self.registraPontoMao(self._times[0], self._valorMao)
-						self._times[0].registraMaoEncerrada(True)
-					if rodadasTimeRemoto == 2:
-						self.registraPontoMao(self._times[1], self._valorMao)
-						self._times[1].registraMaoEncerrada(True)
+				maoEncerrada = True
+				
+				for resultado in rodadas: 
+					temp = 0
+					for resultado1 in rodadas:
+						if resultado1 == resultado:
+							temp = temp +1
+							if temp == 2:
+								vencedor = resultado
+								break 
+		
+		if maoEncerrada:
+			self.adicionarPontuacaoTime(vencedor,self._valorMao)
+			self._valorMao = 1 
+			self.registrarMao()
+			if vencedor == 0:
+				printar = 'azul'
+			else:
+				printar = 'vermelho'
+			self._PlayerInterface.Notificar(f'Time {printar} vence a mao')
+		return [maoEncerrada, vencedor]
+
+
 
 
 	def comparaMonte(self):
@@ -278,8 +234,8 @@ class Mesa():
 		pass
 
 	def adicionarPontuacaoTime(self, aTime, aPontos):
-		self._times[aTime] = self._times[aTime] + aPontos
-		pass
+		self._times[aTime]._pontuacao = self._times[aTime]._pontuacao + aPontos
+
 
 	def aumentarValorMao(self):
 		pass
@@ -329,6 +285,34 @@ class Mesa():
 		self.distribuirCartas()
 		self._manilha = self._jogadores[0].definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
 		print(self._manilha._valor)
+		print("Sou o Dealer. Hora da novaMao")
+		novas_maos = []
+		for jogador in self._jogadores:
+			nova_mao = []
+			for carta in jogador._mao:
+				valor = carta._valor
+				naipe = carta._naipe
+				nova_mao.append([valor,naipe])
+			novas_maos.append(nova_mao)
+		print('\n\n')
+		print(novas_maos)
+		print('\n\n')
+
+		self._Inicializada = True
+		#turno = (self.localPlayer._position + 1) % 4 , 'turno' : turno
+		temp_mao = novas_maos[self._PlayerInterface.localPlayer._position]
+
+		carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
+		carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
+		carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
+		
+		self._PlayerInterface.localPlayer._mao.append(carta1)
+		self._PlayerInterface.localPlayer._mao.append(carta2)
+		self._PlayerInterface.localPlayer._mao.append(carta3)
+
+		self._PlayerInterface.AtualizarInterface()
+		novo_estado = {'tipo': 'NovaMao', 'nova_mao': novas_maos, 'turno_mao':1, 'manilha': self._manilha._valor}
+		self._PlayerInterface.enviarAtualizacaoPartida(novo_estado)
 
 
 
@@ -346,7 +330,13 @@ class Mesa():
 		
 
 	def novaRodada(self):
-		pass
+		self._PlayerInterface.Notificar(str("Nova Rodada Iniciada\n Turno de " + self._PlayerInterface.localPlayer._nome))
+		rodadaAndamento = self.registrarStatusRodada(True)
+		#self._ordemRodada = self.definirOrdem() #!! remover da modelagem
+		novoEstado = {'tipo':'rodada', 'rodadaAndamento':rodadaAndamento}
+		self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
+		self._PlayerInterface.AtualizarInterface()
+		self._PlayerInterface.localPlayer._seuTurno = True
 
 	def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
 		carta = jogador._mao[cardIndex]
@@ -411,7 +401,9 @@ class Mesa():
 					self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
      
 			elif aJogada.payload['tipo'] == 'rodada':
-				pass
+				self._PlayerInterface.Notificar("Nova Rodada Iniciada")
+				self.registrarStatusRodada(True)
+
 		
 			elif aJogada.payload['tipo'] == 'carta' :
 
@@ -424,34 +416,43 @@ class Mesa():
 				
 				if aJogada.payload['rodadaEncerrada'] == True:
 					vence = aJogada.payload['vencedor_rodada']
+
 					if vence == 0:
 						printar = 'azul'
 					else:
 						printar = 'vermelho'
+
 					if aJogada.payload['maoEncerrada']:
 						self.registrarMao()
-						vence = None # só pra nao acusar erro
-						self.adicionarPontuacaoTime(vence, self._valorMao) # tem q receber o paratro do time q vence a rodada por pyng 
+						vence = aJogada.payload['vencedor_mao']
+						self.adicionarPontuacaoTime(vence, self._valorMao)
+						self._valorMao = 1
+						
+
 						if aJogada.payload['jogoEncerrado']:
 							self.registrarVencedor(vence) #  TODO time vencedor deve chegar por pyng
 							self._PlayerInterface.Notificar(f'Time {printar} vence o jogo')
+
 						else:
-						
-							self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
+							self._PlayerInterface.Notificar(f'Time {printar} vence a mao')
+							if self._PlayerInterface.localPlayer._dealer:
+								self.novaMao()
+
 					else:
 						self.registrarStatusRodada(False)
 						self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
 						qualRodada = None # apenas pra nao acusar erro
 						self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
+						self._monte = []
+						self._PlayerInterface._topo = Carta(4,"")
+						if self._PlayerInterface.localPlayer._dealer:
+							self.novaRodada()
 					
-					
-
-				
 				else:
 					if aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
 						
 						self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
-						self._PlayerInterface.AtualizarInterface()
+						
 							
 						self._PlayerInterface.localPlayer._seuTurno = True
 						print("MEU TURNO AEEE")
@@ -459,13 +460,8 @@ class Mesa():
 			
 			elif aJogada.payload['tipo'] == 'truco':
 				pass
-
-			if 'atualizacao_placar' in aJogada.payload:
-				print("ahahahahahaha")
-				print(aJogada['atualizacao_placar'])
-				self._table._times[0]._pontuacao= aJogada.payload['atualizacao_placar'][0]
-				self._table._times[1]._pontuacao = aJogada.payload['atualizacao_placar'][1]
-				self._PlayerInterface.AtualizarInterface()
+	
+		self._PlayerInterface.AtualizarInterface()
 
 	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []

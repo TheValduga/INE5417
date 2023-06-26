@@ -54,17 +54,22 @@ class Jogador():
 				encerraRodada = self._mesa.encerramentoRodada(self._position)
 				if not encerraRodada:
 					proximo = self._mesa.PassarTurno(self)
+					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': False,'jogoEncerrado': False, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
 				else:
 					encerraMao = self._mesa.encerramentoMao()
-					if encerraMao:
-						encerraPartida = self._mesa.encerramentoPartida()
+					if encerraMao[0]: #!! encerraMao é um array agora
+						#encerraPartida = self._mesa.encerramentoPartida()
+						pass
+					
+					proximo = self._mesa.PassarTurno(self)
+					#self._mesa._monte.append(carta)
+					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao[0],'vencedor_mao':encerraMao[1], 'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'vencedor_rodada': self._mesa._registroRodada[-1],}
+					self._mesa.registrarStatusRodada(False)
+					self._mesa._PlayerInterface.Notificar("Nova Rodada Iniciada")
+					self._monte = []
+					self._mesa._PlayerInterface._topo = Carta(4,'')
+					
 				self._mesa._PlayerInterface.AtualizarInterface()
-				proximo = self._mesa.PassarTurno(self)
-				#self._mesa._monte.append(carta)
-				if encerraRodada:
-					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'vencedor_rodada': self._mesa._registroRodada[-1],}
-				else:
-					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
 				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
 			else:
 				self._mesa._PlayerInterface.Notificar('Truco em andamento')
