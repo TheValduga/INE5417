@@ -9,7 +9,7 @@ class Jogador():
 
 	def verificarTurno(self):
 		"""@ReturnType boolean"""
-		pass
+		return self._seuTurno
 
 	def clicarBotao(self):
 		pass
@@ -33,13 +33,12 @@ class Jogador():
 
 		manilha = sequencia[(sequencia.index(vira)+1) % 10]
 
-		print("MANILHA:" + str(manilha))
 
 		carta_retorno = Carta(manilha,'ouro')
 
 		return carta_retorno
 
-	def selecionarCarta(self, aCarta):
+	def selecionarCarta(self, cartaIndex: int): # !! alterar nome e tipo de do argumento para int
 		"""@ParamType aCarta Problema.Carta"""
 		turno = self.verificarTurno()
 		encerraMao = False
@@ -49,30 +48,32 @@ class Jogador():
 		if turno:
 			truco = self._mesa.VerificarTrucoAndamento()
 			if not truco:
-<<<<<<< Updated upstream
-				time = self._time.PegarTime()
-				self._mesa.ColocarNaMesa(time)
-				encerraRodada = self._mesa.encerramentoRodada()
-=======
 				time = self._position % 2
 				carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
 				encerraRodada = self._mesa.encerramentoRodada(self._position)
->>>>>>> Stashed changes
 				if not encerraRodada:
-					self._mesa.PassarTurno()
+					proximo = self._mesa.PassarTurno(self)
+					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': False,'jogoEncerrado': False, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
 				else:
 					encerraMao = self._mesa.encerramentoMao()
-					if encerraMao:
-						encerraPartida = self._mesa.encerramentoPartida()
+					if encerraMao[0]: #!! encerraMao é um array agora
+						#encerraPartida = self._mesa.encerramentoPartida()
+						
+						pass
+					
+					proximo = self._mesa.PassarTurno(self)
+					#self._mesa._monte.append(carta)
+					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao[0],'vencedor_mao':encerraMao[1], 'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'vencedor_rodada': self._mesa._registroRodada[-1],}
+					self._mesa.registrarStatusRodada(False)
+					self._mesa._PlayerInterface.Notificar("Nova Rodada Iniciada")
+					self._mesa._monte = []
+					self._mesa._PlayerInterface._topo = Carta(4,"ouro")
+					self._mesa._PlayerInterface.AtualizarInterface()
+					if encerraMao[0]:
+						self._mesa._registroRodada = []
+					
 				self._mesa._PlayerInterface.AtualizarInterface()
-<<<<<<< Updated upstream
-				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': aCarta}
-=======
-				proximo = self._mesa.PassarTurno(self)
-				novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao,'jogoEncerrado': encerraPartida, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo}
->>>>>>> Stashed changes
 				self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
-				print(novoEstado)
 			else:
 				self._mesa._PlayerInterface.Notificar('Truco em andamento')
 		else:
@@ -90,10 +91,11 @@ class Jogador():
 		self._seuTurno = False
 		return ((self._position + 1) % 4)
 
-	def ehUltimo(self, *aOrdem):
-		"""@ParamType aOrdem Problema.Jogador*
-		@ReturnType boolean"""
-		pass
+	def ehUltimo(self):
+		"""@ReturnType boolean"""
+		"""@ParamType ordem Problema.Jogador[]"""
+		return self._position == 3
+
 
 	def respondeTruco(self):
 		"""@ReturnType boolean"""
@@ -104,19 +106,18 @@ class Jogador():
 		self._nome = nome
 		pass
 
-	def DefinirDealer(self): #!! mudar diagrama de algoritmo
+	def DefinirDealer(self):
 		self._dealer = True
-		self._seuTurno = True # !! mais uma pequena alteração no diagrama de algoritmo
 		return True
 
 	def PegarTime(self):
 		"""@ReturnType int"""
-		pass
+		return self._time
 
-	def __init__(self, mesa): #!! não sei exatamente como se modelo o init, dar uma olhada no exemplo do Ricardo
+	def __init__(self, mesa): #!! não sei exatamente como se modelou o init, dar uma olhada no exemplo do Ricardo
 		self._nome = ''
 		"""@AttributeType string"""
-		self._seuTurno = None
+		self._seuTurno = False
 		"""@AttributeType boolean"""
 		self._mao = []
 		"""@AttributeType Problema.Carta*"""

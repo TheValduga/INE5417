@@ -25,6 +25,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
 		self.localPlayer.RegistrarNome(nome)
+		self._topo = Carta(4,'paus')
 
 	 #----------------------- Pynetgames ----------------------------------->
 		self.add_listener()
@@ -51,6 +52,8 @@ class PlayerInterface(PyNetgamesServerListener):
 		self._botao_truco = None
 		"""@AttributeType TKinter.Button"""
 		self._unnamed_PhotoImage_ = None
+
+		
 		"""@AttributeType TKinter.PhotoImage
 		# @AssociationType TKinter.PhotoImage
 		# @AssociationKind Aggregation"""
@@ -276,7 +279,6 @@ class PlayerInterface(PyNetgamesServerListener):
 
 	def atualizaTopo(self, aMonte_cartaForte_):
 		"""@ParamType aMonte_cartaForte_ Problema.Carta"""
-		
 		pass
 
 	def exibirCarta(self, aCarta):
@@ -300,7 +302,6 @@ class PlayerInterface(PyNetgamesServerListener):
 	def clicarCarta(self, index: int): #!! adicionar argumento ao projeto
 		"""@ReturnType Problema.Carta"""
 
-		print('AAAAUUUUUUUUUUUUUU')
 		self.localPlayer.selecionarCarta(index)
 
 		pass
@@ -324,10 +325,12 @@ class PlayerInterface(PyNetgamesServerListener):
 		self._match_id = match_id
 		pass
 	
-	def atualizarTopo(self, carta):
-		carta.get_foto_carta()
+	def atualizarTopo(self):
+
+		self._topo = self._table._topo
+		self._topo.get_foto_carta()
 		self.logo_label.grid(row=0, column=1)
-		self.logo_label = Label(self.mesa_frame, bd = 0, image=carta._imagem) # MONTE
+		self.logo_label = Label(self.mesa_frame, bd = 0, image=self._topo._imagem) # MONTE
 		self.logo_label.grid(row=0, column=2)
 
 	def AtualizarInterface(self):
@@ -337,7 +340,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		carta3 = self.localPlayer._mao[2]
 		manilha = self._table._manilha
 		
-		
+		self.atualizarTopo()
 		
 		
 		manilha.get_foto_carta()
@@ -388,7 +391,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.send_move(aNovoEstado)
 
 	def ClicarBotaoTruco(self):
-		pass
+		self._table.ClicarBotaoTruco(self.localPlayer)
 
 	def botaoResposta(self):
 		pass
@@ -424,9 +427,7 @@ class PlayerInterface(PyNetgamesServerListener):
 	
 	def pega_nomes_e_posicoes(self): #!! adicionar aos diagramas
 		if self.match_position == 0:
-			print("COMEÇO ORDEM")
 			jogadores = {"jogadores" : [(self.localPlayer._nome, self.match_position)],'turno_init':1}
-			print("ENVIANDO: " + str(jogadores))
 			self.send_move(jogadores)
 
 	
@@ -464,40 +465,12 @@ class PlayerInterface(PyNetgamesServerListener):
 						
 						self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
 						
-						self._table.novaMao()
 
 						self._table._Inicializada = True
 
 						if self.localPlayer._dealer:
 							self._table.novaMao()
-							print("Sou o Dealer. Hora da novaMao")
-							novas_maos = []
-							for jogador in self._table._jogadores:
-								nova_mao = []
-								for carta in jogador._mao:
-									valor = carta._valor
-									naipe = carta._naipe
-									nova_mao.append([valor,naipe])
-								novas_maos.append(nova_mao)
-							print('\n\n')
-							print(novas_maos)
-							print('\n\n')
-
-							self._table._Inicializada = True
-							#turno = (self.localPlayer._position + 1) % 4 , 'turno' : turno
-							temp_mao = novas_maos[self.localPlayer._position]
-
-							carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
-							carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
-							carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
 							
-							self.localPlayer._mao.append(carta1)
-							self.localPlayer._mao.append(carta2)
-							self.localPlayer._mao.append(carta3)
-
-							self.AtualizarInterface()
-
-							self.send_move({'tipo': 'NovaMao', 'nova_mao': novas_maos, 'turno_mao':1, 'manilha': self._table._manilha._valor})
 							
 			#turno = (self.localPlayer._position + 1) % 4 , 'turno':turno
 								
@@ -505,37 +478,10 @@ class PlayerInterface(PyNetgamesServerListener):
 	def receive_move(self, move):	# Pyng use case "receive move"
 		if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
 			self.inicializar_mesa(move) #!! Adicionar ao diagrama
-		elif 'tipo' in move.payload:
-			if move.payload['tipo'] == 'NovaMao' and move.payload['turno_mao'] == self.localPlayer._position:
-						print("pegando minha mão hehe")
-						temp_mao = move.payload['nova_mao'][(self.match_position)]
-						self.localPlayer._mao = []
-									
-						carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
-						carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
-						carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
-
-						self.localPlayer._mao.append(carta1)
-						self.localPlayer._mao.append(carta2)
-						self.localPlayer._mao.append(carta3)
-
-						temp_manilha = move.payload['manilha']
-						manilha = Carta(temp_manilha,'ouro')
-						self._table._manilha = manilha
-
-						self.AtualizarInterface()
-
-						if self.localPlayer._position == 3:
-							pass
-						else:
-							turno = (self.localPlayer._position + 1)
-							self.send_move({'tipo': 'NovaMao', 'nova_mao': move.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._table._manilha._valor})
-							
-				
-
-
+		else:
+			self._table.receberJogada(move)
 		
-
+							
 	#!! só para teste. Talvez vai pra interface, foda-se
 	def send_move(self,move):
 		self.server_proxy.send_move(self._match_id, move)
