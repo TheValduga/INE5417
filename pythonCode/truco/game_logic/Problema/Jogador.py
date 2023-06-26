@@ -105,7 +105,6 @@ class Jogador():
 
 	def DefinirDealer(self):
 		self._dealer = True
-		self._seuTurno = True # !! mais uma pequena alteração no diagrama de algoritmo
 		return True
 
 	def PegarTime(self):

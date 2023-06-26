@@ -283,6 +283,7 @@ class Mesa():
 		self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
 		self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
 		self.distribuirCartas()
+		
 		self._manilha = self._jogadores[0].definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
 		print(self._manilha._valor)
 		print("Sou o Dealer. Hora da novaMao")
@@ -301,7 +302,7 @@ class Mesa():
 		self._Inicializada = True
 		#turno = (self.localPlayer._position + 1) % 4 , 'turno' : turno
 		temp_mao = novas_maos[self._PlayerInterface.localPlayer._position]
-
+		
 		carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
 		carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
 		carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
@@ -312,6 +313,8 @@ class Mesa():
 
 		self._PlayerInterface.AtualizarInterface()
 		novo_estado = {'tipo': 'NovaMao', 'nova_mao': novas_maos, 'turno_mao':1, 'manilha': self._manilha._valor}
+		self._PlayerInterface.Notificar(str("Nova Mão Iniciada\n Turno de " + self._PlayerInterface.localPlayer._nome))
+		self._PlayerInterface.localPlayer._seuTurno = True
 		self._PlayerInterface.enviarAtualizacaoPartida(novo_estado)
 
 
