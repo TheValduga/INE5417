@@ -411,7 +411,7 @@ class Mesa():
 				else:
 					turno = (self._PlayerInterface.localPlayer._position + 1)
 					self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
-     
+
 			elif aJogada.payload['tipo'] == 'rodada':
 				pass
 		
@@ -448,19 +448,65 @@ class Mesa():
 					
 					self._PlayerInterface.send_move({'atualizacao_placar': [self._times[0]._pontuacao,self._times[1]._pontuacao]})
 
-				
+
+
 				else:
 					if aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
-						
-						self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
+						self._PlayerInterface.Notificar(
+							f'Turno de {aJogada.payload["proximo"]}')  # !! talvez tenha mudado a ordem
 						self._PlayerInterface.AtualizarInterface()
-							
+
 						self._PlayerInterface.localPlayer._seuTurno = True
 						print("MEU TURNO AEEE")
-				
-			
+
+
 			elif aJogada.payload['tipo'] == 'truco':
-				pass
+				if aJogada.payload['time'] == self._times[0]:
+					# pedido aliado
+					if aJogada.payload['respondido']:
+						match aJogada.payload['resposta']:
+							case 'correr':
+								self.adicionarPontuacaoTime(self._times[1], 1)
+								self._times[0].setarPontuacao(1)
+								self.registrarMao()
+								self.encerramentoPartida()
+							case 'aceitar':
+								self.aumentarValorMao()
+								self.registrarTruco()
+								self._PlayerInterface.Notificar(f"Truco respondido com {aJogada.payload['resposta']}")
+								if aJogada.payload['jogadorResponde'] == self._PlayerInterface.localPlayer:
+									estado = ""  # todo: verificar informações do estado
+									self._PlayerInterface.enviarAtualizacaoPartida(estado)
+									self._PlayerInterface.send_move(
+										{'tipo': 'truco', 'time': self._times[1], 'respondido': True,
+										 'resposta': aJogada.payload['resposta'],
+										 'jogadorResponde': self._PlayerInterface.localPlayer})
+							case _:
+								self._PlayerInterface.Notificar("Resposta inválida")
+					else:
+						self._PlayerInterface.Notificar("Aguardando resposta ao pedido de truco aliado")
+				else:
+					if aJogada.payload['jogadorResponde'] == self._PlayerInterface.localPlayer:
+						self.registrarRespostaTruco(aJogada.payload['resposta'])
+					elif aJogada.payload['respondido']:
+						match aJogada.payload['resposta']:
+							case 'correr':
+								self.adicionarPontuacaoTime(self._times[0], 1)
+								self._times[0].setarPontuacao(1)
+								self.registrarMao()
+								self.encerramentoPartida()
+							case 'aceitar':
+								self.aumentarValorMao()
+								self.registrarTruco()
+								self._PlayerInterface.Notificar(f"Truco respondido com {aJogada.payload['resposta']}")
+								estado = ""
+								self._PlayerInterface.enviarAtualizacaoPartida(estado)
+								self._PlayerInterface.send_move(
+									{'tipo': 'truco', 'time': self._times[1], 'respondido': True,
+									 'resposta': aJogada.payload['resposta'],
+									 'jogadorResponde': self._PlayerInterface.localPlayer})
+							case _:
+								self._PlayerInterface.Notificar("Resposta inválida")
 
 			if 'atualizacao_placar' in aJogada.payload:
 				print(aJogada['atualizacao_placar'])
