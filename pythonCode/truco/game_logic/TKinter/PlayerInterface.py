@@ -25,7 +25,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
 		nome = self.SolicitarNomeJogador()
 		self.localPlayer.RegistrarNome(nome)
-		self._topo = Carta(4,'paus')
+		self._topo = Carta(4,'ouro')
 
 	 #----------------------- Pynetgames ----------------------------------->
 		self.add_listener()
@@ -302,7 +302,6 @@ class PlayerInterface(PyNetgamesServerListener):
 	def clicarCarta(self, index: int): #!! adicionar argumento ao projeto
 		"""@ReturnType Problema.Carta"""
 
-		print('AAAAUUUUUUUUUUUUUU')
 		self.localPlayer.selecionarCarta(index)
 
 		pass
@@ -326,15 +325,13 @@ class PlayerInterface(PyNetgamesServerListener):
 		self._match_id = match_id
 		pass
 	
-	def atualizarTopo(self, carta):
-		valores = [4,5,6,7,'J','Q','K',1,2,3]
-		if valores.index(carta._valor) > valores.index(self._topo._valor):
-			self._topo = carta #!! self._topo é novo
+	def atualizarTopo(self):
+
+		self._topo = self._table._topo
 		self._topo.get_foto_carta()
 		self.logo_label.grid(row=0, column=1)
 		self.logo_label = Label(self.mesa_frame, bd = 0, image=self._topo._imagem) # MONTE
 		self.logo_label.grid(row=0, column=2)
-		return self._topo
 
 	def AtualizarInterface(self):
 		
@@ -343,7 +340,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		carta3 = self.localPlayer._mao[2]
 		manilha = self._table._manilha
 		
-		
+		self.atualizarTopo()
 		
 		
 		manilha.get_foto_carta()
@@ -430,9 +427,7 @@ class PlayerInterface(PyNetgamesServerListener):
 	
 	def pega_nomes_e_posicoes(self): #!! adicionar aos diagramas
 		if self.match_position == 0:
-			print("COMEÇO ORDEM")
 			jogadores = {"jogadores" : [(self.localPlayer._nome, self.match_position)],'turno_init':1}
-			print("ENVIANDO: " + str(jogadores))
 			self.send_move(jogadores)
 
 	
