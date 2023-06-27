@@ -51,6 +51,7 @@ class Jogador():
 				time = self._position % 2
 				carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
 				encerraRodada = self._mesa.encerramentoRodada(self._position)
+				self._mesa._PlayerInterface.AtualizarInterface()
 				encerraPartida = False
 				if not encerraRodada:
 					proximo = self._mesa.PassarTurno(self)
