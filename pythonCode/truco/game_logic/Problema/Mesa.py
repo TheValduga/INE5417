@@ -43,15 +43,16 @@ class Mesa():
 		return self._ordemRodada
 
 	def encerramentoPartida(self):
-		placar = [self._times[0].pegarPontuacao(self._times[0]),
-				  self._times[1].pegarPontuacao(self._times[1])]
+		placar = [self._times[0].pegarPontuacao(),
+				  self._times[1].pegarPontuacao()]
+		print(placar)
 		if placar[0] >= 12 or placar[1] >= 12:
 			# Partida acabou
 			self.definirPartidaAndamento(False)
 			if placar[0] >= 12:
-				self.registrarVencedor(self._times[0])
+				self.registrarVencedor(0)
 			else:
-				self.registrarVencedor(self._times[1])
+				self.registrarVencedor(1)
 			return True
 		else:
 			# Partida continua
@@ -62,8 +63,7 @@ class Mesa():
 		self._partidaAndamento = aBoolean
 
 	def registrarVencedor(self, aTime):
-		"""@ParamType aTime Problema.Time"""
-		pass
+		self._vencedor = aTime
 
 	def verificarRegistroRodadas(self):
 		"""@ReturnType list"""
@@ -366,6 +366,13 @@ class Mesa():
 	def receberJogada(self, aJogada):
 		"""@ParamType aJogada Dict{string, any}"""
 		if 'tipo' in aJogada.payload:
+			if aJogada.payload['tipo'] == 'carta' and aJogada.payload['jogoEncerrado'] == True:
+				if aJogada.payload['vencedor_mao'] == 0:
+					time_vencedor = 'azul'
+				else:
+					time_vencedor = 'vermelho'
+				self._PlayerInterface.Notificar("FIM DE PARTIDA! TIME " + time_vencedor + " GANHOU")
+
 			if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self._PlayerInterface.localPlayer._position:
 				temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
 				self._PlayerInterface.localPlayer._mao = []
@@ -491,7 +498,7 @@ class Mesa():
 		"""@AttributeType Problema.Baralho"""
 		self._manilha = Carta('','')
 		"""@AttributeType Problema.Carta"""
-		self._valorMao = 1
+		self._valorMao = 20 # teste
 		"""@AttributeType int"""
 		self._partidaAndamento = False
 

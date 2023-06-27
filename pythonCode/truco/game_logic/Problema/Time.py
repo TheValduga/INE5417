@@ -8,10 +8,11 @@ class Time(object):
 		@ReturnType Problema.Time"""
 		pass
 
-	def pegarPontuacao(self, aTime):
+	def pegarPontuacao(self): #!! pegarPontuacao acho que tem mais um parametro na modelagem
 		"""@ParamType aTime Problema.Time
 		@ReturnType int"""
-		pass
+		return self._pontuacao
+
 
 	def verificarRodadasTime(self):
 		"""@ReturnType int"""

@@ -51,13 +51,22 @@ class Jogador():
 				time = self._position % 2
 				carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
 				encerraRodada = self._mesa.encerramentoRodada(self._position)
+				encerraPartida = False
 				if not encerraRodada:
 					proximo = self._mesa.PassarTurno(self)
 					novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': False,'jogoEncerrado': False, 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'monte':self._mesa._monte}
 				else:
 					encerraMao = self._mesa.encerramentoMao()
 					if encerraMao[0]: #!! encerraMao é um array agora
-						#encerraPartida = self._mesa.encerramentoPartida()
+						encerraPartida = self._mesa.encerramentoPartida()
+						
+						if encerraPartida:
+							print("ACABOU PARTIDA")
+							if self._mesa._vencedor == 0:
+								time_vencedor = "azul"
+							elif self._mesa._vencedor == 1:
+								time_vencedor = "vermelho"
+							self._mesa._PlayerInterface.Notificar("FIM DE PARTIDA! TIME " + time_vencedor + " GANHOU")
 						
 						pass
 					
