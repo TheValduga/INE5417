@@ -9,8 +9,8 @@ import random
 
 class Mesa():
 
-	def registrarTruco(self):
-		self._truco = not self._truco
+	def registrarTruco(self, set):
+		self._truco = set
 		return self._truco
 
 	def registrarMao(self):
@@ -275,9 +275,6 @@ class Mesa():
 			if jogador_local._position == 0:
 				dealer = jogador_local.DefinirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
 
-		
-
-
 	def pegarPlacar(self):
 		"""@ReturnType int*"""
 		pass
@@ -358,15 +355,22 @@ class Mesa():
 			if player._position == proximo:
 				return player._nome
 
+	def QuemResponde(self):
+		proximo = (self._PlayerInterface._localPlayer._position + 1) % 4
+		for player in self._jogadores:
+			if player._position == proximo:
+				return player._nome
 
 	def ClicarBotaoTruco(self, jogador):
 		turno = jogador.verificarTurno()
+		print('PEÇO TRUCO')
 		if turno:
 			truco = self.VerificarTrucoAndamento()
 			if not truco:
-				self.registrarTruco()
+				self.registrarTruco(True)
+				quemResponde = self.QuemResponde()
 				self._PlayerInterface.Notificar('Você pediu truco, aguardando resposta adversária')
-				novoEstado = {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False}
+				novoEstado = {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
 				self._PlayerInterface.enviarAtualizaçãoPartida(novoEstado)
 			else:
 				self._PlayerInterface.Notificar("Jogada de truco em andamento")
@@ -501,9 +505,26 @@ class Mesa():
 					
 				
 				elif aJogada.payload['tipo'] == 'truco':
-					pass
-	
-			
+				# payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
+					if aJogada.payload['time'] == self._PlayerInterface.localPlayer._time:
+						if aJogada.payload['respondido']:
+							pass
+						else:
+							self._PlayerInterface.Notificar('Seu aliado pediu truco, aguardando resposta adversária')
+					else:
+						if not aJogada.payload['respondido']:
+							if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
+								self._PlayerInterface.localPlayer.quemResponde = True
+								self._PlayerInterface.Notificar('O time adversário pediu truco e você deve responder')
+							else:
+								self._PlayerInterface.Notificar('O adversário pediu truco e seu aliado deve responder, aguardando resposta aliada')
+						else:
+							if aJogada.payload['resposta'] == 'correr':
+								self.adicionarPontuacaoTime(aJogada.payload['time'], self._valorMao)
+								self.registrarMao()
+								self.encerramentoPartida()
+										
+       
 
 	def __init__(self, deck, time1, time2, interface):
 		self._jogadores = []

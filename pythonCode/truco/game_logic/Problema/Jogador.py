@@ -141,6 +141,8 @@ class Jogador():
 		self._dealer = False
 		"""@AttributeType boolean"""
 		self._time = None
+  
+		self.quemResponde = False
 
 		self._position = '' #!! atributo nao ta na modelagem
 

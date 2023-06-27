@@ -161,7 +161,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.cartas_viradas2 = Button(self.player1_frame, bd = 3, image=self._back_card, command=lambda: self.clicarCarta(2))
 		self.cartas_viradas2.grid(row=1, column=4)
 
-		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=self.clicarBotao())
+		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=lambda:self.ClicarBotaoTruco())
 		self.botao_truco.grid(row=1, column=5)
 
 		self.botao_aceitar = Button(self.player1_frame, bd = 3, text="Aceitar", command=self.clicarBotao())
