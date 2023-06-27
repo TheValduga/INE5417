@@ -397,7 +397,7 @@ class Mesa():
 				self.registrarStatusRodada(True)
 
 		
-			elif aJogada.payload['tipo'] == 'carta' and aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
+			elif aJogada.payload['tipo'] == 'carta':
 				
 
 				temp_monte = aJogada.payload['monte']
@@ -411,7 +411,8 @@ class Mesa():
 					self._monte = new_monte
 				else:
 					for carta in temp_monte:
-						self._monte.append(carta)
+						if carta not in self._monte:
+							self._monte.append(carta)
 				
 				#self._monte.append(aJogada.payload['carta'])
 				
