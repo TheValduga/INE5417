@@ -146,10 +146,10 @@ class PlayerInterface(PyNetgamesServerListener):
 
 		# Imagem das cartas dos jogador 1
 
-		self.botao_correr = Button(self.player1_frame, bd = 3, text="Correr", command= self.clicarBotao())
+		self.botao_correr = Button(self.player1_frame, bd = 3, text="Correr", command= lambda:self.botaoResposta('correr'))
 		self.botao_correr.grid(row=1, column=0)
 
-		self.botao_aumentar = Button(self.player1_frame, bd = 3, text="Aumentar", command=self.clicarBotao())
+		self.botao_aumentar = Button(self.player1_frame, bd = 3, text="Aumentar", command=lambda:self.botaoResposta('aumentar'))
 		self.botao_aumentar.grid(row=1, column=1)
 
 		self.cartas_viradas = Button(self.player1_frame, bd = 3, image=self._back_card, command=lambda:self.clicarCarta(0))
@@ -164,7 +164,7 @@ class PlayerInterface(PyNetgamesServerListener):
 		self.botao_truco = Button(self.player1_frame, bd = 3, text="Truco", command=lambda:self.ClicarBotaoTruco())
 		self.botao_truco.grid(row=1, column=5)
 
-		self.botao_aceitar = Button(self.player1_frame, bd = 3, text="Aceitar", command=self.clicarBotao())
+		self.botao_aceitar = Button(self.player1_frame, bd = 3, text="Aceitar", command=lambda:self.botaoResposta('aceitar'))
 		self.botao_aceitar.grid(row=1, column=6)
 		
 		
@@ -393,8 +393,8 @@ class PlayerInterface(PyNetgamesServerListener):
 	def ClicarBotaoTruco(self):
 		self._table.ClicarBotaoTruco(self.localPlayer)
 
-	def botaoResposta(self):
-		pass
+	def botaoResposta(self, resposta):
+		self._table.botaoResposta(resposta)
 
 	def add_listener(self):		# Pyng use case "add listener"
 		self.server_proxy = PyNetgamesServerProxy()
