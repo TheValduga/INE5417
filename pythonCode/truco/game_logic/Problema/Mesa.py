@@ -404,7 +404,7 @@ class Mesa():
                 if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self._PlayerInterface.localPlayer._position:
                     temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
                     self._PlayerInterface.localPlayer._mao = []
-                                
+                    self._valorMao = 1          
                     carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
                     carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
                     carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
@@ -521,21 +521,23 @@ class Mesa():
                             if aJogada.payload['resposta'] == 'correr':
                                 print(f'sou aliado de quem pediu truco meu time é {self._PlayerInterface.localPlayer._time}')
                                 self.adicionarPontuacaoTime(self._PlayerInterface.localPlayer._time, self._valorMao)
+                                self._valorMao = 1
                                 self.registrarMao()
                                 self.registrarTruco(False)
                                 self._PlayerInterface.Notificar('O adversário correu do truco, seu time pontua')
                                 encerramentoPartida = self.encerramentoPartida()
-                                self._valorMao = 1
                                 if not encerramentoPartida and self._PlayerInterface.localPlayer._dealer:
                                     self.novaMao()
                             elif aJogada.payload['resposta'] == 'aceitar':
                                 self.aumentarValorMao()
+                                print(f'valor da mao em {self._valorMao}, aceitar aliado')
                                 self.registrarTruco(False)
                                 self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar')
         
                             elif aJogada.payload['resposta'] == 'aumentar':
-                                # incompleto
-                                pass
+                                self.aumentarValorMao()
+                                print(f'valor da mao em {self._valorMao}, aumentar aliado')
+                                self._PlayerInterface.Notificar('Seu aliado pediu aumento ao truco adversário, aguardando resposta')
                         else:
                             self._PlayerInterface.Notificar('Seu aliado pediu truco, aguardando resposta adversária')
                     else:
@@ -560,16 +562,23 @@ class Mesa():
                             
                             elif aJogada.payload['resposta'] == 'aceitar':
                                 self.aumentarValorMao()
+                                print(f'valor da mao em {self._valorMao}, aceitar adversario')
                                 self.registrarTruco(False)
                                 self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar sua carta')
                             
                             elif aJogada.payload['resposta'] == 'aumentar':
-                                # incompleto
-                                pass
+                                self.aumentarValorMao()
+                                print(f'valor da mao em {self._valorMao}, aumentar adversario')
+                                if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
+                                    self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e você deve responder')
+                                    self._PlayerInterface.localPlayer.quemResponde = True
+                                else:
+                                    self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e seu aliado deve responder')
                     self._PlayerInterface.AtualizarInterface()
 
     def botaoResposta(self, resposta):
         if self._PlayerInterface.localPlayer.quemResponde:
+            quemResponde = None
             if resposta == 'correr':
                    self._PlayerInterface.Notificar(f'Você correu')
                    self.registrarMao()
@@ -592,12 +601,14 @@ class Mesa():
                        time = 0
                 else:
                     time = self._PlayerInterface.localPlayer._time
+                    # print(f'aumentando valor para {self._valorMao}, respondi aumento')
+                    quemResponde = self.QuemResponde()
                 self._PlayerInterface.Notificar(f'Você respondeu {resposta}, aguardando ação adversária')
             # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
             self.aumentarValorMao()
             self.registrarTruco(False)
             self._PlayerInterface.localPlayer.quemResponde = False
-            novoEstado = {'tipo' : 'truco', 'time' : time, 'respondido' : True , 'resposta' : resposta}
+            novoEstado = {'tipo' : 'truco', 'time' : time, 'respondido' : True , 'resposta' : resposta, 'quemResponde' : quemResponde}
             self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
             self._PlayerInterface.AtualizarInterface()
     
