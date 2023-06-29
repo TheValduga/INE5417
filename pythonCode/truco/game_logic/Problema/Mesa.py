@@ -245,12 +245,11 @@ class Mesa():
 
 
     def aumentarValorMao(self):
-        self._valorMao = 12
-        # if self._valorMao != 12:
-        #     if self._valorMao == 1:
-        #         self._valorMao = 3
-        #     else:
-        #         self._valorMao += 3
+        if self._valorMao != 12:
+            if self._valorMao == 1:
+                self._valorMao = 3
+            else:
+                self._valorMao += 3
 
     def clicarBotao(self, aJogador):
         """@ParamType aJogador Problema.Jogador"""
