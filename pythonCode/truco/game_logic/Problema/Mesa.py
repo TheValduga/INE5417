@@ -45,20 +45,20 @@ class Mesa():
     def encerramentoPartida(self):
         placar = [self._times[0].pegarPontuacao(),
                   self._times[1].pegarPontuacao()]
-        print(placar)
+        
         if placar[0] >= 12 or placar[1] >= 12:
             # Partida acabou
-            self.definirPartidaAndamento(False)
             if placar[0] >= 12:
-                self.registrarVencedor(0)
+                vencedor = 'azul'
             else:
-                self.registrarVencedor(1)
-            return True
-        else:
-            # Partida continua
-            return False
-
-
+                vencedor = 'vermelho'
+            self._PlayerInterface.AtualizarInterface()
+            self._PlayerInterface.Notificar(f"FIM DE PARTIDA! TIME {vencedor} GANHOU")
+            self._PlayerInterface.Notificar('O programa sera finalizado')
+            self._PlayerInterface.main_window.destroy()
+            exit()
+        # Partida continua
+        
     def definirPartidaAndamento(self, aBoolean):
         self._partidaAndamento = aBoolean
 
@@ -245,11 +245,12 @@ class Mesa():
 
 
     def aumentarValorMao(self):
-        if self._valorMao != 12:
-            if self._valorMao == 1:
-                self._valorMao = 3
-            else:
-                self._valorMao += 3
+        self._valorMao = 12
+        # if self._valorMao != 12:
+        #     if self._valorMao == 1:
+        #         self._valorMao = 3
+        #     else:
+        #         self._valorMao += 3
 
     def clicarBotao(self, aJogador):
         """@ParamType aJogador Problema.Jogador"""
@@ -291,6 +292,7 @@ class Mesa():
     def novaMao(self):
         Mao_registro =self.registrarMao()
         Rodada = self.registrarStatusRodada(True)
+        self._valorMao = 1
         self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
         self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
         self.distribuirCartas()
@@ -392,226 +394,208 @@ class Mesa():
     def receberJogada(self, aJogada):
         """@ParamType aJogada Dict{string, any}"""
         if 'tipo' in aJogada.payload:
-            if aJogada.payload['tipo'] == 'carta' and aJogada.payload['jogoEncerrado'] == True:
-                if aJogada.payload['vencedor_mao'] == 0:
-                    time_vencedor = 'azul'
+        
+            if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self._PlayerInterface.localPlayer._position:
+                temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
+                self._PlayerInterface.localPlayer._mao = []
+                self._valorMao = 1          
+                carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
+                carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
+                carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
+
+                self._PlayerInterface.localPlayer._mao.append(carta1)
+                self._PlayerInterface.localPlayer._mao.append(carta2)
+                self._PlayerInterface.localPlayer._mao.append(carta3)
+
+                temp_manilha = aJogada.payload['manilha']
+                manilha = Carta(temp_manilha,'ouro')
+                self._manilha = manilha
+
+                self._PlayerInterface.AtualizarInterface()
+
+                if self._PlayerInterface.localPlayer._position == 3:
+                    pass
                 else:
-                    time_vencedor = 'vermelho'
-                self._PlayerInterface.Notificar("FIM DE PARTIDA! TIME " + time_vencedor + " GANHOU")
-            
-            else:
-
-                if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self._PlayerInterface.localPlayer._position:
-                    temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
-                    self._PlayerInterface.localPlayer._mao = []
-                    self._valorMao = 1          
-                    carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
-                    carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
-                    carta3 = Carta(temp_mao[2][0],temp_mao[2][1])
-
-                    self._PlayerInterface.localPlayer._mao.append(carta1)
-                    self._PlayerInterface.localPlayer._mao.append(carta2)
-                    self._PlayerInterface.localPlayer._mao.append(carta3)
-
-                    temp_manilha = aJogada.payload['manilha']
-                    manilha = Carta(temp_manilha,'ouro')
-                    self._manilha = manilha
-
-                    self._PlayerInterface.AtualizarInterface()
-
-                    if self._PlayerInterface.localPlayer._position == 3:
-                        pass
-                    else:
-                        turno = (self._PlayerInterface.localPlayer._position + 1)
-                        self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
-        
-                elif aJogada.payload['tipo'] == 'rodada':
-                    
-                    self._PlayerInterface.AtualizarInterface()
-                    self._PlayerInterface.Notificar("Nova Rodada Iniciada")
-                    self.registrarStatusRodada(True)
-
-            
-                elif aJogada.payload['tipo'] == 'carta':
-                    
-
-                    temp_monte = aJogada.payload['monte']
-                    if len(temp_monte) > 4:
-                        new_monte = []
-                        for carta in temp_monte:
-                            if carta in self._monte:
-                                pass
-                            else:
-                                new_monte.append(carta)
-                        self._monte = new_monte
-                    else:
-                        for carta in temp_monte:
-                            if carta not in self._monte:
-                                self._monte.append(carta)
-                    
-                    #self._monte.append(aJogada.payload['carta'])
-                    
-                    print(self._monte)
-
-                    cartaForte = self.comparaMonte()
-                    self.definirTopo(cartaForte)
-                    self._topo = cartaForte
-                    print(cartaForte._valor)
-                    self._PlayerInterface.AtualizarInterface()
-
-                    if aJogada.payload['rodadaEncerrada'] == True:
-                        vence = aJogada.payload['vencedor_rodada']
-
-                        if vence == 0:
-                            printar = 'azul'
-                        else:
-                            printar = 'vermelho'
-
-                        if aJogada.payload['maoEncerrada']:
-                            self.registrarMao()
-                            vence = aJogada.payload['vencedor_mao']
-                            self.adicionarPontuacaoTime(vence, self._valorMao)
-                            self._valorMao = 1
-                            self._registroRodada = []
-                            self._monte = []
-                            self._topo = Carta(4,"ouro")
-                            self._PlayerInterface._topo = Carta(4,"ouro")
-                            self._PlayerInterface.AtualizarInterface()
-                            
-
-                            if aJogada.payload['jogoEncerrado']:
-                                self.registrarVencedor(vence) #  TODO time vencedor deve chegar por pyng
-                                self._PlayerInterface.Notificar(f'Time {printar} vence o jogo')
-
-                            else:
-                                self._PlayerInterface.Notificar(f'Time {printar} vence a mao')
-                                if self._PlayerInterface.localPlayer._dealer:
-                                    self._registroRodada = []
-                                    self.novaMao()
-
-                        else:
-                            self.registrarStatusRodada(False)
-                            self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
-                            qualRodada = None # apenas pra nao acusar erro
-                            self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
-                            self._monte = []
-                            self._topo = Carta(4,"ouro")
-                            self._PlayerInterface._topo = Carta(4,"ouro")
-                            self._PlayerInterface.AtualizarInterface()
-                            if self._PlayerInterface.localPlayer._dealer:
-                                self.novaRodada()
-                        
-                    else:
-                        if aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
-                            self._PlayerInterface.AtualizarInterface()
-                            
-                            self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
-                            
-                                
-                            self._PlayerInterface.localPlayer._seuTurno = True
-                            print("MEU TURNO AEEE")
-                    
+                    turno = (self._PlayerInterface.localPlayer._position + 1)
+                    self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
+    
+            elif aJogada.payload['tipo'] == 'rodada':
                 
-                elif aJogada.payload['tipo'] == 'truco':
-                # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
-                    print(aJogada.payload['time'])
-                    print(self._PlayerInterface.localPlayer._time)
-                    if aJogada.payload['time'] == self._PlayerInterface.localPlayer._time:
-                        if aJogada.payload['respondido']:
-                            if aJogada.payload['resposta'] == 'correr':
-                                print(f'sou aliado de quem pediu truco meu time é {self._PlayerInterface.localPlayer._time}')
-                                self.adicionarPontuacaoTime(self._PlayerInterface.localPlayer._time, self._valorMao)
-                                self._valorMao = 1
-                                self.registrarMao()
-                                self.registrarTruco(False)
-                                self._PlayerInterface.Notificar('O adversário correu do truco, seu time pontua')
-                                encerramentoPartida = self.encerramentoPartida()
-                                if not encerramentoPartida and self._PlayerInterface.localPlayer._dealer:
-                                    self.novaMao()
-                            elif aJogada.payload['resposta'] == 'aceitar':
-                                self.aumentarValorMao()
-                                print(f'valor da mao em {self._valorMao}, aceitar aliado')
-                                self.registrarTruco(False)
-                                self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar')
+                self._PlayerInterface.AtualizarInterface()
+                self._PlayerInterface.Notificar("Nova Rodada Iniciada")
+                self.registrarStatusRodada(True)
+
         
-                            elif aJogada.payload['resposta'] == 'aumentar':
-                                self.aumentarValorMao()
-                                print(f'valor da mao em {self._valorMao}, aumentar aliado')
-                                self._PlayerInterface.Notificar('Seu aliado pediu aumento ao truco adversário, aguardando resposta')
+            elif aJogada.payload['tipo'] == 'carta':
+                
+
+                temp_monte = aJogada.payload['monte']
+                if len(temp_monte) > 4:
+                    new_monte = []
+                    for carta in temp_monte:
+                        if carta in self._monte:
+                            pass
                         else:
-                            self._PlayerInterface.Notificar('Seu aliado pediu truco, aguardando resposta adversária')
+                            new_monte.append(carta)
+                    self._monte = new_monte
+                else:
+                    for carta in temp_monte:
+                        if carta not in self._monte:
+                            self._monte.append(carta)
+                
+                #self._monte.append(aJogada.payload['carta'])
+                
+                print(self._monte)
+
+                cartaForte = self.comparaMonte()
+                self.definirTopo(cartaForte)
+                self._topo = cartaForte
+                print(cartaForte._valor)
+                self._PlayerInterface.AtualizarInterface()
+
+                if aJogada.payload['rodadaEncerrada'] == True:
+                    vence = aJogada.payload['vencedor_rodada']
+
+                    if vence == 0:
+                        printar = 'azul'
                     else:
-                        if not aJogada.payload['respondido']:
-                            if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
-                                self._PlayerInterface.localPlayer.quemResponde = True
-                                self._PlayerInterface.Notificar('O time adversário pediu truco e você deve responder')
-                            else:
-                                self._PlayerInterface.Notificar('O adversário pediu truco e seu aliado deve responder, aguardando resposta aliada')
-                        else:
-                            if aJogada.payload['resposta'] == 'correr':
-                                print(f'sou adversario de quem pediu truco, meu time NÃO é {self._PlayerInterface.localPlayer._time}')
-                                self.adicionarPontuacaoTime(aJogada.payload['time'], self._valorMao)
-                                self.registrarMao()
-                                self.registrarTruco(False)
-                                self._PlayerInterface.Notificar('O adversário correu do truco, seu time pontua')
-                                encerramentoPartida = self.encerramentoPartida()
-                                self._valorMao = 1
-                                if not encerramentoPartida and self._PlayerInterface.localPlayer._dealer:
-                                    self.novaMao()
+                        printar = 'vermelho'
+
+                    if aJogada.payload['maoEncerrada']:
+                        self.registrarMao()
+                        vence = aJogada.payload['vencedor_mao']
+                        self.adicionarPontuacaoTime(vence, self._valorMao)
+                        self._registroRodada = []
+                        self._monte = []
+                        self._topo = Carta(4,"ouro")
+                        self._PlayerInterface._topo = Carta(4,"ouro")
+                        self._PlayerInterface.AtualizarInterface()
+                        self._PlayerInterface.Notificar(f'Time {printar} vence a mao')
+                        self.encerramentoPartida()
+                        if self._PlayerInterface.localPlayer._dealer:
+                            self.novaMao()
+
+                    else:
+                        self.registrarStatusRodada(False)
+                        self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
+                        qualRodada = None # apenas pra nao acusar erro
+                        self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
+                        self._monte = []
+                        self._topo = Carta(4,"ouro")
+                        self._PlayerInterface._topo = Carta(4,"ouro")
+                        self._PlayerInterface.AtualizarInterface()
+                        if self._PlayerInterface.localPlayer._dealer:
+                            self.novaRodada()
+                    
+                else:
+                    if aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
+                        self._PlayerInterface.AtualizarInterface()
+                        self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
+                        self._PlayerInterface.localPlayer._seuTurno = True
+                        print("MEU TURNO AEEE")
+                
+            elif aJogada.payload['tipo'] == 'truco':
+            # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
+                print(aJogada.payload['time'])
+                print(self._PlayerInterface.localPlayer._time)
+                if aJogada.payload['time'] == self._PlayerInterface.localPlayer._time:
+                    if aJogada.payload['respondido']:
+                        if aJogada.payload['resposta'] == 'correr':
+                            print(f'sou aliado de quem pediu truco meu time é {self._PlayerInterface.localPlayer._time}')
+                            self.adicionarPontuacaoTime(self._PlayerInterface.localPlayer._time, self._valorMao)
+                            self.registrarMao()
+                            self.registrarTruco(False)
+                            self._PlayerInterface.Notificar('O adversário correu do truco, seu time pontua')
+                            self.encerramentoPartida()
+                            if self._PlayerInterface.localPlayer._dealer:
+                                self.novaMao()
                                 
+                        elif aJogada.payload['resposta'] == 'aceitar':
+                            self.aumentarValorMao()
+                            print(f'valor da mao em {self._valorMao}, aceitar aliado')
+                            self.registrarTruco(False)
+                            self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar')
+    
+                        elif aJogada.payload['resposta'] == 'aumentar':
+                            self.aumentarValorMao()
+                            print(f'valor da mao em {self._valorMao}, aumentar aliado')
+                            self._PlayerInterface.Notificar('Seu aliado pediu aumento ao truco adversário, aguardando resposta')
+                    else:
+                        self._PlayerInterface.Notificar('Seu aliado pediu truco, aguardando resposta adversária')
+                else:
+                    if not aJogada.payload['respondido']:
+                        if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
+                            self._PlayerInterface.localPlayer.quemResponde = True
+                            self._PlayerInterface.Notificar('O time adversário pediu truco e você deve responder')
+                        else:
+                            self._PlayerInterface.Notificar('O adversário pediu truco e seu aliado deve responder, aguardando resposta aliada')
+                    else:
+                        if aJogada.payload['resposta'] == 'correr':
+                            print(f'sou adversario de quem pediu truco, meu time NÃO é {self._PlayerInterface.localPlayer._time}')
+                            self.adicionarPontuacaoTime(aJogada.payload['time'], self._valorMao)
+                            self.registrarMao()
+                            self.registrarTruco(False)
+                            self._PlayerInterface.Notificar('Seu aliado correu do truco, time adversário pontua')
+                            self.encerramentoPartida()
+                            if self._PlayerInterface.localPlayer._dealer:
+                                self.novaMao()
                             
-                            elif aJogada.payload['resposta'] == 'aceitar':
-                                self.aumentarValorMao()
-                                print(f'valor da mao em {self._valorMao}, aceitar adversario')
-                                self.registrarTruco(False)
-                                self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar sua carta')
-                            
-                            elif aJogada.payload['resposta'] == 'aumentar':
-                                self.aumentarValorMao()
-                                print(f'valor da mao em {self._valorMao}, aumentar adversario')
-                                if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
-                                    self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e você deve responder')
-                                    self._PlayerInterface.localPlayer.quemResponde = True
-                                else:
-                                    self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e seu aliado deve responder')
-                    self._PlayerInterface.AtualizarInterface()
+                        elif aJogada.payload['resposta'] == 'aceitar':
+                            self.aumentarValorMao()
+                            print(f'valor da mao em {self._valorMao}, aceitar adversario')
+                            self.registrarTruco(False)
+                            self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar sua carta')
+                        
+                        elif aJogada.payload['resposta'] == 'aumentar':
+                            self.aumentarValorMao()
+                            print(f'valor da mao em {self._valorMao}, aumentar adversario')
+                            if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
+                                self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e você deve responder')
+                                self._PlayerInterface.localPlayer.quemResponde = True
+                            else:
+                                self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e seu aliado deve responder')
+                self._PlayerInterface.AtualizarInterface()
 
     def botaoResposta(self, resposta):
         if self._PlayerInterface.localPlayer.quemResponde:
             quemResponde = None
             if resposta == 'correr':
-                   self._PlayerInterface.Notificar(f'Você correu')
-                   self.registrarMao()
-                   if self._PlayerInterface.localPlayer._time == 0:
-                        pontua = 1
-                   else:
-                       pontua = 0 
-                   self.adicionarPontuacaoTime(pontua , self._valorMao)
-                   self._valorMao = 1
-                   self.encerramentoPartida() 
-                   if self._PlayerInterface.localPlayer._time == 0:
-                       time = 1
-                   else:
-                       time = 0
-            else:
-                if resposta == 'aceitar':
-                    if self._PlayerInterface.localPlayer._time == 0:
-                       time = 1
-                    else:
-                       time = 0
+                self._PlayerInterface.Notificar(f'Você correu, time adversário pontua')
+                self.registrarMao()
+                if self._PlayerInterface.localPlayer._time == 0:
+                    pontua = 1
                 else:
-                    time = self._PlayerInterface.localPlayer._time
-                    # print(f'aumentando valor para {self._valorMao}, respondi aumento')
-                    quemResponde = self.QuemResponde()
+                    pontua = 0 
+                self.adicionarPontuacaoTime(pontua , self._valorMao)
+                # self._valorMao = 1 
+                if self._PlayerInterface.localPlayer._time == 0:
+                    time = 1
+                else:
+                    time = 0
+                self.registrarTruco(False)
+            elif resposta == 'aceitar':
+                if self._PlayerInterface.localPlayer._time == 0:
+                    time = 1
+                else:
+                    time = 0
+                self._PlayerInterface.Notificar(f'Você respondeu {resposta}, aguardando ação adversária')    
+                self.aumentarValorMao()
+                self.registrarTruco(False)
+            elif resposta == 'aumentar':
+                time = self._PlayerInterface.localPlayer._time
+                # print(f'aumentando valor para {self._valorMao}, respondi aumento')
+                self.aumentarValorMao()
+                quemResponde = self.QuemResponde()
                 self._PlayerInterface.Notificar(f'Você respondeu {resposta}, aguardando ação adversária')
             # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
-            self.aumentarValorMao()
-            self.registrarTruco(False)
+            
+            
             self._PlayerInterface.localPlayer.quemResponde = False
             novoEstado = {'tipo' : 'truco', 'time' : time, 'respondido' : True , 'resposta' : resposta, 'quemResponde' : quemResponde}
             self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
             self._PlayerInterface.AtualizarInterface()
-    
+            self.encerramentoPartida()
+            
     def __init__(self, deck, time1, time2, interface):
         self._jogadores = []
 
