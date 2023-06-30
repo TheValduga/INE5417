@@ -288,6 +288,8 @@ class Mesa():
 
 
     def novaMao(self):
+        self.limpaMonte()
+        self.resetaTopo()
         Mao_registro =self.registrarMao()
         Rodada = self.registrarStatusRodada(True)
         self._valorMao = 1
@@ -393,6 +395,8 @@ class Mesa():
         if 'tipo' in aJogada.payload:
         
             if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self._PlayerInterface.localPlayer._position:
+                self.limpaMonte()
+                self.resetaTopo()
                 temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
                 self._PlayerInterface.localPlayer._mao = []
                 self._valorMao = 1          
