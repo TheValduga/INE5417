@@ -413,12 +413,12 @@ class PlayerInterface(PyNetgamesServerListener):
     def receive_disconnect(self):	# Pyng use case "receive disconnect"
         self.Notificar("Desconectado do servidor, o programa sera finalizado")
         self.main_window.destroy()
-        exit()
+        
             
     def receive_error(self, error):	# Pyng use case "receive error"
         self.Notificar("ERRO NO SERVIDOR!! , o programa será finalizado")
         self.main_window.destroy()
-        exit()
+
 
     def receive_match(self, match):	# Pyng use case "receive match"
         self.set_match_id(match.match_id)
@@ -438,42 +438,42 @@ class PlayerInterface(PyNetgamesServerListener):
     def inicializar_mesa(self,move): #!! adicionar ao diagrama  #!!Receive Match = Salvar match_id e match_position -> definir jogadores -> definir times -> definir  times -> definir dealer -> notificar times
         if 'turno_init' in move.payload:
             if move.payload['turno_init'] == self.match_position:
-                    if len(move.payload['jogadores']) < 4:
-                        pacote = {}
-                        pacote['jogadores'] = move.payload['jogadores']
-                        pacote['jogadores'].append((self.localPlayer._nome, self.match_position)) #!! tupla de nome, posicao pra ajudar na UI
-                        turno = (self.match_position +1) % 4
-                        pacote['turno_init'] = turno
-                        self.send_move(pacote)
-                    else:
-                        remotos_locais = []
-                        for (jogador, position) in move.payload['jogadores']:
-                            if jogador != self.localPlayer._nome:
-                                remotos_locais.append((jogador, position))
-                        self.remotePlayers = remotos_locais
-                        if self.match_position == 3:
-                            turno = 0
-                        turno = (self.match_position +1) % 4
-                        self.send_move({'jogadores':move.payload['jogadores'], 'turno_init': turno})
-                        for nome,posicao in move.payload["jogadores"]:
-                            jog_temp = Jogador(self._table)
-                            jog_temp._nome = nome
-                            jog_temp._position = posicao
-                            self._table._jogadores.append(jog_temp)
+                if len(move.payload['jogadores']) < 4:
+                    pacote = {}
+                    pacote['jogadores'] = move.payload['jogadores']
+                    pacote['jogadores'].append((self.localPlayer._nome, self.match_position)) #!! tupla de nome, posicao pra ajudar na UI
+                    turno = (self.match_position +1) % 4
+                    pacote['turno_init'] = turno
+                    self.send_move(pacote)
+                else:
+                    remotos_locais = []
+                    for (jogador, position) in move.payload['jogadores']:
+                        if jogador != self.localPlayer._nome:
+                            remotos_locais.append((jogador, position))
+                    self.remotePlayers = remotos_locais
+                    if self.match_position == 3:
+                        turno = 0
+                    turno = (self.match_position +1) % 4
+                    self.send_move({'jogadores':move.payload['jogadores'], 'turno_init': turno})
+                    for nome,posicao in move.payload["jogadores"]:
+                        jog_temp = Jogador(self._table)
+                        jog_temp._nome = nome
+                        jog_temp._position = posicao
+                        self._table._jogadores.append(jog_temp)
 
-                        #self._table._jogadores = move.payload['jogadores']
+                    #self._table._jogadores = move.payload['jogadores']
 
-                        self._table.IniciarPartida(self.localPlayer) #!! diagrama e precisa disso pra escolher o dealer se não não funciona
-                        self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0]._nome) + ' ,'+str(self._table._times[0]._jogadores[1]._nome)+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0]._nome)+' ,'+str(self._table._times[1]._jogadores[1]._nome))
+                    self._table.IniciarPartida(self.localPlayer) #!! diagrama e precisa disso pra escolher o dealer se não não funciona
+                    self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0]._nome) + ' ,'+str(self._table._times[0]._jogadores[1]._nome)+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0]._nome)+' ,'+str(self._table._times[1]._jogadores[1]._nome))
+                    
+                    self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
+                    
+
+                    self._table._Inicializada = True
+
+                    if self.localPlayer._dealer:
+                        self._table.novaMao()
                         
-                        self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
-                        
-
-                        self._table._Inicializada = True
-
-                        if self.localPlayer._dealer:
-                            self._table.novaMao()
-                            
                             
             #turno = (self.localPlayer._position + 1) % 4 , 'turno':turno
                                 

@@ -56,7 +56,6 @@ class Mesa():
             self._PlayerInterface.Notificar(f"FIM DE PARTIDA! TIME {vencedor} GANHOU")
             self._PlayerInterface.Notificar('O programa sera finalizado')
             self._PlayerInterface.main_window.destroy()
-            exit()
         # Partida continua
         
     def definirPartidaAndamento(self, aBoolean):
