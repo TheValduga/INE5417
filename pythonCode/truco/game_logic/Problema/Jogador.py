@@ -48,7 +48,7 @@ class Jogador():
             truco = self._mesa.VerificarTrucoAndamento()
             if not truco:
                 time = self._position % 2
-                carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
+                carta = self._mesa.ColocarNaMesa( cartaIndex, self) # !! adicionar argumento cartaIndex no
                 encerraRodada = self._mesa.encerramentoRodada(self._position)
                 self._mesa._PlayerInterface.AtualizarInterface()
                 
@@ -118,6 +118,9 @@ class Jogador():
     def PegarTime(self):
         """@ReturnType int"""
         return self._time
+    
+    def setQuemResponde(self, set):
+        self.quemResponde = set
 
     def __init__(self, mesa): #!! não sei exatamente como se modelou o init, dar uma olhada no exemplo do Ricardo
         self._nome = ''

@@ -347,7 +347,7 @@ class Mesa():
         self._PlayerInterface.AtualizarInterface()
         self._PlayerInterface.localPlayer._seuTurno = True
 
-    def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
+    def ColocarNaMesa(self, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
         carta = jogador._mao[cardIndex]
         jogador._mao[cardIndex] = None
         carta = [carta._valor,carta._naipe]
@@ -587,7 +587,7 @@ class Mesa():
             # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
             
             
-            self._PlayerInterface.localPlayer.quemResponde = False
+            self._PlayerInterface.localPlayer.setQuemResponde(False)
             novoEstado = {'tipo' : 'truco', 'time' : time, 'respondido' : True , 'resposta' : resposta, 'quemResponde' : quemResponde}
             self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
             self._PlayerInterface.AtualizarInterface()
