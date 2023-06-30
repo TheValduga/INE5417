@@ -469,7 +469,7 @@ class PlayerInterface(PyNetgamesServerListener):
                     self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
                     
 
-                    self._table._Inicializada = True
+                    self._table.setInicializada(True)
 
                     if self.localPlayer._dealer:
                         self._table.novaMao()

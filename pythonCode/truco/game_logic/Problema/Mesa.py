@@ -291,8 +291,8 @@ class Mesa():
         Mao_registro =self.registrarMao()
         Rodada = self.registrarStatusRodada(True)
         self._valorMao = 1
-        self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
-        self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
+        self._ordemRodada = self.definirOrdem() 
+        self._baralho.embaralharCartas() 
         self.distribuirCartas()
         
         self._manilha = self._jogadores[0].definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
@@ -305,8 +305,7 @@ class Mesa():
                 nova_mao.append([valor,naipe])
             novas_maos.append(nova_mao)
 
-        self._Inicializada = True
-        #turno = (self.localPlayer._position + 1) % 4 , 'turno' : turno
+        
         temp_mao = novas_maos[self._PlayerInterface.localPlayer._position]
         self._registroRodada = []
         self._PlayerInterface.localPlayer._mao = []
@@ -593,6 +592,9 @@ class Mesa():
             self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
             self._PlayerInterface.AtualizarInterface()
             self.encerramentoPartida()
+            
+    def setInicializada(self, set):
+        self._Inicializada = set
             
     def __init__(self, deck, time1, time2, interface):
         self._jogadores = []
