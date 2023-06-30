@@ -301,13 +301,7 @@ class PlayerInterface(PyNetgamesServerListener):
 
     def clicarCarta(self, index: int): #!! adicionar argumento ao projeto
         """@ReturnType Problema.Carta"""
-
         self.localPlayer.selecionarCarta(index)
-
-        pass
-
-
-
 
     def SolicitarNomeJogador(self):
         """@ReturnType string"""

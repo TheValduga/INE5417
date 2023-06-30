@@ -595,6 +595,18 @@ class Mesa():
             
     def setInicializada(self, set):
         self._Inicializada = set
+        
+    def getRegistroRodada(self):
+        return self._registroRodada
+    
+    def limpaMonte(self):
+        self._monte.clear()
+        
+    def resetaTopo(self):
+        self._topo = Carta(4,'ouro')
+        
+    def limpaRegistroRodada(self):
+        self._registroRodada.clear()
             
     def __init__(self, deck, time1, time2, interface):
         self._jogadores = []
