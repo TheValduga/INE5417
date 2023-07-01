@@ -66,8 +66,32 @@ class Mesa():
 
     def verificarRegistroRodadas(self):
         """@ReturnType list"""
-        return self._registroRodada
+        # return self._registroRodada
+        maoEncerrada = False
+        vencedor = None
+        match len(self._registroRodada):
+            case 1:
+                #  Apenas uma rodada até o momento.
+                pass
+            case 2:
+                #  Duas rodadas até o momento.
+                if self._registroRodada[0] == self._registroRodada[1]:
+                    maoEncerrada = True
+                    vencedor = self._registroRodada[0]
+            case 3:
+                #  Três rodadas até o momento.
+                maoEncerrada = True
+                
+                for resultado in self._registroRodada: 
+                    temp = 0
+                    for resultado1 in self._registroRodada:
+                        if resultado1 == resultado:
+                            temp = temp +1
+                            if temp == 2:
+                                vencedor = resultado
+                                break 
 
+        return [maoEncerrada, vencedor]
     def verificarVencedorRodada(self, aRodada):
         """@ParamType aRodada int
         @ReturnType Problema.Time"""
@@ -107,30 +131,29 @@ class Mesa():
         return encerraRodada
 
     def encerramentoMao(self): # COMICAMENTE CONSISTENTE COM DIAGRAMAS
-        rodadas = self.verificarRegistroRodadas()
-        maoEncerrada = False
-        vencedor = None
-        match len(rodadas):
-            case 1:
-                #  Apenas uma rodada até o momento.
-                pass
-            case 2:
-                #  Duas rodadas até o momento.
-                if rodadas[0] == rodadas[1]:
-                    maoEncerrada = True
-                    vencedor = rodadas[0]
-            case 3:
-                #  Três rodadas até o momento.
-                maoEncerrada = True
+        maoEncerrada, vencedor = self.verificarRegistroRodadas()
+        
+        # match len(rodadas):
+        #     case 1:
+        #         #  Apenas uma rodada até o momento.
+        #         pass
+        #     case 2:
+        #         #  Duas rodadas até o momento.
+        #         if rodadas[0] == rodadas[1]:
+        #             maoEncerrada = True
+        #             vencedor = rodadas[0]
+        #     case 3:
+        #         #  Três rodadas até o momento.
+        #         maoEncerrada = True
                 
-                for resultado in rodadas: 
-                    temp = 0
-                    for resultado1 in rodadas:
-                        if resultado1 == resultado:
-                            temp = temp +1
-                            if temp == 2:
-                                vencedor = resultado
-                                break 
+        #         for resultado in rodadas: 
+        #             temp = 0
+        #             for resultado1 in rodadas:
+        #                 if resultado1 == resultado:
+        #                     temp = temp +1
+        #                     if temp == 2:
+        #                         vencedor = resultado
+        #                         break 
         
         if maoEncerrada:
             self.adicionarPontuacaoTime(vencedor,self._valorMao)
@@ -143,9 +166,6 @@ class Mesa():
             self._PlayerInterface.Notificar(f'Time {printar} vence a mao')
             
         return [maoEncerrada, vencedor]
-
-
-
 
     def comparaMonte(self):
         """@ReturnType carta"""
