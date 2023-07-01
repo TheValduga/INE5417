@@ -106,7 +106,7 @@ class Mesa():
             
         return encerraRodada
 
-    def encerramentoMao(self): #!! comicamente diferente dos diagramas
+    def encerramentoMao(self): # COMICAMENTE CONSISTENTE COM DIAGRAMAS
         rodadas = self.verificarRegistroRodadas()
         maoEncerrada = False
         vencedor = None
@@ -433,14 +433,9 @@ class Mesa():
                         if carta not in self._monte:
                             self._monte.append(carta)
                 
-                #self._monte.append(aJogada.payload['carta'])
-                
-                print(self._monte)
-
                 cartaForte = self.comparaMonte()
                 self.definirTopo(cartaForte)
-                self._topo = cartaForte
-                print(cartaForte._valor)
+                # self._topo = cartaForte
                 self._PlayerInterface.AtualizarInterface()
 
                 if aJogada.payload['rodadaEncerrada'] == True:
@@ -455,10 +450,13 @@ class Mesa():
                         self.registrarMao()
                         vence = aJogada.payload['vencedor_mao']
                         self.adicionarPontuacaoTime(vence, self._valorMao)
-                        self._registroRodada = []
-                        self._monte = []
-                        self._topo = Carta(4,"ouro")
-                        self._PlayerInterface._topo = Carta(4,"ouro")
+                        self.limpaRegistroRodada()
+                        self.limpaMonte()
+                        self.resetaTopo()
+                        # self._registroRodada = []
+                        # self._monte = []
+                        # self._topo = Carta(4,"ouro")
+                        # self._PlayerInterface._topo = Carta(4,"ouro")
                         self._PlayerInterface.AtualizarInterface()
                         self._PlayerInterface.Notificar(f'Time {printar} vence a mao')
                         self.encerramentoPartida()
@@ -468,11 +466,13 @@ class Mesa():
                     else:
                         self.registrarStatusRodada(False)
                         self._PlayerInterface.Notificar(f'Time {printar} vence a rodada')
-                        qualRodada = None # apenas pra nao acusar erro
-                        self.registrarRodada(qualRodada,vence) # TODO parametros tem que chegar por pyng
-                        self._monte = []
-                        self._topo = Carta(4,"ouro")
-                        self._PlayerInterface._topo = Carta(4,"ouro")
+                        qualRodada = None 
+                        self.registrarRodada(qualRodada,vence) 
+                        self.limpaMonte()
+                        self.resetaTopo()
+                        # self._monte = []
+                        # self._topo = Carta(4,"ouro")
+                        # self._PlayerInterface._topo = Carta(4,"ouro")
                         self._PlayerInterface.AtualizarInterface()
                         if self._PlayerInterface.localPlayer._dealer:
                             self.novaRodada()
@@ -482,10 +482,8 @@ class Mesa():
                         self._PlayerInterface.AtualizarInterface()
                         self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
                         self._PlayerInterface.localPlayer._seuTurno = True
-                        print("MEU TURNO AEEE")
                 
             elif aJogada.payload['tipo'] == 'truco':
-            # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
                 print(aJogada.payload['time'])
                 print(self._PlayerInterface.localPlayer._time)
                 if aJogada.payload['time'] == self._PlayerInterface.localPlayer._time:
