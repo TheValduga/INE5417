@@ -601,7 +601,7 @@ class Mesa():
         self._Inicializada = set
         
     def getRegistroRodada(self):
-        return self._registroRodada
+        return self._registroRodada.copy()
     
     def limpaMonte(self):
         self._monte.clear()
