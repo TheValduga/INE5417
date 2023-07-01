@@ -118,6 +118,9 @@ class Jogador():
     
     def setQuemResponde(self, set):
         self.quemResponde = set
+        
+    def limpaMao(self):
+        self._mao = []
 
     def __init__(self, mesa): #!! não sei exatamente como se modelou o init, dar uma olhada no exemplo do Ricardo
         self._nome = ''

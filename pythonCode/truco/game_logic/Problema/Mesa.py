@@ -88,9 +88,9 @@ class Mesa():
         #!! alterar parametro nos diagramas
         cartaForte = self.comparaMonte()
         self.definirTopo(cartaForte)
-        ordem = []
-        for player in self.pegarOrdem():
-            ordem.append(player._nome)
+        # ordem = []
+        # for player in self.pegarOrdem():
+        #     ordem.append(player._nome)
         encerraRodada = self._jogadores[jogador].ehUltimo() 
         
         if encerraRodada:
@@ -391,7 +391,7 @@ class Mesa():
                 self.limpaMonte()
                 self.resetaTopo()
                 temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
-                self._PlayerInterface.localPlayer._mao = []
+                self._PlayerInterface.localPlayer.limpaMao()
                 self._valorMao = 1          
                 carta1 = Carta(temp_mao[0][0],temp_mao[0][1])
                 carta2 = Carta(temp_mao[1][0],temp_mao[1][1])
@@ -400,25 +400,21 @@ class Mesa():
                 self._PlayerInterface.localPlayer._mao.append(carta1)
                 self._PlayerInterface.localPlayer._mao.append(carta2)
                 self._PlayerInterface.localPlayer._mao.append(carta3)
-
-                temp_manilha = aJogada.payload['manilha']
-                manilha = Carta(temp_manilha,'ouro')
-                self._manilha = manilha
+                
+                self.setManilha(aJogada.payload['manilha'])
 
                 self._PlayerInterface.AtualizarInterface()
 
-                if self._PlayerInterface.localPlayer._position == 3:
-                    pass
-                else:
+                if self._PlayerInterface.localPlayer._position != 3:
                     turno = (self._PlayerInterface.localPlayer._position + 1)
-                    self._PlayerInterface.send_move({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
+                    self._PlayerInterface.enviarAtualizacaoPartida({'tipo': 'NovaMao', 'nova_mao': aJogada.payload['nova_mao'], 'turno_mao':turno, 'manilha': self._manilha._valor})
+               
     
             elif aJogada.payload['tipo'] == 'rodada':
                 
                 self._PlayerInterface.AtualizarInterface()
                 self._PlayerInterface.Notificar("Nova Rodada Iniciada")
                 self.registrarStatusRodada(True)
-
         
             elif aJogada.payload['tipo'] == 'carta':
                 
@@ -604,6 +600,11 @@ class Mesa():
         
     def limpaRegistroRodada(self):
         self._registroRodada.clear()
+        
+    def setManilha(self, manilha):
+        temp_manilha = manilha
+        new_manilha = Carta(temp_manilha,'ouro')
+        self._manilha = new_manilha
             
     def __init__(self, deck, time1, time2, interface):
         self._jogadores = []
