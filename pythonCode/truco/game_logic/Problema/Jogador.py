@@ -48,9 +48,9 @@ class Jogador():
             truco = self._mesa.VerificarTrucoAndamento()
             if not truco:
                 time = self._position % 2
-                carta = self._mesa.ColocarNaMesa(time, cartaIndex, self) # !! adicionar argumento cartaIndex no
+                carta = self._mesa.ColocarNaMesa( cartaIndex, self) # !! adicionar argumento cartaIndex no
                 encerraRodada = self._mesa.encerramentoRodada(self._position)
-                self._mesa._PlayerInterface.AtualizarInterface()
+                # self._mesa._PlayerInterface.AtualizarInterface()
                 
                 if not encerraRodada:
                     proximo = self._mesa.PassarTurno(self)
@@ -61,18 +61,15 @@ class Jogador():
                     #self._mesa._monte.append(carta)
                     self._mesa.registrarStatusRodada(False)
                     self._mesa._PlayerInterface.Notificar("Nova Rodada Iniciada")
-                    registro_envio = self._mesa._registroRodada
+                    registro_envio = self._mesa.getRegistroRodada()
                     monte_envio = []
-                    self._mesa._monte = []
-                    self._mesa._topo = Carta(4,'ouro')
-                    self._mesa._PlayerInterface._topo = Carta(4,'ouro')
+                    self._mesa.limpaMonte()
+                    self._mesa.resetaTopo()
                     if encerraMao[0]: #!! encerraMao é um array agora
-                        self._mesa._registroRodada = []
-                        self._mesa._PlayerInterface._topo = Carta(4,"ouro")
-                    print("ESTOU ENVIANDO:")
-                    print(monte_envio)
+                        self._mesa.limpaRegistroRodada()
+
                     novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao[0],'vencedor_mao':encerraMao[1], 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'monte':monte_envio, 'vencedor_rodada': registro_envio[-1],}
-                    self._mesa._PlayerInterface._topo = Carta(4,"ouro")
+                    # self._mesa._PlayerInterface._topo = Carta(4,"ouro")
         
                 self._mesa._PlayerInterface.AtualizarInterface()
                 self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
@@ -118,6 +115,9 @@ class Jogador():
     def PegarTime(self):
         """@ReturnType int"""
         return self._time
+    
+    def setQuemResponde(self, set):
+        self.quemResponde = set
 
     def __init__(self, mesa): #!! não sei exatamente como se modelou o init, dar uma olhada no exemplo do Ricardo
         self._nome = ''

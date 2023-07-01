@@ -17,8 +17,6 @@ class Baralho(object):
 		
 		self._cartas = baralho_resultado
 
-
-
 	# !! metodo adicionado depois, ATUALIZAR PROJETO -> diagrama de sequência do initialize por exemplo
 	def instanciarCartas(self):
 		baralho_aux = []
@@ -31,9 +29,6 @@ class Baralho(object):
 		
 		return baralho_aux
 	
-
-
-
 	def __init__(self):
 		self._cartas = self.instanciarCartas()
 		"""@AttributeType Problema.Carta"""

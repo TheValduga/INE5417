@@ -56,7 +56,6 @@ class Mesa():
             self._PlayerInterface.Notificar(f"FIM DE PARTIDA! TIME {vencedor} GANHOU")
             self._PlayerInterface.Notificar('O programa sera finalizado')
             self._PlayerInterface.main_window.destroy()
-            exit()
         # Partida continua
         
     def definirPartidaAndamento(self, aBoolean):
@@ -289,11 +288,13 @@ class Mesa():
 
 
     def novaMao(self):
+        self.limpaMonte()
+        self.resetaTopo()
         Mao_registro =self.registrarMao()
         Rodada = self.registrarStatusRodada(True)
         self._valorMao = 1
-        self._ordemRodada = self.definirOrdem() #!! olha, aqui ta meio redundante já que definirOrdem já faz a atribuição. De qualquer forma tem que mudar o diagrama de sequencia Nova Mão
-        self._baralho.embaralharCartas() #!! Tem um nota bizarra no diagrama de sequencia sobre "só entrará se for dealer" isso aqui tudo quem vai fazer é só o dealer. Por isso no final ele chama "enviarAtualização"
+        self._ordemRodada = self.definirOrdem() 
+        self._baralho.embaralharCartas() 
         self.distribuirCartas()
         
         self._manilha = self._jogadores[0].definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
@@ -306,8 +307,7 @@ class Mesa():
                 nova_mao.append([valor,naipe])
             novas_maos.append(nova_mao)
 
-        self._Inicializada = True
-        #turno = (self.localPlayer._position + 1) % 4 , 'turno' : turno
+        
         temp_mao = novas_maos[self._PlayerInterface.localPlayer._position]
         self._registroRodada = []
         self._PlayerInterface.localPlayer._mao = []
@@ -349,7 +349,7 @@ class Mesa():
         self._PlayerInterface.AtualizarInterface()
         self._PlayerInterface.localPlayer._seuTurno = True
 
-    def ColocarNaMesa(self, aTime, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
+    def ColocarNaMesa(self, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
         carta = jogador._mao[cardIndex]
         jogador._mao[cardIndex] = None
         carta = [carta._valor,carta._naipe]
@@ -395,6 +395,8 @@ class Mesa():
         if 'tipo' in aJogada.payload:
         
             if aJogada.payload['tipo'] == 'NovaMao' and aJogada.payload['turno_mao'] == self._PlayerInterface.localPlayer._position:
+                self.limpaMonte()
+                self.resetaTopo()
                 temp_mao = aJogada.payload['nova_mao'][(self._PlayerInterface.match_position)]
                 self._PlayerInterface.localPlayer._mao = []
                 self._valorMao = 1          
@@ -524,7 +526,7 @@ class Mesa():
                 else:
                     if not aJogada.payload['respondido']:
                         if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
-                            self._PlayerInterface.localPlayer.quemResponde = True
+                            self._PlayerInterface.localPlayer.setQuemResponde(True)
                             self._PlayerInterface.Notificar('O time adversário pediu truco e você deve responder')
                         else:
                             self._PlayerInterface.Notificar('O adversário pediu truco e seu aliado deve responder, aguardando resposta aliada')
@@ -550,7 +552,7 @@ class Mesa():
                             print(f'valor da mao em {self._valorMao}, aumentar adversario')
                             if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
                                 self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e você deve responder')
-                                self._PlayerInterface.localPlayer.quemResponde = True
+                                self._PlayerInterface.localPlayer.setQuemResponde(True)
                             else:
                                 self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e seu aliado deve responder')
                 self._PlayerInterface.AtualizarInterface()
@@ -589,11 +591,26 @@ class Mesa():
             # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
             
             
-            self._PlayerInterface.localPlayer.quemResponde = False
+            self._PlayerInterface.localPlayer.setQuemResponde(False)
             novoEstado = {'tipo' : 'truco', 'time' : time, 'respondido' : True , 'resposta' : resposta, 'quemResponde' : quemResponde}
             self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
             self._PlayerInterface.AtualizarInterface()
             self.encerramentoPartida()
+            
+    def setInicializada(self, set):
+        self._Inicializada = set
+        
+    def getRegistroRodada(self):
+        return self._registroRodada.copy()
+    
+    def limpaMonte(self):
+        self._monte.clear()
+        
+    def resetaTopo(self):
+        self._topo = Carta(4,'ouro')
+        
+    def limpaRegistroRodada(self):
+        self._registroRodada.clear()
             
     def __init__(self, deck, time1, time2, interface):
         self._jogadores = []
