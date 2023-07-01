@@ -526,7 +526,7 @@ class Mesa():
                 else:
                     if not aJogada.payload['respondido']:
                         if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
-                            self._PlayerInterface.localPlayer.quemResponde = True
+                            self._PlayerInterface.localPlayer.setQuemResponde(True)
                             self._PlayerInterface.Notificar('O time adversário pediu truco e você deve responder')
                         else:
                             self._PlayerInterface.Notificar('O adversário pediu truco e seu aliado deve responder, aguardando resposta aliada')
@@ -552,7 +552,7 @@ class Mesa():
                             print(f'valor da mao em {self._valorMao}, aumentar adversario')
                             if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
                                 self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e você deve responder')
-                                self._PlayerInterface.localPlayer.quemResponde = True
+                                self._PlayerInterface.localPlayer.setQuemResponde(True)
                             else:
                                 self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e seu aliado deve responder')
                 self._PlayerInterface.AtualizarInterface()
