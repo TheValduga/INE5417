@@ -86,19 +86,15 @@ class Mesa():
 
     def encerramentoRodada(self, jogador):
         #!! alterar parametro nos diagramas
-        encerrar = False
         cartaForte = self.comparaMonte()
         self.definirTopo(cartaForte)
-        self._topo = cartaForte
-        print(self._topo._valor)
         ordem = []
         for player in self.pegarOrdem():
             ordem.append(player._nome)
-        ehUltimo = self._jogadores[jogador].ehUltimo() #!! AGORA VAI SER SEMPRE A MESMA ORDEM FODA-SE
+        encerraRodada = self._jogadores[jogador].ehUltimo() 
         
-        if ehUltimo:
+        if encerraRodada:
             pontuaRodada = self.vencedorRodada(self._monte, self._topo)
-            #!! TODO: acrescentar vetor registroRodadas
             qualrodada= self.verificaRodada()
             self.registrarRodada(qualrodada, pontuaRodada) #!!
             if pontuaRodada == 0:
@@ -106,12 +102,9 @@ class Mesa():
             if pontuaRodada == 1:
                 vencedor = "Time vermelho vence a rodada"
             self._PlayerInterface.Notificar(vencedor)
-            print(self._registroRodada)
-            encerrar = True
             self.registrarStatusRodada(False)
             
-        
-        return encerrar
+        return encerraRodada
 
     def encerramentoMao(self): #!! comicamente diferente dos diagramas
         rodadas = self.verificarRegistroRodadas()
@@ -198,7 +191,7 @@ class Mesa():
     def definirTopo(self, aCartaForte):
         """@ParamType aCartaForte int
         @ReturnType int"""
-        pass
+        self._topo = aCartaForte
 
     def pegarOrdem(self):
         return self._ordemRodada
