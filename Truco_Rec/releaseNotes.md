@@ -25,7 +25,7 @@ pipenv shell
 python -m truco
 ```
   
-Necessário pillow e pynetgames, instalados no ambiente virtual por meio de `requirements.txt` [^1]
+Necessário pillow e pynetgames, instalados no ambiente virtual por meio de `requirements.txt` [^1] ou `pip install pillow`.
 
 
 > Written with [StackEdit](https://stackedit.io/).
