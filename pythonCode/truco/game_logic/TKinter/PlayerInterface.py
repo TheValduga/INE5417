@@ -16,13 +16,13 @@ class PlayerInterface(PyNetgamesServerListener):
     def __init__(self):
         self.main_window = Tk()
 
-        deck = Baralho() #!! diagrama de sequência initialize tem que mudar. Metodo novo em baralho
-        time1 = Time(0) #!! initialize ordem em que as coisas acontecem.
-        time2 = Time(1) #!! initialize
-        self._table = Mesa(deck, time1, time2, self) #!! deve mudar um tanto de coisa.
-        self._table._baralho = deck #!! initialize
-        self.localPlayer = Jogador(self._table) #!! tem que botar nos diagramas
-        self.remotePlayers = [] #!! Estou fazendo assim. Se estiver correto tem que mudar no diagrama
+        deck = Baralho() 
+        time1 = Time(0) 
+        time2 = Time(1) 
+        self._table = Mesa(deck, time1, time2, self) 
+        self._table._baralho = deck 
+        self.localPlayer = Jogador(self._table) 
+        self.remotePlayers = [] 
         nome = self.SolicitarNomeJogador()
         self.localPlayer.RegistrarNome(nome)
         self._topo = Carta(4,'ouro')
@@ -31,8 +31,8 @@ class PlayerInterface(PyNetgamesServerListener):
         self.add_listener()
         self.send_connect()
       #<----------------------- Pynetgames ----------------------------------
-        #self.fill_main_window()
-        self.main_window.mainloop() #!! na modelagem o initialize acaba aqui. ainda não sei se vamos precisar de mais coisa
+      
+        self.main_window.mainloop() 
         #------------------ final do initialize-------------------#
         
         
@@ -103,14 +103,11 @@ class PlayerInterface(PyNetgamesServerListener):
 
 
 
-    def fill_main_window(self): #!! adicionar a modelagem. usar como a "criação" da janela e usar a AtualizarInterface como a  função de atualização em si
+    def fill_main_window(self):
         self.main_window.title("Truco")
         self.main_window.geometry("1366x768")
         self.main_window["bg"]="#046307"
-        # # Frame da mesa do jogo
-        # self.board_frame = Frame(self.main_window, padx=100, pady=25, bg="red")
-        # self.board_frame.grid(row=0 , column=0)
-        # Frame das cartas do jogador
+      
         self.player1_frame = Frame(self.main_window, padx=150, pady=20, bg="#046307")
         self.player1_frame.grid(row=2, column=1)
             
@@ -133,14 +130,12 @@ class PlayerInterface(PyNetgamesServerListener):
         self.logo_label = Label(self.player1_frame, text=self.localPlayer._nome, font="arial 24", bg="#046307")
         self.logo_label.grid(row=0, column=3)
 
-        #!! esse porre precisa botar nos diagramas? 
-        #!! variavel temporaria auxiliar porra, pelo amor de deus né
+        
         diretorio_atual = os.path.dirname(os.path.abspath(__file__))
         diretorio_pai = os.path.dirname(diretorio_atual)
         diretorio_imagens = os.path.join(diretorio_pai,"images")
         self._back_card = PhotoImage(file=os.path.join(diretorio_imagens,"back_card2.png"))
-        #teste_carta = Carta(1,'paus')
-        #self._back_card = teste_carta.get_foto_carta()
+        
         self.front_card = PhotoImage(file=os.path.join(diretorio_imagens,"a-espada.png")) 
         self.card_deck = PhotoImage(file=os.path.join(diretorio_imagens, "card_deck.png")) 
 
@@ -173,15 +168,13 @@ class PlayerInterface(PyNetgamesServerListener):
         self.logo_label = Label(self.mesa_frame, bd = 0, image=self._back_card)
         self.logo_label.grid(row=0, column=0)
         self.logo_label = Label(self.mesa_frame, bd = 0, image=self.card_deck)
-        # canvas = Canvas(self.mesa_frame, bg="#046307", width=200, height=100)
-        # canvas.pack()
-        # canvas.create_image(100,50,image=self.card_deck)
+        
         self.logo_label.grid(row=0, column=1)
         self.logo_label = Label(self.mesa_frame, bd = 0, image=self._back_card)
         self.logo_label.grid(row=0, column=2)
 
-        ##!! TODOS ESSES IF'S PODEM SER SUBSTITUIDOS POR ALGO TIPO "IF self._table.Inicializado == True" depois
-        if len(self.remotePlayers) ==3: #!! mudar 2 pra 3 depois
+        
+        if len(self.remotePlayers) ==3: 
 
             aux = self.remotePlayers
             aux.append((self.localPlayer._nome, self.match_position))
@@ -259,7 +252,7 @@ class PlayerInterface(PyNetgamesServerListener):
         self.Notificar("Nova Mão entregue")
 
 
-    def clicarCarta(self, index: int): #!! adicionar argumento ao projeto
+    def clicarCarta(self, index: int): 
         """@ReturnType Problema.Carta"""
         self.localPlayer.selecionarCarta(index)
 
@@ -274,7 +267,7 @@ class PlayerInterface(PyNetgamesServerListener):
     def Notificar(self, mensagem):
         messagebox.showinfo(message= mensagem)
 
-    def set_match_id(self, match_id): # !! ATUALIZAR : botar match_id como atributo da classe playerinterface
+    def set_match_id(self, match_id): 
         """@ParamType aMatch_id string"""
         self._match_id = match_id
         pass
@@ -317,9 +310,6 @@ class PlayerInterface(PyNetgamesServerListener):
         self.logo_label = Label(self.mesa_frame, bd = 0, image= manilha._imagem) # MANILHA
         self.logo_label.grid(row=0, column=0)
         self.logo_label = Label(self.mesa_frame, bd = 0, image=self.card_deck)
-        # canvas = Canvas(self.mesa_frame, bg="#046307", width=200, height=100)
-        # canvas.pack()
-        # canvas.create_image(100,50,image=self.card_deck)
 
 
         self.titulo_label = Label(self.placar_frame, text='Score', font="arial 24", bg="#046307")
@@ -348,12 +338,12 @@ class PlayerInterface(PyNetgamesServerListener):
     def send_connect(self):	# Pyng use case "send connect"
         self.server_proxy.send_connect("wss://py-netgames-server.fly.dev")
 
-    def send_match(self): #!! esse amount_of_players é desnecessário e atrapalha. Tira essa porra da modelagemm pra já	# Pyng use case "send match"
+    def send_match(self): # Pyng use case "send match"
         self.server_proxy.send_match(4) #4 = quantidade de jogadores.
 
     def receive_connection_success(self):	# Pyng use case "receive connection"
-        self.Notificar("Conectado ao servidor") #!! ISSO AQUI É DO RECEIVE_CONNECTION. SÓ PRA PODEREM SE LOCALIZAR NA HORA DA MODELAGEM
-        self.send_match() #!! diagrama de sequencia do Receive Connection. Enfia o amount_of_players no cu. desnecessário
+        self.Notificar("Conectado ao servidor") 
+        self.send_match() 
 
     def receive_disconnect(self):	# Pyng use case "receive disconnect"
         self.Notificar("Desconectado do servidor, o programa sera finalizado")
@@ -367,26 +357,26 @@ class PlayerInterface(PyNetgamesServerListener):
 
     def receive_match(self, match):	# Pyng use case "receive match"
         self.set_match_id(match.match_id)
-        self.match_position = match.position #!! acrescentar aos diagramas (lembrar: Sequencia e Atividade)
-        self.localPlayer._position = match.position #!! também vai pro diagrama
+        self.match_position = match.position 
+        self.localPlayer._position = match.position 
 
-        # aqui ele começa uma sequência de mensagens pra pegar o nome e match_position de todos os jogadores. Só posso inicializar a mesa depois de ter isso
+        
         self.pega_nomes_e_posicoes()
     
-    def pega_nomes_e_posicoes(self): #!! adicionar aos diagramas
+    def pega_nomes_e_posicoes(self): 
         if self.match_position == 0:
             jogadores = {"jogadores" : [(self.localPlayer._nome, self.match_position)],'turno_init':1}
             self.send_move(jogadores)
 
     
 
-    def inicializar_mesa(self,move): #!! adicionar ao diagrama  #!!Receive Match = Salvar match_id e match_position -> definir jogadores -> definir times -> definir  times -> definir dealer -> notificar times
+    def inicializar_mesa(self,move): 
         if 'turno_init' in move.payload:
             if move.payload['turno_init'] == self.match_position:
                 if len(move.payload['jogadores']) < 4:
                     pacote = {}
                     pacote['jogadores'] = move.payload['jogadores']
-                    pacote['jogadores'].append((self.localPlayer._nome, self.match_position)) #!! tupla de nome, posicao pra ajudar na UI
+                    pacote['jogadores'].append((self.localPlayer._nome, self.match_position)) 
                     turno = (self.match_position +1) % 4
                     pacote['turno_init'] = turno
                     self.send_move(pacote)
@@ -406,12 +396,12 @@ class PlayerInterface(PyNetgamesServerListener):
                         jog_temp._position = posicao
                         self._table._jogadores.append(jog_temp)
 
-                    #self._table._jogadores = move.payload['jogadores']
+                    
 
-                    self._table.IniciarPartida(self.localPlayer) #!! diagrama e precisa disso pra escolher o dealer se não não funciona
+                    self._table.IniciarPartida(self.localPlayer) 
                     self.Notificar("Partida iniciada \nTime azul: " + str(self._table._times[0]._jogadores[0]._nome) + ' ,'+str(self._table._times[0]._jogadores[1]._nome)+'\nTime vermelho: '+str(self._table._times[1]._jogadores[0]._nome)+' ,'+str(self._table._times[1]._jogadores[1]._nome))
                     
-                    self.fill_main_window() #!! final do diagrama de sequencia receive_match. substituir "atualizar..." por fill_main_window. Ver comentário de fill_main_window pra ver minha justificativa
+                    self.fill_main_window() 
                     
 
                     self._table.setInicializada(True)
@@ -420,17 +410,17 @@ class PlayerInterface(PyNetgamesServerListener):
                         self._table.novaMao()
                         
                             
-            #turno = (self.localPlayer._position + 1) % 4 , 'turno':turno
+            
                                 
 
     def receive_move(self, move):	# Pyng use case "receive move"
-        if self._table._Inicializada == False: #!! tem que fazer esse rolo do cacete pra rececber o nome dos jogadores antes de começar o jogo
-            self.inicializar_mesa(move) #!! Adicionar ao diagrama
+        if self._table._Inicializada == False: 
+            self.inicializar_mesa(move) 
         else:
             self._table.receberJogada(move)
         
                             
-    #!! só para teste. Talvez vai pra interface, foda-se
+    
     def send_move(self,move):
         self.server_proxy.send_move(self._match_id, move)
 

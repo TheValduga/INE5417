@@ -20,16 +20,16 @@ class Carta():
 		"""@AttributeType Problema.Baralho
 		# @AssociationType Problema.Baralho"""
 
-		#!! TUDO DAQUI PRA BAIXO TEM QUE BOTAR EU IMAGINO (pelo menos os com self eu acho)
+		
 		diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 		diretorio_pai = os.path.dirname(diretorio_atual)
 		self.diretorio_imagens = os.path.join(diretorio_pai,"images")
 	
-	def get_foto_carta(self): #!! além de adicionar nos diagramas, ver se escrevi o nome dos arquivos perfeitamente
+	def get_foto_carta(self): 
 		nome_imagem = str(self._valor) + '_' + str(self._naipe) + ".png"
 		file=os.path.join(self.diretorio_imagens, nome_imagem)
 		imagem = ImageTk.PhotoImage(Image.open(file).resize((61,95)))
-		self._imagem = imagem #!! adicionar self._imagem aos diagramas
+		self._imagem = imagem 
 		
 
 		

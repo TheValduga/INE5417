@@ -17,7 +17,7 @@ class Jogador():
 
         sequencia = [4,5,6,7,'J','Q','K',1,2,3]
 
-        vira = baralho._cartas[13]._valor # !! mudar diagrama de algoritmo
+        vira = baralho._cartas[13]._valor 
 
         manilha = sequencia[(sequencia.index(vira)+1) % 10]
 
@@ -26,7 +26,7 @@ class Jogador():
 
         return carta_retorno
 
-    def selecionarCarta(self, cartaIndex: int): # !! alterar nome e tipo de do argumento para int
+    def selecionarCarta(self, cartaIndex: int): 
         """@ParamType aCarta Problema.Carta"""
         turno = self.verificarTurno()
         encerraMao = False
@@ -36,9 +36,9 @@ class Jogador():
             truco = self._mesa.VerificarTrucoAndamento()
             if not truco:
                 time = self._position % 2
-                carta = self._mesa.ColocarNaMesa( cartaIndex, self) # !! adicionar argumento cartaIndex no
+                carta = self._mesa.ColocarNaMesa( cartaIndex, self) 
                 encerraRodada = self._mesa.encerramentoRodada(self._position)
-                # self._mesa._PlayerInterface.AtualizarInterface()
+                
                 
                 if not encerraRodada:
                     proximo = self._mesa.PassarTurno(self)
@@ -46,18 +46,18 @@ class Jogador():
                 else:
                     encerraMao = self._mesa.encerramentoMao()
                     proximo = self._mesa.PassarTurno(self)
-                    #self._mesa._monte.append(carta)
+                
                     self._mesa.registrarStatusRodada(False)
                     self._mesa._PlayerInterface.Notificar("Nova Rodada Iniciada")
                     registro_envio = self._mesa.getRegistroRodada()
                     monte_envio = []
                     self._mesa.limpaMonte()
                     self._mesa.resetaTopo()
-                    if encerraMao[0]: #!! encerraMao é um array agora
+                    if encerraMao[0]: 
                         self._mesa.limpaRegistroRodada()
 
                     novoEstado = {'rodadaEncerrada': encerraRodada, 'maoEncerrada': encerraMao[0],'vencedor_mao':encerraMao[1], 'carta': carta, 'tipo' : 'carta', 'proximo' : proximo, 'monte':monte_envio, 'vencedor_rodada': registro_envio[-1],}
-                    # self._mesa._PlayerInterface._topo = Carta(4,"ouro")
+                    
         
                 self._mesa._PlayerInterface.AtualizarInterface()
                 self._mesa._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
@@ -96,7 +96,7 @@ class Jogador():
     def limpaMao(self):
         self._mao = []
 
-    def __init__(self, mesa): #!! não sei exatamente como se modelou o init, dar uma olhada no exemplo do Ricardo
+    def __init__(self, mesa): 
         self._nome = ''
         """@AttributeType string"""
         self._seuTurno = False
@@ -109,7 +109,7 @@ class Jogador():
   
         self.quemResponde = False
 
-        self._position = '' #!! atributo nao ta na modelagem
+        self._position = '' 
 
         """@AttributeType int"""
         self._unnamed_Carta_ = []

@@ -24,7 +24,7 @@ class Mesa():
         return self._rodadaAndamento
         
 
-    def definirOrdem(self): #!! serve pra nada mais
+    def definirOrdem(self): 
         """@ReturnType Problema.Jogador[]"""
         if self._ordemRodada == []:
             nova_ordem = self._jogadores
@@ -89,12 +89,10 @@ class Mesa():
         return [maoEncerrada, vencedor]
     
     def encerramentoRodada(self, jogador):
-        #!! alterar parametro nos diagramas
+        
         cartaForte = self.comparaMonte()
         self.definirTopo(cartaForte)
-        # ordem = []
-        # for player in self.pegarOrdem():
-        #     ordem.append(player._nome)
+        
         encerraRodada = self._jogadores[jogador].ehUltimo() 
         
         if encerraRodada:
@@ -110,31 +108,9 @@ class Mesa():
             
         return encerraRodada
 
-    #!! esse aqui não achei nos diagramas
-    def encerramentoMao(self): # COMICAMENTE CONSISTENTE COM DIAGRAMAS
+    
+    def encerramentoMao(self): # COMICAMENTE CONSISTENTE COM DIAGRAMAs
         maoEncerrada, vencedor = self.verificarRegistroRodadas()
-        
-        # match len(rodadas):
-        #     case 1:
-        #         #  Apenas uma rodada até o momento.
-        #         pass
-        #     case 2:
-        #         #  Duas rodadas até o momento.
-        #         if rodadas[0] == rodadas[1]:
-        #             maoEncerrada = True
-        #             vencedor = rodadas[0]
-        #     case 3:
-        #         #  Três rodadas até o momento.
-        #         maoEncerrada = True
-                
-        #         for resultado in rodadas: 
-        #             temp = 0
-        #             for resultado1 in rodadas:
-        #                 if resultado1 == resultado:
-        #                     temp = temp +1
-        #                     if temp == 2:
-        #                         vencedor = resultado
-        #                         break 
         
         if maoEncerrada:
             self.adicionarPontuacaoTime(vencedor,self._valorMao)
@@ -234,12 +210,12 @@ class Mesa():
     def IniciarPartida(self, jogador_local): #!!
         #self._jogadores = jogadores
         self.DefinirTimes()
-        self.EscolherDealer(jogador_local) #!! adicionar aos diagramas
+        self.EscolherDealer(jogador_local) 
         self._times[0].ZerarPlacar()
         self._times[1].ZerarPlacar()
-        #self._baralho = Baralho() #!! isso não tem nos diagramas de Receive Match. Tem que ter
+        
 
-    def DefinirTimes(self): #!! no diagrama times é Time. Tem que ser um array de Time
+    def DefinirTimes(self): 
         j = self._jogadores
         
         self._times[0]._jogadores = [j[0],j[2]]
@@ -255,9 +231,9 @@ class Mesa():
                 self._PlayerInterface.localPlayer._time = jogador._time
         
 
-    def EscolherDealer(self, jogador_local): #!! tive que mudar o algoritmo. Jogador DefinirDealer nos diagramas tem que virar Mesa EscolherDealer e fazer as alterações necessárias)
+    def EscolherDealer(self, jogador_local): 
             if jogador_local._position == 0:
-                dealer = jogador_local.DefinirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
+                dealer = jogador_local.DefinirDealer() 
 
 
     def novaMao(self):
@@ -270,7 +246,7 @@ class Mesa():
         self._baralho.embaralharCartas() 
         self.distribuirCartas()
         
-        self._manilha = self._jogadores[0].definirManilha(self._baralho) #!! diagrama de sequência não ta passando baralho como parametro. tem que passar
+        self._manilha = self._jogadores[0].definirManilha(self._baralho) 
         novas_maos = []
         for jogador in self._jogadores:
             nova_mao = []
@@ -300,7 +276,7 @@ class Mesa():
 
 
 
-    def distribuirCartas(self): #!! acho que metodo não existe na classe. o gerador automatico pelo menos não fez. O return é desnecessário e bunda
+    def distribuirCartas(self): 
 
         i = 0 
         for jogador in self._jogadores:
@@ -316,17 +292,17 @@ class Mesa():
     def novaRodada(self):
         self._PlayerInterface.Notificar(str("Nova Rodada Iniciada\n Turno de " + self._PlayerInterface.localPlayer._nome))
         rodadaAndamento = self.registrarStatusRodada(True)
-        #self._ordemRodada = self.definirOrdem() #!! remover da modelagem
+        
         novoEstado = {'tipo':'rodada', 'rodadaAndamento':rodadaAndamento}
         self._PlayerInterface.enviarAtualizacaoPartida(novoEstado)
         self._PlayerInterface.AtualizarInterface()
         self._PlayerInterface.localPlayer._seuTurno = True
 
-    def ColocarNaMesa(self, cardIndex, jogador): #!! deve retornar um array com valor naipe da carta
+    def ColocarNaMesa(self, cardIndex, jogador): 
         carta = jogador._mao[cardIndex]
         jogador._mao[cardIndex] = None
         carta = [carta._valor,carta._naipe]
-        self._monte.append(carta) #!! A estrutura de dado pra dividir o monte em 2 é uma bosta. Agora que a ordem é sempre a mesma foda-se
+        self._monte.append(carta) 
         self._PlayerInterface.localPlayer._mao[cardIndex] = None
         return carta
 
@@ -433,10 +409,7 @@ class Mesa():
                         self.limpaRegistroRodada()
                         self.limpaMonte()
                         self.resetaTopo()
-                        # self._registroRodada = []
-                        # self._monte = []
-                        # self._topo = Carta(4,"ouro")
-                        # self._PlayerInterface._topo = Carta(4,"ouro")
+                        
                         self._PlayerInterface.AtualizarInterface()
                         self._PlayerInterface.Notificar(f'Time {printar} vence a mao')
                         self.encerramentoPartida()
@@ -450,9 +423,7 @@ class Mesa():
                         self.registrarRodada(qualRodada,vence) 
                         self.limpaMonte()
                         self.resetaTopo()
-                        # self._monte = []
-                        # self._topo = Carta(4,"ouro")
-                        # self._PlayerInterface._topo = Carta(4,"ouro")
+                        
                         self._PlayerInterface.AtualizarInterface()
                         if self._PlayerInterface.localPlayer._dealer:
                             self.novaRodada()
@@ -460,7 +431,7 @@ class Mesa():
                 else:
                     if aJogada.payload['proximo'] == self._PlayerInterface.localPlayer._nome:
                         self._PlayerInterface.AtualizarInterface()
-                        self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') #!! talvez tenha mudado a ordem
+                        self._PlayerInterface.Notificar(f'Turno de {aJogada.payload["proximo"]}') 
                         self._PlayerInterface.localPlayer._seuTurno = True
                 
             elif aJogada.payload['tipo'] == 'truco':
@@ -535,7 +506,7 @@ class Mesa():
                 else:
                     pontua = 0 
                 self.adicionarPontuacaoTime(pontua , self._valorMao)
-                # self._valorMao = 1 
+            
                 if self._PlayerInterface.localPlayer._time == 0:
                     time = 1
                 else:
@@ -551,11 +522,11 @@ class Mesa():
                 self.registrarTruco(False)
             elif resposta == 'aumentar':
                 time = self._PlayerInterface.localPlayer._time
-                # print(f'aumentando valor para {self._valorMao}, respondi aumento')
+                
                 self.aumentarValorMao()
                 quemResponde = self.QuemResponde()
                 self._PlayerInterface.Notificar(f'Você respondeu {resposta}, aguardando ação adversária')
-            # payload {'tipo' : 'truco', 'time' : jogador._time, 'respondido' : False, 'quemResponde' : quemResponde}
+            
             
             
             self._PlayerInterface.localPlayer.setQuemResponde(False)

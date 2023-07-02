@@ -3,7 +3,7 @@
 from truco.game_logic.Problema import Jogador
 
 class Time(object):
-	def pegarPontuacao(self): #!! pegarPontuacao acho que tem mais um parametro na modelagem
+	def pegarPontuacao(self): 
 		"""@ParamType aTime Problema.Time
 		@ReturnType int"""
 		return self._pontuacao
