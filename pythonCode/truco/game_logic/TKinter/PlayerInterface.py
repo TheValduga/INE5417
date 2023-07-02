@@ -254,50 +254,10 @@ class PlayerInterface(PyNetgamesServerListener):
             self.time_vermelho_label = Label(self.placar_frame, text=placar_vermelho, font="arial 20", fg="red", bg="#046307")
             self.time_vermelho_label.grid(row=2, column=1)
 
-    def mostra_mensagem(self, aMensagem):
-        """@ParamType aMensagem string
-        @ReturnType void"""
-        pass
-
-    def clicarBotao(self, aJogador):
-        pass
 
     def exibirNotificacaoInicioMao(self):
         self.Notificar("Nova Mão entregue")
 
-    def enviarPedidoTruco(self):
-        pass
-
-    def notificarNaoEhTurno(self):
-        pass
-
-    def notificarTrucoAndamento(self):
-        pass
-
-    def exibirNovoEstado(self):
-        pass
-
-    def atualizaTopo(self, aMonte_cartaForte_):
-        """@ParamType aMonte_cartaForte_ Problema.Carta"""
-        pass
-
-    def exibirCarta(self, aCarta):
-        """@ParamType aCarta Problema.Carta"""
-        pass
-
-    def exibirMesa(self, aMesa):
-        """@ParamType aMesa Problema.Mesa"""
-        pass
-
-    def receberJogada(self, aJogada):
-        """@ParamType aJogada Dict{ string, any }"""
-        pass
-
-    def exibirAguardandoResposta(self):
-        pass
-
-    def exibirRespostaTruco(self, aResposta):
-        pass
 
     def clicarCarta(self, index: int): #!! adicionar argumento ao projeto
         """@ReturnType Problema.Carta"""
@@ -371,15 +331,6 @@ class PlayerInterface(PyNetgamesServerListener):
         self.time_vermelho_label = Label(self.placar_frame, text=placar_vermelho, font="arial 20", fg="red", bg="#046307")
         self.time_vermelho_label.grid(row=2, column=1)
 
-    def clicarBotao(self):
-        pass
-
-    def responderTruco(self, aResposta):
-        """@ParamType aResposta string"""
-        pass
-
-    def reset(self):
-        pass
 
     def enviarAtualizacaoPartida(self, aNovoEstado):
         self.send_move(aNovoEstado)

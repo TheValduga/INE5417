@@ -11,18 +11,6 @@ class Jogador():
         """@ReturnType boolean"""
         return self._seuTurno
 
-    def clicarBotao(self):
-        pass
-
-    def definirOrdem(self):
-        """@ReturnType Problema.Jogador[]"""
-        pass
-
-    def distribuirCartas(self, aBaralho):
-        """@ParamType aBaralho Problema.Baralho
-        @ReturnType Problema.Carta*"""
-        pass
-
     def definirManilha(self, baralho):
         """@ParamType aBaralho Problema.Baralho
         @ReturnType Problema.Carta"""
@@ -81,14 +69,6 @@ class Jogador():
         else:
             self._mesa._PlayerInterface.Notificar('Não é seu turno')
 
-    def verificarTrucoAndamento(self):
-        """@ReturnType boolean"""
-        pass
-
-    def removerCartaMao(self, aCarta):
-        """@ParamType aCarta Problema.Carta"""
-        pass
-
     def passarTurno(self):
         self._seuTurno = False
         return ((self._position + 1) % 4)
@@ -98,16 +78,10 @@ class Jogador():
         """@ParamType ordem Problema.Jogador[]"""
         return self._position == 3
 
-
-    def respondeTruco(self):
-        """@ReturnType boolean"""
-        pass
-
     def RegistrarNome(self, nome):
         """@ParamType aNome string"""
         self._nome = nome
-        pass
-
+        
     def DefinirDealer(self):
         self._dealer = True
         return True

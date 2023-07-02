@@ -24,11 +24,6 @@ class Mesa():
         return self._rodadaAndamento
         
 
-    def registraPontoMao(self, aTime, aPontuacao):
-        """@ParamType aTime Problema.Time
-        @ParamType aPontuacao int"""
-        pass
-
     def definirOrdem(self): #!! serve pra nada mais
         """@ReturnType Problema.Jogador[]"""
         if self._ordemRodada == []:
@@ -92,22 +87,7 @@ class Mesa():
                                 break 
 
         return [maoEncerrada, vencedor]
-    def verificarVencedorRodada(self, aRodada):
-        """@ParamType aRodada int
-        @ReturnType Problema.Time"""
-        pass
-
-    def verificarEmpate(self):
-        """@ReturnType boolean"""
-        pass
-
-    def verificarRodadasEmpatadas(self):
-        """@ReturnType int*"""
-        pass
-
-    def nenhumTimePontua(self):
-        pass
-
+    
     def encerramentoRodada(self, jogador):
         #!! alterar parametro nos diagramas
         cartaForte = self.comparaMonte()
@@ -130,6 +110,7 @@ class Mesa():
             
         return encerraRodada
 
+    #!! esse aqui não achei nos diagramas
     def encerramentoMao(self): # COMICAMENTE CONSISTENTE COM DIAGRAMAS
         maoEncerrada, vencedor = self.verificarRegistroRodadas()
         
@@ -224,10 +205,8 @@ class Mesa():
 
     def verificaRodada(self, *aRegistroRodadas):
         for rodada in aRegistroRodadas:
-            if rodada == 0:
-                # EMPATE
-                return 0
-            elif rodada == 1:
+            
+            if rodada == 1:
                 # Time 1 venceu
                 return 1
             elif rodada == 2:
@@ -240,17 +219,7 @@ class Mesa():
     def registrarRodada(self, aQualRodada, aVencedorRodada):
         self._registroRodada.append(aVencedorRodada)
 
-    def trucoRespondido(self):
-        """@ReturnType boolean"""
-        pass
 
-    def registrarRespostaTruco(self, aValor):
-        """@ParamType aValor string"""
-        pass
-
-    def timeTrucou(self):
-        """@ReturnType Problema.Time"""
-        pass
 
     def adicionarPontuacaoTime(self, aTime, aPontos):
         self._times[aTime]._pontuacao = self._times[aTime]._pontuacao + aPontos
@@ -263,9 +232,6 @@ class Mesa():
             else:
                 self._valorMao += 3
 
-    def clicarBotao(self, aJogador):
-        """@ParamType aJogador Problema.Jogador"""
-        pass
 
     def IniciarPartida(self, jogador_local): #!!
         #self._jogadores = jogadores
@@ -294,10 +260,6 @@ class Mesa():
     def EscolherDealer(self, jogador_local): #!! tive que mudar o algoritmo. Jogador DefinirDealer nos diagramas tem que virar Mesa EscolherDealer e fazer as alterações necessárias)
             if jogador_local._position == 0:
                 dealer = jogador_local.DefinirDealer() #!! não sei se nos diagramas isso ta aqui. alguem ve
-
-    def pegarPlacar(self):
-        """@ReturnType int*"""
-        pass
 
 
     def novaMao(self):

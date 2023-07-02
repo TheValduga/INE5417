@@ -3,31 +3,13 @@
 from truco.game_logic.Problema import Jogador
 
 class Time(object):
-	def registrarTimeCarta(self, aJogador):
-		"""@ParamType aJogador Problema.Jogador
-		@ReturnType Problema.Time"""
-		pass
-
 	def pegarPontuacao(self): #!! pegarPontuacao acho que tem mais um parametro na modelagem
 		"""@ParamType aTime Problema.Time
 		@ReturnType int"""
 		return self._pontuacao
 
-
-	def verificarRodadasTime(self):
-		"""@ReturnType int"""
-		pass
-
-	def registraMaoEncerrada(self, aEncerrada):
-		"""@ParamType aEncerrada boolean"""
-		pass
-
 	def ZerarPlacar(self):
 		self._pontuacao = 0
-
-	def setarPontuacao(self, aPontos):
-		"""@ParamType aPontos int"""
-		pass
 
 	def __init__(self, id):
 		self._identificacao = id
