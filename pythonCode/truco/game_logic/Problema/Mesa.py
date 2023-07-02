@@ -155,14 +155,12 @@ class Mesa():
         cartaForte = Carta("", "")
         cartas_monte = self._monte
         for carta in cartas_monte:
-            print(carta)
             carta_temp = Carta(carta[0],carta[1])
             valorCarta = seq.index(carta_temp._valor)
             valorCartaForte = seq.index(cartaForte._valor)
             naipeCarta = naipes.index(carta_temp._naipe)
             naipeCartaForte = naipes.index(cartaForte._naipe)
             valorManilha = seq.index(self._manilha._valor)
-            print("MANILHA = " + str(self._manilha._valor))
 
             if valorCartaForte == valorManilha : 
                 if valorCarta == valorManilha : #trativa caso a carta sendo analisada tenha valor de manilha
