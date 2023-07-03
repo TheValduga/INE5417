@@ -140,12 +140,10 @@ class Mesa():
 
             if valorCartaForte == valorManilha : 
                 if valorCarta == valorManilha : #trativa caso a carta sendo analisada tenha valor de manilha
-                    print("ENTREI NA TRATATIVA DE MANILHA NO MONTE")
                     if naipeCarta > naipeCartaForte:
                         cartaForte = carta_temp
 
             else: 
-                print("ENTREI NA TRATATIVA SEM MANILHA NO MONTE")
                 if valorCarta == valorManilha:
                     cartaForte = carta_temp
                 else:
@@ -321,7 +319,6 @@ class Mesa():
 
     def ClicarBotaoTruco(self, jogador):
         turno = jogador.verificarTurno()
-        print('PEÇO TRUCO')
         if turno:
             truco = self.VerificarTrucoAndamento()
             if not truco:
@@ -435,12 +432,9 @@ class Mesa():
                         self._PlayerInterface.localPlayer._seuTurno = True
                 
             elif aJogada.payload['tipo'] == 'truco':
-                print(aJogada.payload['time'])
-                print(self._PlayerInterface.localPlayer._time)
                 if aJogada.payload['time'] == self._PlayerInterface.localPlayer._time:
                     if aJogada.payload['respondido']:
                         if aJogada.payload['resposta'] == 'correr':
-                            print(f'sou aliado de quem pediu truco meu time é {self._PlayerInterface.localPlayer._time}')
                             self.adicionarPontuacaoTime(self._PlayerInterface.localPlayer._time, self._valorMao)
                             self.registrarMao()
                             self.registrarTruco(False)
@@ -451,13 +445,11 @@ class Mesa():
                                 
                         elif aJogada.payload['resposta'] == 'aceitar':
                             self.aumentarValorMao()
-                            print(f'valor da mao em {self._valorMao}, aceitar aliado')
                             self.registrarTruco(False)
                             self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar')
     
                         elif aJogada.payload['resposta'] == 'aumentar':
                             self.aumentarValorMao()
-                            print(f'valor da mao em {self._valorMao}, aumentar aliado')
                             self._PlayerInterface.Notificar('Seu aliado pediu aumento ao truco adversário, aguardando resposta')
                     else:
                         self._PlayerInterface.Notificar('Seu aliado pediu truco, aguardando resposta adversária')
@@ -470,7 +462,6 @@ class Mesa():
                             self._PlayerInterface.Notificar('O adversário pediu truco e seu aliado deve responder, aguardando resposta aliada')
                     else:
                         if aJogada.payload['resposta'] == 'correr':
-                            print(f'sou adversario de quem pediu truco, meu time NÃO é {self._PlayerInterface.localPlayer._time}')
                             self.adicionarPontuacaoTime(aJogada.payload['time'], self._valorMao)
                             self.registrarMao()
                             self.registrarTruco(False)
@@ -481,13 +472,11 @@ class Mesa():
                             
                         elif aJogada.payload['resposta'] == 'aceitar':
                             self.aumentarValorMao()
-                            print(f'valor da mao em {self._valorMao}, aceitar adversario')
                             self.registrarTruco(False)
                             self._PlayerInterface.Notificar('O adversário aceitou o truco, quem pediu truco deve jogar sua carta')
                         
                         elif aJogada.payload['resposta'] == 'aumentar':
                             self.aumentarValorMao()
-                            print(f'valor da mao em {self._valorMao}, aumentar adversario')
                             if aJogada.payload['quemResponde'] == self._PlayerInterface.localPlayer._nome:
                                 self._PlayerInterface.Notificar('O advérsario pediu aumento do truco, e você deve responder')
                                 self._PlayerInterface.localPlayer.setQuemResponde(True)
